@@ -70,3 +70,8 @@ body {
 .transfer-account-details {
   padding-top: 10px;
 }
+
+label small {
+  display: block;
+  color: #ccc;
+}
