@@ -9,7 +9,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>Welcome ${USER} - SBS Merchant Home - Group 11</title>
+    <title>SBS Credit / Debit Funds - Group 11</title>
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -35,12 +35,11 @@
         <div class="col-sm-3 col-md-2 sidebar">
 
           <ul class="nav nav-sidebar">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#">Credit/Debit</a></li>
+            <li><a href="#">Home</a></li>
+            <li class="active"><a href="#">Credit/Debit</a></li>
             <li><a href="#">Fund Transfer</a></li>
             <li><a href="#">Payments</a></li>
             <li><a href="#">Statements</a></li>
-            <li><a href="#">Bank Requests</a></li>
             <li><a href="#">Settings</a></li>
             <li><a href="#">Logout ${User}</a></li>
           </ul>
@@ -50,7 +49,7 @@
         <div class="col-sm-9 col-md-10 main">
 
           <div class="page-header">
-            <h1>SBS MERCHANT HOME - Welcome ${User}</h1>
+            <h1>SBS Credit / Debit Funds</h1>
           </div>
 
           <h2>Accounts:</h2>
@@ -60,22 +59,58 @@
               <tr>
                 <th>Name</th>
                 <th>Balance</th>
-                <th>Statement</th>
+                <th>Credit / Debit</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td><a title="Go to Account" href="#">${User}'s Checking Account (*1234)</a></td>
                 <td>$200.10</td>
-                <td><a href="">View Statement</a></td>
+                <td><a class="add-withdraw" href="">Add / Withdraw Funds</a></td>
               </tr>
               <tr>
                 <td><a title="Go to Account" href="#">${User}'s Savings Account (*5678)</a></td>
                 <td>$7500.47</td>
-                <td><a href="">View Statement</a></td>
+                <td><a class="add-withdraw" href="">Add / Withdraw Funds</a></td>
               </tr>
             </tbody>
           </table>
+
+          <div id="add-withdraw" class="modal fade">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  <h4 class="modal-title">Add / Withdraw </h4>
+                </div>
+                <div class="modal-body">
+                  <p>
+                    <label>Account:</label>
+                    <select class="form-control">
+                      <option>Select an Account</option>
+                      <option>${User}'s Checking Account (*1234)</option>
+                      <option>${User}'s Savings Account (*5678)</option>
+                    </select>
+                  </p>                  
+                  <hr>
+                  <p>
+                    <label>Current Balance:</label>
+                    <p><i> Please select an account </i></p>
+                  </p>
+                  <hr>
+                  <p>
+                    <label>Amount to be Credited / Debited (in USD):</label>
+                    <input type="text" class="form-control" placeholder="0.00">
+                  </p>
+                </div>
+                <div class="modal-footer">                
+                  <button type="button" class="btn btn-success">Credit Funds</button>
+                  <button type="button" class="btn btn-danger">Debit Funds</button>
+                  <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+                </div>
+              </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+          </div><!-- /.modal -->
           
         </div> <!-- /main -->
 

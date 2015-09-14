@@ -66,3 +66,7 @@ body {
 .nav-sidebar .active a {
   color: #333;
 }
+
+.transfer-account-details {
+  padding-top: 10px;
+}
