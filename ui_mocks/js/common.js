@@ -1,5 +1,15 @@
 $(function() {
 
+    if ($('#virtualKeyboard').length) {
+        jsKeyboard.init("virtualKeyboard");
+
+        //first input focus
+        var $firstInput = $(':input').first().focus();
+        jsKeyboard.currentElement = $firstInput;
+        jsKeyboard.currentElementCursorPosition = 0;
+        
+    }    
+
     // Open Add Withdraw Funds modal when .add-withdraw class is clicked
     $('.add-withdraw').click( function() {
         $('#add-withdraw').modal('show');
