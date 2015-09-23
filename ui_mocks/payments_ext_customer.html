@@ -9,7 +9,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>SBS Merchant Payments - Group 11</title>
+    <title>SBS User Payments - Group 11</title>
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -50,29 +50,35 @@
         <div class="col-sm-9 col-md-10 main">
 
           <div class="page-header">
-            <h1>SBS Merchant Payments</h1>
+            <h1>SBS User Payments</h1>
           </div>
 
-          <h2>Issue a payment on behalf of a user:</h2>
+          <h2>Make a quick payment to a merchant!</h2>
 
           <div id="payment">
             <p>
-              <label>Account Holder's Name:</label>
-              <input type="text" class="form-control" placeholder="eg: Rahul Parekh">
+              <label>Select Merchant:</label>
+              <select class="form-control">
+                <option>Select Merchant</option>
+                <option>Amazon.com</option>
+                <option>Google.com</option>
+                <option>Apple.com</option>
+              </select>
             </p>
+            <hr>
             <p>
-              <label>Account Number:</label>
-              <input type="text" class="form-control" placeholder="123456789">
-            </p>
+              <label>Debit Account:</label>
+              <select class="form-control">
+                <option>Select an Account</option>
+                <option>${User}'s Checking Account (*1234)</option>
+                <option>${User}'s Savings Account (*5678)</option>
+              </select>
+            </p>    
             <p>
               <label>Amount to be Transferred:</label>
               <input type="text" class="form-control" placeholder="0.00">
             </p>
             <hr>
-            <p>
-              <label>Unique transaction code: <small>(sent to you via email when the user made the transaction)</small></label>
-              <input type="text" class="form-control">
-            </p>
             <p>
               <label>Upload Security Token :</label>
               <input type="file" class="form-control">
