@@ -38,9 +38,9 @@
             <li><a href="#">Home</a></li>
             <li><a href="#">Credit/Debit</a></li>
             <li><a href="#">Fund Transfer</a></li>
-            <li class="active"><a href="#">Payments</a></li>
+            <li><a href="#">Payments</a></li>
             <li><a href="#">Statements</a></li>
-            <li><a href="#">Bank Requests</a></li>
+            <li class="active"><a href="#">Bank Requests</a></li>
             <li><a href="#">Settings</a></li>
             <li><a href="#">Logout</a></li>
           </ul>
@@ -50,54 +50,40 @@
         <div class="col-sm-9 col-md-10 main">
 
           <div class="page-header">
-            <h1>SBS User Payments</h1>
+            <h1>SBS User Bank Requests</h1>
           </div>
 
-          <h2>Make a quick payment to a merchant!</h2>
+          <h2>Pending Bank Requests</h2>
 
-          <div id="payment">
-            <p>
-              <label>Select Merchant:</label>
-              <select class="form-control">
-                <option>Select Merchant</option>
-                <option>Amazon.com</option>
-                <option>Google.com</option>
-                <option>Apple.com</option>
-              </select>
-            </p>
-            <hr>
-            <p>
-              <label>Debit Account:</label>
-              <select class="form-control">
-                <option>Select an Account</option>
-                <option>${User}'s Checking Account (*1234)</option>
-                <option>${User}'s Savings Account (*5678)</option>
-              </select>
-            </p>    
-            <p>
-              <label>Amount to be Transferred:</label>
-              <input type="text" class="form-control" placeholder="0.00">
-            </p>
-            <hr>
-            <p>
-              <label>Upload Security Token :</label>
-              <input type="file" class="form-control">
-            </p>
-            <p>
-              <label>One time password: <a href="" class="btn btn-xs btn-info">Generate OTP</a></label>
-              <input type="text" class="form-control">
-            </p>
-            <div class="modal-footer">                
-              <button type="button" class="btn btn-success">Make Payment</button>
-            </div>
-          </div><!-- /payment -->
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th colspan="3">Request</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><a href="#">Credit Transaction #46879 review request</a></td>
+                <td><button type="button" class="btn btn-success">Approve</button></td>
+                <td><button type="button" class="btn btn-info">Decline</button></td>
+              </tr>
+              <tr>
+                <td><a href="#">Debit Transaction #41121 review request</a></td>
+                <td><button type="button" class="btn btn-success">Approve</button></td>
+                <td><button type="button" class="btn btn-info">Decline</button></td>
+              </tr>
+              <tr>
+                <td><a href="#">Merchant Payment to Apple.com #7455 review request</a></td>
+                <td><button type="button" class="btn btn-success">Approve</button></td>
+                <td><button type="button" class="btn btn-info">Decline</button></td>
+              </tr>
+            </tbody>
+          </table>
+          
           
         </div> <!-- /main -->
 
       </div> <!-- /row -->
-
-      <div id="virtualKeyboard">        
-      </div>
 
     </div> <!-- /container -->
 
