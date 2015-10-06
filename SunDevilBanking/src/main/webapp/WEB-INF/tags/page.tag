@@ -13,7 +13,7 @@
 <link rel="icon"
 	href="${pageContext.servletContext.contextPath}/static/favicon.ico">
 
-<title>${title}| Sun Devil Bank - Group 11</title>
+<title>${title} | Sun Devil Bank - Group 11</title>
 
 <!-- Bootstrap core CSS -->
 <link
