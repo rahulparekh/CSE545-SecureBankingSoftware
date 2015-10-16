@@ -7,7 +7,11 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>SunDevilBanking Maven Webapp</name>
 	<url>http://maven.apache.org</url>
-
+	<properties>
+		<springframework.version>4.2.1.RELEASE</springframework.version>
+		<hibernate.version>4.3.11.Final</hibernate.version>
+		<mysql.connector.version>5.1.36</mysql.connector.version>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -18,9 +22,25 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
-			<version>4.2.1.RELEASE</version>
+			<version>${springframework.version}</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<!-- Hibernate -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>${hibernate.version}</version>
+		</dependency>
+		<!-- MySQL -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql.connector.version}</version>
+		</dependency>
 		<!-- Below declared dependencies are included for the servers who may complain 
 			about servlet/jstl missing dependency -->
 		<dependency>
