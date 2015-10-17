@@ -6,7 +6,7 @@
 
 ## Resources:
 1. [WebMystique tutorial used for Spring/Hibernate Setup](http://websystique.com/springmvc/spring-4-mvc-and-hibernate4-integration-example-using-annotations/)
-2. Java/Hibernate Validator [here](https://docs.oracle.com/javaee/7/api/javax/validation/constraints/package-summary.html)
+2. We are using the Java/Hibernate Validator. Found [here](https://docs.oracle.com/javaee/7/api/javax/validation/constraints/package-summary.html)
 
 
 ## Project setup information
