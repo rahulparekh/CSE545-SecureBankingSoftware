@@ -1,10 +1,16 @@
 package com.sbs.group11.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
@@ -13,9 +19,8 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDateTime;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class ExternalUser - Hibernate model for External Users.
+ * ExternalUser - Hibernate model for External Users.
  *
  * @author Rahul
  */
@@ -24,10 +29,30 @@ import org.joda.time.LocalDateTime;
 @Table(name = "ExternalUser")
 public class ExternalUser {
 
-	/** The id. */
+	/** The security questions. For the One-to-Many relationship */
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name="CustomerID", foreignKey = @ForeignKey(name = "Fk_ExternalUser_SecurityQuestion"))
+	private Set<SecurityQuestion> securityQuestions = new HashSet<SecurityQuestion>(
+			0);
+
+	/**
+	 * The customer id. No auto increment as revealing how many users we have in
+	 * the bank might be insecure. We should have it randomized.
+	 */
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int id;
+	@NotNull
+	@Size(min = 11, max = 11)
+	@Column(name = "CustomerID", nullable = false, length = 11, unique = true)
+	private String customerID;
+
+	public ExternalUser() {
+	}
+
+	public ExternalUser(String customerID,
+			Set<SecurityQuestion> securityQuestions) {
+		this.customerID = customerID;
+		this.securityQuestions = securityQuestions;
+	}
 
 	/** The first name. */
 	@NotNull
@@ -78,24 +103,17 @@ public class ExternalUser {
 	@Column(name = "Phone", nullable = false, length = 15)
 	private String phone;
 
-	/** The customer id. */
-	@NotNull
-	@Size(min = 10, max = 10)
-	@Column(name = "CustomerID", nullable = false, length = 10, unique = true)
-	private String customerID;
-	
 	/** The email. */
 	@NotNull
 	@Size(max = 255)
 	@Column(name = "Email", nullable = false, length = 255, unique = true)
 	private String email;
-	
-	/** The password. */
+
+	/** The password. 60 characters as we will use BCrypt hash */
 	@NotNull
-	@Size(min=60, max = 60)
+	@Size(min = 60, max = 60)
 	@Column(name = "Password", nullable = false, length = 60)
-	private String password;	
-	
+	private String password;
 
 	/** The employee override. */
 	@Digits(integer = 1, fraction = 0)
@@ -127,21 +145,22 @@ public class ExternalUser {
 	private LocalDateTime updatedAt;
 
 	/**
-	 * Gets the id.
+	 * Gets the security questions. Defines a 1 to Many relationship
 	 *
-	 * @return the id
+	 * @return the security questions
 	 */
-	public int getId() {
-		return id;
+	public Set<SecurityQuestion> getSecurityQuestions() {
+		return this.securityQuestions;
 	}
 
 	/**
-	 * Sets the id.
+	 * Sets the security questions.
 	 *
-	 * @param id the new id
+	 * @param securityQuestions
+	 *            the new security questions
 	 */
-	public void setId(int id) {
-		this.id = id;
+	public void setSecurityQuestions(Set<SecurityQuestion> securityQuestions) {
+		this.securityQuestions = securityQuestions;
 	}
 
 	/**
@@ -156,7 +175,8 @@ public class ExternalUser {
 	/**
 	 * Sets the first name.
 	 *
-	 * @param firstName the new first name
+	 * @param firstName
+	 *            the new first name
 	 */
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
@@ -174,7 +194,8 @@ public class ExternalUser {
 	/**
 	 * Sets the middle name.
 	 *
-	 * @param middleName the new middle name
+	 * @param middleName
+	 *            the new middle name
 	 */
 	public void setMiddleName(String middleName) {
 		this.middleName = middleName;
@@ -192,7 +213,8 @@ public class ExternalUser {
 	/**
 	 * Sets the last name.
 	 *
-	 * @param lastName the new last name
+	 * @param lastName
+	 *            the new last name
 	 */
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
@@ -210,7 +232,8 @@ public class ExternalUser {
 	/**
 	 * Sets the address line1.
 	 *
-	 * @param addressLine1 the address line 1
+	 * @param addressLine1
+	 *            the address line 1
 	 */
 	public void setAddressLine1(String addressLine1) {
 		this.addressLine1 = addressLine1;
@@ -228,7 +251,8 @@ public class ExternalUser {
 	/**
 	 * Sets the address line2.
 	 *
-	 * @param addressLine2 the new address line2
+	 * @param addressLine2
+	 *            the new address line2
 	 */
 	public void setAddressLine2(String addressLine2) {
 		this.addressLine2 = addressLine2;
@@ -246,7 +270,8 @@ public class ExternalUser {
 	/**
 	 * Sets the state.
 	 *
-	 * @param state the new state
+	 * @param state
+	 *            the new state
 	 */
 	public void setState(String state) {
 		this.state = state;
@@ -264,7 +289,8 @@ public class ExternalUser {
 	/**
 	 * Sets the zip code.
 	 *
-	 * @param zipCode the new zip code
+	 * @param zipCode
+	 *            the new zip code
 	 */
 	public void setZipCode(String zipCode) {
 		this.zipCode = zipCode;
@@ -282,7 +308,8 @@ public class ExternalUser {
 	/**
 	 * Sets the phone.
 	 *
-	 * @param phone the new phone
+	 * @param phone
+	 *            the new phone
 	 */
 	public void setPhone(String phone) {
 		this.phone = phone;
@@ -300,7 +327,8 @@ public class ExternalUser {
 	/**
 	 * Sets the customer id.
 	 *
-	 * @param customerID the new customer id
+	 * @param customerID
+	 *            the new customer id
 	 */
 	public void setCustomerID(String customerID) {
 		this.customerID = customerID;
@@ -318,7 +346,8 @@ public class ExternalUser {
 	/**
 	 * Sets the email.
 	 *
-	 * @param email the new email
+	 * @param email
+	 *            the new email
 	 */
 	public void setEmail(String email) {
 		this.email = email;
@@ -336,7 +365,8 @@ public class ExternalUser {
 	/**
 	 * Sets the password.
 	 *
-	 * @param password the new password
+	 * @param password
+	 *            the new password
 	 */
 	public void setPassword(String password) {
 		this.password = password;
@@ -354,7 +384,8 @@ public class ExternalUser {
 	/**
 	 * Sets the employee override.
 	 *
-	 * @param employeeOverride the new employee override
+	 * @param employeeOverride
+	 *            the new employee override
 	 */
 	public void setEmployeeOverride(int employeeOverride) {
 		this.employeeOverride = employeeOverride;
@@ -372,7 +403,8 @@ public class ExternalUser {
 	/**
 	 * Sets the customer type.
 	 *
-	 * @param customerType the new customer type
+	 * @param customerType
+	 *            the new customer type
 	 */
 	public void setCustomerType(int customerType) {
 		this.customerType = customerType;
@@ -390,7 +422,8 @@ public class ExternalUser {
 	/**
 	 * Sets the created at.
 	 *
-	 * @param createdAt the new created at
+	 * @param createdAt
+	 *            the new created at
 	 */
 	public void setCreatedAt(LocalDateTime createdAt) {
 		this.createdAt = createdAt;
@@ -408,7 +441,8 @@ public class ExternalUser {
 	/**
 	 * Sets the last login at.
 	 *
-	 * @param lastLoginAt the new last login at
+	 * @param lastLoginAt
+	 *            the new last login at
 	 */
 	public void setLastLoginAt(LocalDateTime lastLoginAt) {
 		this.lastLoginAt = lastLoginAt;
@@ -426,13 +460,11 @@ public class ExternalUser {
 	/**
 	 * Sets the updated at.
 	 *
-	 * @param updatedAt the new updated at
+	 * @param updatedAt
+	 *            the new updated at
 	 */
 	public void setUpdatedAt(LocalDateTime updatedAt) {
 		this.updatedAt = updatedAt;
 	}
-	
-	
-	
 
 }
