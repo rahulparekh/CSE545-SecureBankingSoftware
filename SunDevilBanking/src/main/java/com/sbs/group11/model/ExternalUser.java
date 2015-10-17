@@ -7,7 +7,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
@@ -31,9 +30,14 @@ public class ExternalUser {
 
 	/** The security questions. For the One-to-Many relationship */
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name="CustomerID", foreignKey = @ForeignKey(name = "Fk_ExternalUser_SecurityQuestion"))
+	@JoinColumn(name="CustomerID")
 	private Set<SecurityQuestion> securityQuestions = new HashSet<SecurityQuestion>(
 			0);
+	
+	/** The accounts. For the One-to-Many relationship */
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name="CustomerID")
+	private Set<Account> accounts = new HashSet<Account>(0);
 
 	/**
 	 * The customer id. No auto increment as revealing how many users we have in
@@ -47,11 +51,12 @@ public class ExternalUser {
 
 	public ExternalUser() {
 	}
-
+	
 	public ExternalUser(String customerID,
-			Set<SecurityQuestion> securityQuestions) {
+			Set<SecurityQuestion> securityQuestions, Set<Account> accounts) {
 		this.customerID = customerID;
 		this.securityQuestions = securityQuestions;
+		this.accounts = accounts;
 	}
 
 	/** The first name. */
@@ -161,6 +166,24 @@ public class ExternalUser {
 	 */
 	public void setSecurityQuestions(Set<SecurityQuestion> securityQuestions) {
 		this.securityQuestions = securityQuestions;
+	}
+	
+	/**
+	 * Gets the accounts.
+	 *
+	 * @return the accounts
+	 */
+	public Set<Account> getAccounts() {
+		return this.accounts;
+	}
+
+	/**
+	 * Sets the accounts.
+	 *
+	 * @param accounts the new accounts
+	 */
+	public void setAccounts(Set<Account> accounts) {
+		this.accounts = accounts;
 	}
 
 	/**
