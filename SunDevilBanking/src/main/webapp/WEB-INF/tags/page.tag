@@ -51,15 +51,15 @@
 					<li
 						class="${fn:endsWith(pageContext.request.requestURI, 'creditdebit.jsp') ? 'active':''}"><a
 						href="#">Credit/Debit</a></li>
-					<li class="${fn:endsWith(pageContext.request.requestURI, "fundtransfer.jsp") ? 'active':''}"><a
+					<li class="${fn:endsWith(pageContext.request.requestURI, 'fundtransfer.jsp') ? 'active':''}"><a
 						href="">Fund Transfer</a></li>
-					<li class="${fn:endsWith(pageContext.request.requestURI, "payments.jsp") ? 'active':''}"><a
+					<li class="${fn:endsWith(pageContext.request.requestURI, 'payments.jsp') ? 'active':''}"><a
 						href="">Payments</a></li>
-					<li class="${fn:endsWith(pageContext.request.requestURI, "statements.jsp") ? 'active':''}"><a
+					<li class="${fn:endsWith(pageContext.request.requestURI, 'statements.jsp') ? 'active':''}"><a
 						href="">Statements</a></li>
-					<li class="${fn:endsWith(pageContext.request.requestURI, "settings.jsp") ? 'active':''}"><a
+					<li class="${fn:endsWith(pageContext.request.requestURI, 'settings.jsp') ? 'active':''}"><a
 						href="">Settings</a></li>
-					<li class="${fn:endsWith(pageContext.request.requestURI, "logout.jsp") ? 'active':''}"><a
+					<li class="${fn:endsWith(pageContext.request.requestURI, 'logout.jsp') ? 'active':''}"><a
 						href="">Logout</a></li>
 				</ul>
 
