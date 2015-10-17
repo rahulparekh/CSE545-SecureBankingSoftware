@@ -11,6 +11,7 @@
 		<springframework.version>4.2.1.RELEASE</springframework.version>
 		<hibernate.version>4.3.11.Final</hibernate.version>
 		<mysql.connector.version>5.1.36</mysql.connector.version>
+		<joda-time.version>2.3</joda-time.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -35,12 +36,40 @@
 			<artifactId>hibernate-core</artifactId>
 			<version>${hibernate.version}</version>
 		</dependency>
+		
+		<!-- jsr303 validation -->
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>1.1.0.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>5.1.3.Final</version>
+        </dependency>
+		
 		<!-- MySQL -->
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>${mysql.connector.version}</version>
 		</dependency>
+		
+		<!-- Joda-Time -->       
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>${joda-time.version}</version>
+        </dependency>
+         
+        <!-- To map JodaTime with database type -->      
+        <dependency>
+            <groupId>org.jadira.usertype</groupId>
+            <artifactId>usertype.core</artifactId>
+            <version>3.0.0.CR1</version>
+        </dependency>
+		
 		<!-- Below declared dependencies are included for the servers who may complain 
 			about servlet/jstl missing dependency -->
 		<dependency>
