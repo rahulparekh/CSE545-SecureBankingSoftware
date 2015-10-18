@@ -10,6 +10,9 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDateTime;
+
 /**
  * Account - Store external customer accounts.
  *
@@ -26,7 +29,7 @@ public class Account {
 	@Column(name = "CustomerID", nullable = false, length = 11, unique = true)
 	private String customerID;
 	
-	/** The number. */
+	/** The Account Number. */
 	@Id
 	@NotNull
 	@Size(min = 17, max = 17)
@@ -50,6 +53,18 @@ public class Account {
     @Digits(integer=11, fraction=2)
     @Column(name = "Balance", nullable = false)
     private BigDecimal balance;
+	
+	/** The created at. */
+	@NotNull
+	@Column(name = "CreatedAt", nullable = false)
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
+	private LocalDateTime createdAt;
+
+	/** The updated at. */
+	@NotNull
+	@Column(name = "UpdatedAt", nullable = false)
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
+	private LocalDateTime updatedAt;
 
 	/**
 	 * Gets the customer id.
@@ -139,6 +154,29 @@ public class Account {
 	 */
 	public void setBalance(BigDecimal balance) {
 		this.balance = balance;
-	}	
+	}
+		
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	/**
+	 * Sets the created at.
+	 *
+	 * @param createdAt
+	 *            the new created at
+	 */
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	/**
+	 * Gets the updated at.
+	 *
+	 * @return the updated at
+	 */
+	public LocalDateTime getUpdatedAt() {
+		return updatedAt;
+	}
 	
 }
