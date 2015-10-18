@@ -13,8 +13,8 @@
 1. [Download and install MySql](https://dev.mysql.com/downloads/windows/)
 2. Create a db `sbsgroup11`. Create a sql user `sbs` with pass `dbpasswdsbs`
 2. `git clone https://github.com/rahulparekh/cse545group11.git`
-2. Import project to eclipse
-3. Run As -> Maven Install
-4. To Run the server - Run As -> Run Jetty (Configure it in case you don't see this option. Jetty plugin is part of the maven dependencies)
+2. Import project folder **SunDevilBanking** to eclipse as **Existing Maven Projects**
+3. Next do `Run As -> Maven Install`
+4. To Run the server - Run As -> Run Jetty (Need eclipse plugin for Jetty. I use [Run-Jetty-Run](https://marketplace.eclipse.org/content/run-jetty-run) )
 5. This should get you up and running at http://localhost:8080/SunDevilBanking
 6. Using any MySQL GUI client you should see the database has been populated with the schema
