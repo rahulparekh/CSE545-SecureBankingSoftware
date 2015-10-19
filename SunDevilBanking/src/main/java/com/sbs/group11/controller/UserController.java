@@ -5,14 +5,41 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+/**
+ * UserController: Controls most of our application UI paths for all types of
+ * users including internal users.
+ * 
+ * @author Rahul
+ */
 @Controller
 @RequestMapping(value = "/")
 public class UserController {
 
-	@RequestMapping(value="/", method = RequestMethod.GET)
-    public String getHome(ModelMap model) {
+	/**
+	 * Gets the home.
+	 *
+	 * @param model
+	 *            the model
+	 * @return the home
+	 */
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	public String getHome(ModelMap model) {
 		model.addAttribute("title", "Welcome John");
 		model.addAttribute("user", "John Doe");
-        return "customer/home";
-    }
+		return "customer/home";
+	}
+
+	/**
+	 * Gets the credit and debit page.
+	 *
+	 * @param model
+	 *            the model
+	 * @return the credit debit
+	 */
+	@RequestMapping(value = "/credit-debit", method = RequestMethod.GET)
+	public String getCreditDebit(ModelMap model) {
+		model.addAttribute("title", "Credit and Debit Funds");
+		model.addAttribute("user", "John Doe");
+		return "customer/creditdebit";
+	}
 }

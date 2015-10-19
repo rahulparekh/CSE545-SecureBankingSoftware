@@ -47,20 +47,20 @@
 				<ul class="nav nav-sidebar">
 					<li
 						class="${fn:endsWith(pageContext.request.requestURI, 'home.jsp') ? 'active':''}"><a
-						href="#">Home</a></li>
+						href="${pageContext.servletContext.contextPath}">Home</a></li>
 					<li
 						class="${fn:endsWith(pageContext.request.requestURI, 'creditdebit.jsp') ? 'active':''}"><a
-						href="#">Credit/Debit</a></li>
+						href="${pageContext.servletContext.contextPath}/credit-debit">Credit/Debit</a></li>
 					<li class="${fn:endsWith(pageContext.request.requestURI, 'fundtransfer.jsp') ? 'active':''}"><a
-						href="">Fund Transfer</a></li>
+						href="${pageContext.servletContext.contextPath}/fund-transfer">Fund Transfer</a></li>
 					<li class="${fn:endsWith(pageContext.request.requestURI, 'payments.jsp') ? 'active':''}"><a
-						href="">Payments</a></li>
+						href="${pageContext.servletContext.contextPath}/payments">Payments</a></li>
 					<li class="${fn:endsWith(pageContext.request.requestURI, 'statements.jsp') ? 'active':''}"><a
-						href="">Statements</a></li>
+						href="${pageContext.servletContext.contextPath}/statements">Statements</a></li>
 					<li class="${fn:endsWith(pageContext.request.requestURI, 'settings.jsp') ? 'active':''}"><a
-						href="">Settings</a></li>
+						href="${pageContext.servletContext.contextPath}/settings">Settings</a></li>
 					<li class="${fn:endsWith(pageContext.request.requestURI, 'logout.jsp') ? 'active':''}"><a
-						href="">Logout</a></li>
+						href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
 				</ul>
 
 			</div>
