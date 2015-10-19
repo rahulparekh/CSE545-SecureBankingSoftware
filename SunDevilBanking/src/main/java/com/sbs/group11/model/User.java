@@ -73,8 +73,9 @@ public class User {
 	private String firstName;
 
 	/** The middle name. */
+	@NotNull
 	@Size(min = 3, max = 35)
-	@Column(name = "MiddleName", nullable = false, length = 35)
+	@Column(name = "MiddleName", nullable = true, length = 35)
 	private String middleName;
 
 	/** The last name. */
@@ -131,6 +132,11 @@ public class User {
 	@Digits(integer = 1, fraction = 0)
 	@Column(name = "EmployeeOverride", nullable = true, columnDefinition = "int(1) DEFAULT '0'")
 	private int employeeOverride;
+	
+	/** If the user is enabled. */
+	@Digits(integer = 1, fraction = 0)
+	@Column(name = "Enabled", nullable = true, columnDefinition = "int(1) DEFAULT '0'")
+	private int enabled;
 
 	/** The customer type. Customer, Merchant, Employee, Manager, Admin */
 	@NotNull
@@ -420,6 +426,24 @@ public class User {
 	 */
 	public void setEmployeeOverride(int employeeOverride) {
 		this.employeeOverride = employeeOverride;
+	}
+
+	/**
+	 * Gets the enabled.
+	 *
+	 * @return the enabled
+	 */
+	public int getEnabled() {
+		return enabled;
+	}
+
+	/**
+	 * Sets the enabled.
+	 *
+	 * @param enabled the new enabled
+	 */
+	public void setEnabled(int enabled) {
+		this.enabled = enabled;
 	}
 
 	/**

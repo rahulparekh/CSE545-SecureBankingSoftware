@@ -14,7 +14,7 @@ import javax.persistence.Table;
 @Table(name = "Role")
 public class Role {
 	
-	private Integer userRoleId;
+	private Integer RoleID;
 	private User user;
 	private String role;
 
@@ -28,14 +28,14 @@ public class Role {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "UserRoleID", 
+	@Column(name = "RoleID", 
 		unique = true, nullable = false)
-	public Integer getUserRoleId() {
-		return this.userRoleId;
+	public Integer getRoleID() {
+		return this.RoleID;
 	}
 
-	public void setUserRoleId(Integer userRoleId) {
-		this.userRoleId = userRoleId;
+	public void setRoleID(Integer RoleID) {
+		this.RoleID = RoleID;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
