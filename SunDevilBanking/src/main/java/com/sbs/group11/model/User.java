@@ -19,14 +19,18 @@ import org.hibernate.annotations.Type;
 import org.joda.time.LocalDateTime;
 
 /**
- * ExternalUser - Hibernate model for External Users.
+ * User - Hibernate model for Users with user type and roles. One model for all
+ * users is easier to work with and much more efficient than having different
+ * tables for external and internal users. This will integrate much better with
+ * spring security too and provide a more solid and consistent authentication
+ * framework.
  *
  * @author Rahul
  */
 
 @Entity
-@Table(name = "ExternalUser")
-public class ExternalUser {
+@Table(name = "User")
+public class User {
 
 	/** The security questions. For the One-to-Many relationship */
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -52,11 +56,11 @@ public class ExternalUser {
 	@Column(name = "CustomerID", nullable = false, length = 11, unique = true)
 	private String customerID;
 
-	public ExternalUser() {
+	public User() {
 	}
 
-	public ExternalUser(String customerID,
-			Set<SecurityQuestion> securityQuestions, Set<Account> accounts) {
+	public User(String customerID, Set<SecurityQuestion> securityQuestions,
+			Set<Account> accounts) {
 		this.customerID = customerID;
 		this.securityQuestions = securityQuestions;
 		this.accounts = accounts;
@@ -128,11 +132,11 @@ public class ExternalUser {
 	@Column(name = "EmployeeOverride", nullable = true, columnDefinition = "int(1) DEFAULT '0'")
 	private int employeeOverride;
 
-	/** The customer type. */
+	/** The customer type. Customer, Merchant, Employee, Manager, Admin */
 	@NotNull
-	@Digits(integer = 1, fraction = 0)
-	@Column(name = "CustomerType", nullable = true, columnDefinition = "int(1)")
-	private int customerType;
+	@Size(min = 5, max = 8)
+	@Column(name = "CustomerType", nullable = true, length = 8)
+	private String customerType;
 
 	/** The created at. */
 	@NotNull
@@ -423,7 +427,7 @@ public class ExternalUser {
 	 *
 	 * @return the customer type
 	 */
-	public int getCustomerType() {
+	public String getCustomerType() {
 		return customerType;
 	}
 
@@ -433,7 +437,7 @@ public class ExternalUser {
 	 * @param customerType
 	 *            the new customer type
 	 */
-	public void setCustomerType(int customerType) {
+	public void setCustomerType(String customerType) {
 		this.customerType = customerType;
 	}
 
