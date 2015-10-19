@@ -7,26 +7,30 @@
 
 	<http auto-config="true" use-expressions="true">
 
-		<!-- <form-login login-page="/auth/login" login-processing-url="/login"
-			default-target-url="/" always-use-default-target="true"
-			authentication-failure-url="/login?err=1" username-parameter="email"
-			password-parameter="password" /> -->
+		<!-- <form-login login-page="/auth/login" login-processing-url="/login" 
+			default-target-url="/" always-use-default-target="true" authentication-failure-url="/login?err=1" 
+			username-parameter="email" password-parameter="password" /> -->
 
 		<logout logout-url="/auth/logout" logout-success-url="/auth/login"
 			delete-cookies="JSESSIONID" invalidate-session="true" />
 
 		<intercept-url pattern="/auth/*" access="permitAll" />
-		<intercept-url pattern="/home/**"
-			access="hasAnyRole('ROLE_CUSTOMER')" />
+		<intercept-url pattern="/home/**" access="hasAnyRole('ROLE_CUSTOMER')" />
 	</http>
 
 	<authentication-manager>
 		<authentication-provider>
-			<user-service>
-				<user name="r" password="r" authorities="ROLE_CUSTOMER" />
-				<user name="z" password="z" authorities="ROLE_CS" />
-			</user-service>
+			<password-encoder hash="bcrypt" ref="encoder" />
+			<jdbc-user-service data-source-ref="dataSource"
+				users-by-username-query="select CustomerID, Password as password, Enabled as enabled from user where Email=?"
+				authorities-by-username-query=
+				"select u.Email, r.Role from User u, Role r where u.CustomerID = r.CustomerID and u.CustomerID = ?" />
 		</authentication-provider>
 	</authentication-manager>
+
+	<beans:bean id="encoder"
+		class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
+		<beans:constructor-arg name="strength" value="11" />
+	</beans:bean>
 
 </beans:beans>

@@ -19,25 +19,32 @@ import org.hibernate.annotations.Type;
 import org.joda.time.LocalDateTime;
 
 /**
- * ExternalUser - Hibernate model for External Users.
+ * User - Hibernate model for Users with user type and roles. One model for all
+ * users is easier to work with and much more efficient than having different
+ * tables for external and internal users. This will integrate much better with
+ * spring security too and provide a more solid and consistent authentication
+ * framework.
  *
  * @author Rahul
  */
 
 @Entity
-@Table(name = "ExternalUser")
-public class ExternalUser {
+@Table(name = "User")
+public class User {
 
 	/** The security questions. For the One-to-Many relationship */
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name="CustomerID")
+	@JoinColumn(name = "CustomerID")
 	private Set<SecurityQuestion> securityQuestions = new HashSet<SecurityQuestion>(
 			0);
-	
+
 	/** The accounts. For the One-to-Many relationship */
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name="CustomerID")
+	@JoinColumn(name = "CustomerID")
 	private Set<Account> accounts = new HashSet<Account>(0);
+
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
+	private Set<Role> role = new HashSet<Role>(0);
 
 	/**
 	 * The customer id. No auto increment as revealing how many users we have in
@@ -49,11 +56,11 @@ public class ExternalUser {
 	@Column(name = "CustomerID", nullable = false, length = 11, unique = true)
 	private String customerID;
 
-	public ExternalUser() {
+	public User() {
 	}
-	
-	public ExternalUser(String customerID,
-			Set<SecurityQuestion> securityQuestions, Set<Account> accounts) {
+
+	public User(String customerID, Set<SecurityQuestion> securityQuestions,
+			Set<Account> accounts) {
 		this.customerID = customerID;
 		this.securityQuestions = securityQuestions;
 		this.accounts = accounts;
@@ -66,8 +73,9 @@ public class ExternalUser {
 	private String firstName;
 
 	/** The middle name. */
+	@NotNull
 	@Size(min = 3, max = 35)
-	@Column(name = "MiddleName", nullable = false, length = 35)
+	@Column(name = "MiddleName", nullable = true, length = 35)
 	private String middleName;
 
 	/** The last name. */
@@ -124,12 +132,17 @@ public class ExternalUser {
 	@Digits(integer = 1, fraction = 0)
 	@Column(name = "EmployeeOverride", nullable = true, columnDefinition = "int(1) DEFAULT '0'")
 	private int employeeOverride;
-
-	/** The customer type. */
-	@NotNull
+	
+	/** If the user is enabled. */
 	@Digits(integer = 1, fraction = 0)
-	@Column(name = "CustomerType", nullable = true, columnDefinition = "int(1)")
-	private int customerType;
+	@Column(name = "Enabled", nullable = true, columnDefinition = "int(1) DEFAULT '0'")
+	private int enabled;
+
+	/** The customer type. Customer, Merchant, Employee, Manager, Admin */
+	@NotNull
+	@Size(min = 5, max = 8)
+	@Column(name = "CustomerType", nullable = true, length = 8)
+	private String customerType;
 
 	/** The created at. */
 	@NotNull
@@ -167,7 +180,7 @@ public class ExternalUser {
 	public void setSecurityQuestions(Set<SecurityQuestion> securityQuestions) {
 		this.securityQuestions = securityQuestions;
 	}
-	
+
 	/**
 	 * Gets the accounts.
 	 *
@@ -180,7 +193,8 @@ public class ExternalUser {
 	/**
 	 * Sets the accounts.
 	 *
-	 * @param accounts the new accounts
+	 * @param accounts
+	 *            the new accounts
 	 */
 	public void setAccounts(Set<Account> accounts) {
 		this.accounts = accounts;
@@ -415,11 +429,29 @@ public class ExternalUser {
 	}
 
 	/**
+	 * Gets the enabled.
+	 *
+	 * @return the enabled
+	 */
+	public int getEnabled() {
+		return enabled;
+	}
+
+	/**
+	 * Sets the enabled.
+	 *
+	 * @param enabled the new enabled
+	 */
+	public void setEnabled(int enabled) {
+		this.enabled = enabled;
+	}
+
+	/**
 	 * Gets the customer type.
 	 *
 	 * @return the customer type
 	 */
-	public int getCustomerType() {
+	public String getCustomerType() {
 		return customerType;
 	}
 
@@ -429,8 +461,27 @@ public class ExternalUser {
 	 * @param customerType
 	 *            the new customer type
 	 */
-	public void setCustomerType(int customerType) {
+	public void setCustomerType(String customerType) {
 		this.customerType = customerType;
+	}
+
+	/**
+	 * Gets the role.
+	 *
+	 * @return the role
+	 */
+	public Set<Role> getRole() {
+		return role;
+	}
+
+	/**
+	 * Sets the role.
+	 *
+	 * @param role
+	 *            the new role
+	 */
+	public void setRole(Set<Role> role) {
+		this.role = role;
 	}
 
 	/**
