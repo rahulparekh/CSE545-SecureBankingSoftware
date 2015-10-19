@@ -37,9 +37,9 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
+    <script src="${pageContext.servletContext.contextPath}/static/js/bootstrap.min.js"></script>
     <!-- Virtual Keyboard Lib -->
-    <script src="js/jsKeyboard.js"></script>
-    <script src="js/common.js"></script>
+    <script src="${pageContext.servletContext.contextPath}/static/js/jsKeyboard.js"></script>
+    <script src="${pageContext.servletContext.contextPath}/static/js/common.js"></script>
   </body>
 </html>
