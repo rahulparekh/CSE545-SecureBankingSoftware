@@ -9,10 +9,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * UserController: Controls most of our application UI paths for all types of
  * users including internal users.
  * 
+ * Matches all urls with the path /home/**
+ * 
  * @author Rahul
  */
 @Controller
-@RequestMapping(value = "/")
+@RequestMapping(value = "/home")
 public class UserController {
 
 	/**
