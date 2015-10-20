@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.sbs.group11.model.User;
 
 @Repository("internalUserDao")
-public class InternalUserDAO extends AbstractDao<Integer, User> {
+public class InternalUserDaoImpl extends AbstractDao<Integer, User> implements InternalUserDao {
 
 	public void saveInternalUser(User user) {
 		persist(user);

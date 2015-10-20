@@ -3,7 +3,7 @@ package com.sbs.group11.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.sbs.group11.dao.InternalUserDAO;
+import com.sbs.group11.dao.InternalUserDao;
 import com.sbs.group11.model.User;
 
 /**
@@ -15,7 +15,7 @@ import com.sbs.group11.model.User;
 public class InternalUserServiceImpl implements InternalUserService {
 
 	@Autowired
-	private InternalUserDAO dao;
+	private InternalUserDao dao;
 
 	public void addInternalUser(User user) {
 		// Logic here to add a user
