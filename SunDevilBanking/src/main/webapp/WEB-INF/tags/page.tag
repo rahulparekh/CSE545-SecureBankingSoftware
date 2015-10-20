@@ -60,7 +60,7 @@
 					<li class="${fn:endsWith(pageContext.request.requestURI, 'settings.jsp') ? 'active':''}"><a
 						href="${pageContext.servletContext.contextPath}/home/settings">Settings</a></li>
 					<li class="${fn:endsWith(pageContext.request.requestURI, 'logout.jsp') ? 'active':''}"><a
-						href="${pageContext.servletContext.contextPath}/auth/logout">Logout</a></li>
+						href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
 				</ul>
 
 			</div>

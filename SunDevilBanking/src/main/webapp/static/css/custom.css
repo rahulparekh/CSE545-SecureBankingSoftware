@@ -43,6 +43,11 @@ body {
   text-align: center;
 }
 
+.form-errors {
+  color: red;
+  margin-bottom: 10px;
+}
+
 .container-main {
   margin-top: 20px;
 }

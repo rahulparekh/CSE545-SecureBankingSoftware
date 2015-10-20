@@ -1,10 +1,19 @@
 <%@page language="java" contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <t:auth>
 
 	<form class="form-signin" method="post" action="${pageContext.servletContext.contextPath}/login">
 		<h2 class="form-signin-heading">Please Login</h2>
+
+		<c:if test="${not empty SPRING_SECURITY_LAST_EXCEPTION}">
+		      <div class="form-errors">
+		        Your login attempt was not successful due to: 
+		        <c:out value="${SPRING_SECURITY_LAST_EXCEPTION.message}"/>.
+		      </div>
+		</c:if>
+
 		<label for="inputEmail" class="sr-only">Email address</label> <input
 			name="email" type="text" id="inputEmail" class="form-control"
 			placeholder="Email address" required="" autofocus=""
