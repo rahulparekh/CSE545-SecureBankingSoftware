@@ -26,7 +26,7 @@ public class Account {
 	/** The Customer ID. Foreign Key */
 	@NotNull
 	@Size(min = 11, max = 11)
-	@Column(name = "CustomerID", nullable = false, length = 11, unique = true)
+	@Column(name = "CustomerID", nullable = false, length = 11, unique = false)
 	private String customerID;
 	
 	/** The Account Number. */
@@ -38,8 +38,8 @@ public class Account {
 	
 	/** The name. */
 	@NotNull
-	@Size(min = 5, max = 20)
-	@Column(name = "Name", nullable = false, length = 20)
+	@Size(min = 5, max = 100)
+	@Column(name = "Name", nullable = false, length = 100)
 	private String name;
 	
 	/** The type. */

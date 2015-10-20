@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.sbs.group11.model.User;
@@ -14,9 +12,6 @@ import com.sbs.group11.model.User;
 public class UserDaoImpl extends AbstractDao<Integer, User> implements UserDao {
 	
 	final static Logger logger = Logger.getLogger(UserDaoImpl.class);
-
-	@Autowired
-	private SessionFactory sessionFactory;
 	
 	@SuppressWarnings("unchecked")
 	public User findByCustomerID(String customerID) {
@@ -43,7 +38,7 @@ public class UserDaoImpl extends AbstractDao<Integer, User> implements UserDao {
 
 		List<User> users = new ArrayList<User>();
 
-		users = sessionFactory.getCurrentSession()
+		users = getSession()
 			.createQuery("from User where Email=?")
 			.setParameter(0, email)
 			.list();
