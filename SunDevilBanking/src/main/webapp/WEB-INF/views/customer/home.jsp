@@ -4,7 +4,7 @@
 <t:page>
 
 	<div class="page-header">
-		<h1>SBS HOME - Welcome ${user}</h1>
+		<h1>SBS HOME - Welcome ${fullname}</h1>
 	</div>
 
 	<h2>Accounts:</h2>
@@ -19,13 +19,13 @@
 		</thead>
 		<tbody>
 			<tr>
-				<td><a title="Go to Account" href="#">${user}'s Checking
+				<td><a title="Go to Account" href="#">${fullname}'s Checking
 						Account (*1234)</a></td>
 				<td>$200.10</td>
 				<td><a href="">View Statement</a></td>
 			</tr>
 			<tr>
-				<td><a title="Go to Account" href="#">${user}'s Savings
+				<td><a title="Go to Account" href="#">${fullname}'s Savings
 						Account (*5678)</a></td>
 				<td>$7500.47</td>
 				<td><a href="">View Statement</a></td>
