@@ -391,15 +391,6 @@ public class User {
 	}
 
 	/**
-	 * Gets the password.
-	 *
-	 * @return the password
-	 */
-	public String getPassword() {
-		return password;
-	}
-
-	/**
 	 * Sets the password.
 	 *
 	 * @param password
