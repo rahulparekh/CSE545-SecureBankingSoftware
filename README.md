@@ -3,6 +3,7 @@
 1. ui_mocks - Contains html mockups for the system interface
 2. sql - Contains sql files. Can be ignored once models are ported to hibernate completely
 3. SunDevilBanking - Project code resides here
+4. Certificates - Self signed certificates
 
 ## Routes:
 1. `/login` - For the login form page
