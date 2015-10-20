@@ -389,6 +389,16 @@ public class User {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+		
+
+	/**
+	 * Gets the password.
+	 *
+	 * @return the password
+	 */
+	public String getPassword() {
+		return password;
+	}
 
 	/**
 	 * Sets the password.
