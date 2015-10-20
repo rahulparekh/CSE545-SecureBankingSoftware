@@ -4,6 +4,11 @@
 2. sql - Contains sql files. Can be ignored once models are ported to hibernate completely
 3. SunDevilBanking - Project code resides here
 
+## Routes:
+1. `/login` - For the login form page
+2. `/forgotpass` - For forgot password page
+3. `/home/*` - For all routes once a user logs in (like /home/credit-debit, /home/fundtransfer etc)
+
 ## Resources:
 1. [WebMystique tutorial used for Spring/Hibernate Setup](http://websystique.com/springmvc/spring-4-mvc-and-hibernate4-integration-example-using-annotations/)
 2. We are using the Java/Hibernate Validator. Found [here](https://docs.oracle.com/javaee/7/api/javax/validation/constraints/package-summary.html)
