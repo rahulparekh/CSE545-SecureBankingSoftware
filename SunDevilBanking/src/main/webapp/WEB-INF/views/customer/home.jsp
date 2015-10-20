@@ -20,6 +20,9 @@
 			</tr>
 		</thead>
 		<tbody>
+			<c:if test="${empty accounts}">
+				<td colspan="3" class="center">No Accounts to display. Please contact the bank.</td>
+			</c:if>
 			<c:forEach items="${accounts}" var="account"> 
 				<tr>
 					<td><a title="Go to Account" href="#">${account.name} (*${fn:substring(account.number, fn:length(account.number) - 4, fn:length(account.number))})</a></td>
