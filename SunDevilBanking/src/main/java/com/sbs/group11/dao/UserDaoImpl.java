@@ -18,8 +18,6 @@ public class UserDaoImpl extends AbstractDao<Integer, User> implements UserDao {
 
 		List<User> users = new ArrayList<User>();
 		
-		logger.debug("findByCustomerID ID:" + customerID);
-		
 		users = getSession()
 				.createQuery("from User where CustomerID=?")
 				.setParameter(0, customerID)

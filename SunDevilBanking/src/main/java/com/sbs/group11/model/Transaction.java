@@ -1,9 +1,12 @@
 package com.sbs.group11.model;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -24,12 +27,15 @@ public class Transaction {
 	}
 	
 	public Transaction(String transactionID, String receiverAccNumber,
-			String senderAccNumber, String status, LocalDateTime createdAt,
-			LocalDateTime updatedAt) {
+			String senderAccNumber, String status, String type,
+			BigDecimal amount, LocalDateTime createdAt, LocalDateTime updatedAt) {
+		super();
 		this.transactionID = transactionID;
 		this.receiverAccNumber = receiverAccNumber;
 		this.senderAccNumber = senderAccNumber;
 		this.status = status;
+		this.type = type;
+		this.amount = amount;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
 	}
@@ -45,20 +51,32 @@ public class Transaction {
 	/** The receiver account number. */
 	@NotNull
 	@Size(min = 17, max = 17)
-	@Column(name = "receiverAccNumber", nullable = false, length = 17)
+	@Column(name = "ReceiverAccNumber", nullable = false, length = 17)
 	private String receiverAccNumber;
 	
 	/** The sender acc number. */
 	@NotNull
 	@Size(min = 17, max = 17)
-	@Column(name = "senderAccNumber", nullable = false, length = 17)
+	@Column(name = "SenderAccNumber", nullable = false, length = 17)
 	private String senderAccNumber;
 	
 	/** The status. */
 	@NotNull
 	@Size(min = 0, max = 10)
-	@Column(name = "status", nullable = false, length = 10)
+	@Column(name = "Status", nullable = false, length = 10)
 	private String status;
+	
+	/** The type: Can be credit or debit */
+	@NotNull
+	@Size(min = 0, max = 10)
+	@Column(name = "Type", nullable = false, length = 6)
+	private String type;
+	
+	/** The amount. */
+	@NotNull
+    @Digits(integer=11, fraction=2)
+    @Column(name = "Amount", nullable = false)
+    private BigDecimal amount;
 	
 	/** The created at. */
 	@NotNull
@@ -95,7 +113,7 @@ public class Transaction {
 	 *
 	 * @return the receiver acc number
 	 */
-	public String getreceiverAccNumber() {
+	public String getReceiverAccNumber() {
 		return receiverAccNumber;
 	}
 
@@ -104,7 +122,7 @@ public class Transaction {
 	 *
 	 * @param receiverAccNumber the new receiver acc number
 	 */
-	public void setreceiverAccNumber(String receiverAccNumber) {
+	public void setReceiverAccNumber(String receiverAccNumber) {
 		this.receiverAccNumber = receiverAccNumber;
 	}
 
@@ -142,6 +160,37 @@ public class Transaction {
 	 */
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	/**
+	 * Sets the type.
+	 *
+	 * @param type the new type
+	 */
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	/**
+	 * Gets the amount.
+	 *
+	 * @return the amount
+	 */
+	public BigDecimal getAmount() {
+		return amount;
+	}
+
+	/**
+	 * Sets the amount.
+	 *
+	 * @param amount the new amount
+	 */
+	public void setAmount(BigDecimal amount) {
+		this.amount = amount;
 	}
 
 	/**
