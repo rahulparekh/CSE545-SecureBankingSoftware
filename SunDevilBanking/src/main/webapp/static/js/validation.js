@@ -11,10 +11,16 @@ $(function() {
             amount: {
                 required: true,
                 number: true,
+                currency: ["$", false],
                 min: 0.01
             },
             type: {
                 required:true
+            }
+        },        
+        messages: {
+            amount: {
+                currency: "Incorrect format. Valid currency formats are 0, 0.0 and 0.00."
             }
         },
         errorPlacement: function(error, element) {

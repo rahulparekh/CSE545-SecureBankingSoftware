@@ -88,6 +88,8 @@
 	<script
 		src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.js"></script>
 	<script
+		src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/additional-methods.js"></script>
+	<script
 		src="${pageContext.servletContext.contextPath}/static/js/bootstrap.min.js"></script>
 	<script
 		src="${pageContext.servletContext.contextPath}/static/js/validation.js"></script>

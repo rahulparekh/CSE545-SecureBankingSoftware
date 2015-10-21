@@ -6,11 +6,14 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 
 /**
@@ -28,7 +31,7 @@ public class Transaction {
 	
 	public Transaction(String transactionID, String receiverAccNumber,
 			String senderAccNumber, String status, String type,
-			BigDecimal amount, LocalDateTime createdAt, LocalDateTime updatedAt) {
+			BigDecimal amount) {
 		super();
 		this.transactionID = transactionID;
 		this.receiverAccNumber = receiverAccNumber;
@@ -36,38 +39,38 @@ public class Transaction {
 		this.status = status;
 		this.type = type;
 		this.amount = amount;
-		this.createdAt = createdAt;
-		this.updatedAt = updatedAt;
+		this.createdAt = new DateTime().toLocalDateTime();
+		this.updatedAt = new DateTime().toLocalDateTime();
 	}
 
 
 	/** The transaction id. */
 	@Id
-	@NotNull
+	@NotEmpty
 	@Size(min = 17, max = 17)
 	@Column(name = "TransactionID", nullable = false, length = 17, unique = true)
 	private String transactionID;
 	
 	/** The receiver account number. */
-	@NotNull
+	@NotEmpty
 	@Size(min = 17, max = 17)
 	@Column(name = "ReceiverAccNumber", nullable = false, length = 17)
 	private String receiverAccNumber;
 	
 	/** The sender acc number. */
-	@NotNull
+	@NotEmpty
 	@Size(min = 17, max = 17)
 	@Column(name = "SenderAccNumber", nullable = false, length = 17)
 	private String senderAccNumber;
 	
 	/** The status. */
-	@NotNull
+	@NotEmpty
 	@Size(min = 0, max = 10)
 	@Column(name = "Status", nullable = false, length = 10)
 	private String status;
 	
 	/** The type: Can be credit or debit */
-	@NotNull
+	@NotEmpty
 	@Size(min = 0, max = 10)
 	@Column(name = "Type", nullable = false, length = 6)
 	private String type;
@@ -75,6 +78,7 @@ public class Transaction {
 	/** The amount. */
 	@NotNull
     @Digits(integer=11, fraction=2)
+	@DecimalMin("0.01")
     @Column(name = "Amount", nullable = false)
     private BigDecimal amount;
 	
@@ -228,7 +232,15 @@ public class Transaction {
 	public void setUpdatedAt(LocalDateTime updatedAt) {
 		this.updatedAt = updatedAt;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "Transaction [transactionID=" + transactionID
+				+ ", receiverAccNumber=" + receiverAccNumber
+				+ ", senderAccNumber=" + senderAccNumber + ", status=" + status
+				+ ", type=" + type + ", amount=" + amount + ", createdAt="
+				+ createdAt + ", updatedAt=" + updatedAt + "]";
+	}
 	
 
 }

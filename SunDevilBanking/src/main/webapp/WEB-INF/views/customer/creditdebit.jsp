@@ -2,6 +2,7 @@
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
 <t:page>
 
@@ -10,7 +11,7 @@
 	</div>
 
 	<div id="add-withdraw">
-		<form id="credit-debit-form" action="${pageContext.servletContext.contextPath}/home/credit-debit" method="POST">
+		<form:form id="credit-debit-form" method="POST" modelAttribute="transaction" action="credit-debit">
 			<div>
 				<c:if test="${!empty successMsg}">
 					<div class="alert alert-success">						
@@ -38,6 +39,7 @@
 								<c:set var="count" value="${count + 1}" scope="page" />
 							</c:forEach>
 						</select>
+						<form:errors path="receiverAccNumber" cssClass="error" element="label"/>
 					</p>
 					<hr>
 					<label>Current Balance:</label>
@@ -52,14 +54,15 @@
 					<hr>
 					<p>
 						<label>Amount to be Credited / Debited (in USD):</label>
-						<input name="amount" type="text" class="form-control" placeholder="0.00">
+						<input name="amount" type="text" class="form-control" placeholder="e.g. 10.50">
+						<form:errors path="amount" cssClass="error" element="label"/>
 					</p>
 					<hr>
 					<div>
 						<label>Transaction Type:</label><br>
 						<span style="margin-right:30px;"><input type="radio" name="type" value="Credit"> Credit</span>
 						<span><input type="radio" name="type" value="Debit"> Debit</span>
-						<div class="type-error"></div>
+						<div class="type-error"><form:errors path="type" cssClass="error" element="label"/></div>
 					</div>
 				</div>
 				<div class="modal-footer">
@@ -68,7 +71,7 @@
 				</div>
 			</div>
 
-		</form>
+		</form:form>
 		<!-- /form -->
 	</div>
 	<!-- /#add-withdraw -->
