@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.sbs.group11.dao.UserDao;
+import com.sbs.group11.model.Account;
 import com.sbs.group11.model.User;
 
 @Service("userService")
