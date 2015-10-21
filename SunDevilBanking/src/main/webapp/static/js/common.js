@@ -34,4 +34,16 @@ $(function() {
         return false;
     });
 
+    // get balance based on the acount selected
+    $('#select-account-creditdebit').change(function() {
+        var id = "#" + $(this).find('option:selected').prop('id') + "bal";
+        $('#current-balance-credit-debit').find('p').addClass('hide');
+        if(id === '#bal') {
+            $('#please-select-account').removeClass('hide');
+        } else {
+            $(id).removeClass('hide');
+        }        
+        return false;
+    });
+
 });

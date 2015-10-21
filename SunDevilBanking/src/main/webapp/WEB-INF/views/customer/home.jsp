@@ -6,7 +6,7 @@
 <t:page>
 
 	<div class="page-header">
-		<h1>SBS HOME - Welcome ${fullname}</h1>
+		<h1>SBS HOME - Welcome ${fn:escapeXml(fullname)}</h1>
 	</div>
 
 	<h2>Accounts:</h2>
@@ -21,12 +21,14 @@
 		</thead>
 		<tbody>
 			<c:if test="${empty accounts}">
-				<td colspan="3" class="center">No Accounts to display. Please contact the bank.</td>
+				<tr><td colspan="3" class="center">No Accounts to display. Please
+					contact the bank.</td></tr>
 			</c:if>
-			<c:forEach items="${accounts}" var="account"> 
+			<c:forEach items="${accounts}" var="account">
 				<tr>
-					<td><a title="Go to Account" href="#">${account.name} (*${fn:substring(account.number, fn:length(account.number) - 4, fn:length(account.number))})</a></td>
-					<td>$${account.balance}</td>
+					<td><a title="Go to Account" href="#">${fn:escapeXml(account.name)}
+							(*${fn:escapeXml(fn:substring(account.number, fn:length(account.number) - 4, fn:length(account.number)))})</a></td>
+					<td>$${fn:escapeXml(account.balance)}</td>
 					<td><a href="">View Statement</a></td>
 				</tr>
 			</c:forEach>

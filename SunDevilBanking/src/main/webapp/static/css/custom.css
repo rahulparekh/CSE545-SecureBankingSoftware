@@ -43,9 +43,25 @@ body {
   text-align: center;
 }
 
+.form-success {
+  background: rgb(100, 200, 40);
+  color: #fff;
+  margin-bottom: 10px;
+}
+
 .form-errors {
   color: red;
   margin-bottom: 10px;
+}
+
+
+
+form .error {
+  border-color: red;
+}
+
+form label.error {
+  color: red; margin-top: 5px; font-weight: normal;
 }
 
 .container-main {

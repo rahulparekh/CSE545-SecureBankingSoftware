@@ -34,4 +34,9 @@ $(function() {
         return false;
     });
 
+    $('#select-account-creditdebit').change(function() {
+        console.log($(this).find('option:selected').prop('id'));
+        return false;
+    });
+
 });

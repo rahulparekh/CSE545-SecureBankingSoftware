@@ -1,6 +1,7 @@
 <%@page language="java" contentType="text/html" pageEncoding="UTF-8"%>
-<%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
+<%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 <t:page>
 
@@ -8,72 +9,67 @@
 		<h1>SBS Credit / Debit Funds</h1>
 	</div>
 
-	<h2>Accounts:</h2>
-
-	<table class="table">
-		<thead>
-			<tr>
-				<th>Name</th>
-				<th>Balance</th>
-				<th>Credit / Debit</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td><a title="Go to Account" href="#">${user}'s Checking
-						Account (*1234)</a></td>
-				<td>$200.10</td>
-				<td><a class="add-withdraw" href="">Add / Withdraw Funds</a></td>
-			</tr>
-			<tr>
-				<td><a title="Go to Account" href="#">${user}'s Savings
-						Account (*5678)</a></td>
-				<td>$7500.47</td>
-				<td><a class="add-withdraw" href="">Add / Withdraw Funds</a></td>
-			</tr>
-		</tbody>
-	</table>
-
-	<div id="add-withdraw" class="modal fade">
-		<div class="modal-dialog">
-			<div class="modal-content">
+	<div id="add-withdraw">
+		<form id="credit-debit-form" action="${pageContext.servletContext.contextPath}/home/credit-debit" method="POST">
+			<div>
+				<c:if test="${!empty successMsg}">
+					<div class="alert alert-success">						
+						${fn:escapeXml(successMsg)}
+					</div>
+				</c:if>
+				<c:if test="${!empty failureMsg}">
+					<div class="alert alert-danger">						
+						${fn:escapeXml(failureMsg)}
+					</div>
+				</c:if>
 				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal"
-						aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
 					<h4 class="modal-title">Add / Withdraw</h4>
 				</div>
 				<div class="modal-body">
 					<p>
-						<label>Account:</label> <select class="form-control">
-							<option>Select an Account</option>
-							<option>${user}'s Checking Account (*1234)</option>
-							<option>${user}'s Savings Account (*5678)</option>
+						<label>Account:</label> 
+						<select class="form-control" id="select-account-creditdebit" name="number">
+							<option value="">Select an Account</option>
+							<c:set var="count" value="0" scope="page" />
+							<c:forEach items="${accounts}" var="account">
+								<option id="acc${count}" value="${fn:escapeXml(account.number)}">${fn:escapeXml(account.name)}
+									(*${fn:escapeXml(fn:substring(account.number, fn:length(account.number) - 4, fn:length(account.number)))})</option>
+								
+								<c:set var="count" value="${count + 1}" scope="page" />
+							</c:forEach>
 						</select>
 					</p>
 					<hr>
-					<p>
-						<label>Current Balance:</label>
-					<p>
-						<i> Please select an account </i>
-					</p>
-					</p>
+					<label>Current Balance:</label>
+					<div id="current-balance-credit-debit">
+						<p id="please-select-account"><i> Please select an account above </i></p>
+						<c:set var="count" value="0" scope="page" />
+						<c:forEach items="${accounts}" var="account">
+							<p class="hide" id="acc${count}bal">$${fn:escapeXml(account.balance)}</p>
+							<c:set var="count" value="${count + 1}" scope="page" />
+						</c:forEach>
+					</div>
 					<hr>
 					<p>
-						<label>Amount to be Credited / Debited (in USD):</label> <input
-							type="text" class="form-control" placeholder="0.00">
+						<label>Amount to be Credited / Debited (in USD):</label>
+						<input name="amount" type="text" class="form-control" placeholder="0.00">
 					</p>
+					<hr>
+					<div>
+						<label>Transaction Type:</label><br>
+						<span style="margin-right:30px;"><input type="radio" name="type" value="Credit"> Credit</span>
+						<span><input type="radio" name="type" value="Debit"> Debit</span>
+						<div class="type-error"></div>
+					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-success">Credit Funds</button>
-					<button type="button" class="btn btn-danger">Debit Funds</button>
-					<button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+					<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/> 
+					<button type="submit" class="btn btn-success">Submit</button>
 				</div>
 			</div>
-			<!-- /.modal-content -->
-		</div>
-		<!-- /.modal-dialog -->
+
+		</form>
+		<!-- /form -->
 	</div>
-	<!-- /.modal -->
+	<!-- /#add-withdraw -->
 </t:page>
