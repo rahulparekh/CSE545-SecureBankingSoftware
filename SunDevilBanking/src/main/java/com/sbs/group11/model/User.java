@@ -52,7 +52,7 @@ public class User {
 	 */
 	@Id
 	@NotNull
-	@Size(min = 11, max = 11)
+	@Size(min = 1, max = 100)
 	@Column(name = "CustomerID", nullable = false, length = 11, unique = true)
 	private String customerID;
 
@@ -73,7 +73,6 @@ public class User {
 	private String firstName;
 
 	/** The middle name. */
-	@NotNull
 	@Size(min = 3, max = 35)
 	@Column(name = "MiddleName", nullable = true, length = 35)
 	private String middleName;
@@ -124,7 +123,7 @@ public class User {
 
 	/** The password. 60 characters as we will use BCrypt hash */
 	@NotNull
-	@Size(min = 60, max = 60)
+	@Size(min = 6, max = 60)
 	@Column(name = "Password", nullable = false, length = 60)
 	private String password;
 
@@ -139,7 +138,6 @@ public class User {
 	private int enabled;
 
 	/** The customer type. Customer, Merchant, Employee, Manager, Admin */
-	@NotNull
 	@Size(min = 5, max = 8)
 	@Column(name = "CustomerType", nullable = true, length = 8)
 	private String customerType;
