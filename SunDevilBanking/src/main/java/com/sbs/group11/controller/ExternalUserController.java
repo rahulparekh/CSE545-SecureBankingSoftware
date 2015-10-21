@@ -1,17 +1,19 @@
 package com.sbs.group11.controller;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.SmartValidator;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.sbs.group11.model.Account;
 import com.sbs.group11.model.Transaction;
@@ -42,6 +44,9 @@ public class ExternalUserController {
 
 	@Autowired
 	private TransactionService transactionService;
+
+	@Autowired
+	SmartValidator validator;
 
 	/**
 	 * Gets the home.
@@ -82,59 +87,76 @@ public class ExternalUserController {
 	}
 
 	@RequestMapping(value = "/credit-debit", method = RequestMethod.POST)
-	public String postCreditDebit(ModelMap model, HttpServletRequest request) {
+	public String postCreditDebit(ModelMap model, HttpServletRequest request,
+			@ModelAttribute("transaction") Transaction transaction,
+			BindingResult result, RedirectAttributes attr) {
 
 		// Get user details
 		User user = userService.getUserDetails();
 
-		// Get user accounts
+		// Get user accounts and other data for display
 		List<Account> accounts = accountService.getAccountsByCustomerID(user
 				.getCustomerID());
-		model.addAttribute("title", "Welcome " + user.getFirstName());
 		model.addAttribute("fullname",
 				user.getFirstName() + " " + user.getLastName());
 		model.addAttribute("accounts", accounts);
+		model.addAttribute("title", "Welcome " + user.getFirstName());
 
-		// See if the account submitted in the request
-		// is belongs to the user. This will protect us against
-		// updating any user account through any other user
-		boolean isAccount = false;
-		for (Account account : accounts) {
-			if (account.getNumber().equals(request.getParameter("number"))) {
-				isAccount = true;
-				break;
+		// If account is empty or null, skip the account service check
+		if (request.getParameter("number") != null
+				&& !request.getParameter("number").isEmpty()) {
+
+			// See if the account submitted in the request
+			// is belongs to the user. This will protect us against
+			// updating any user account through any other user
+			boolean isAccount = false;
+			for (Account account : accounts) {
+				if (account.getNumber().equals(request.getParameter("number"))) {
+					isAccount = true;
+					break;
+				}
 			}
-		}
 
-		// Exit the transaction if Account doesn't exist
-		if (!isAccount) {
-			logger.warn("Someone tried credit/debit functionality for some other account. Details:");
-			logger.warn("Credit/Debit Acc No: "
-					+ request.getParameter("number"));
-			logger.warn("Customer ID: " + user.getCustomerID());
-			model.addAttribute("failureMsg",
-					"Could not proceed your transaction. Please try again or contact the bank.");
-			return "customer/creditdebit";
+			// Exit the transaction if Account doesn't exist
+			if (!isAccount) {
+				logger.warn("Someone tried credit/debit functionality for some other account. Details:");
+				logger.warn("Credit/Debit Acc No: "
+						+ request.getParameter("number"));
+				logger.warn("Customer ID: " + user.getCustomerID());
+				model.addAttribute("failureMsg",
+						"Could not process your transaction. Please try again or contact the bank.");
+				return "customer/creditdebit";
+			}
+
 		}
 
 		// create the transaction object
-		Transaction transaction = new Transaction(
+		transaction = new Transaction(
 				transactionService.getUniqueTransactionID(),
-				request.getParameter("number"), 
+				request.getParameter("number"),
 				request.getParameter("number"),
 				"pending",
 				request.getParameter("type"),
-				new BigDecimal(request.getParameter("amount")),
-				new DateTime().toLocalDateTime(),
-				new DateTime().toLocalDateTime()
-			);
+				transactionService.getBigDecimal(request.getParameter("amount")));
+
+		validator.validate(transaction, result);
+		if (result.hasErrors()) {
+			logger.debug(result);
+			attr.addFlashAttribute(
+					"org.springframework.validation.BindingResult.transaction",
+					result);
+			attr.addFlashAttribute("transaction", transaction);
+			// redirect to the credit debit view page
+			return "redirect:/home/credit-debit"; 
+		}
 
 		transactionService.addTransaction(transaction);
 
-		model.addAttribute(
+		attr.addFlashAttribute(
 				"successMsg",
 				"Transaction completed successfully. Transaction should show up on your account shortly.");
-
-		return "customer/creditdebit";
+		
+		// redirect to the credit debit view page
+		return "redirect:/home/credit-debit";
 	}
 }
