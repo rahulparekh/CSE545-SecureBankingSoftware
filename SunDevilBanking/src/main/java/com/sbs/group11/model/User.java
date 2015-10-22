@@ -57,6 +57,9 @@ public class User {
 	private String customerID;
 
 	public User() {
+	
+		customerID = "";
+	
 	}
 
 	public User(String customerID, Set<SecurityQuestion> securityQuestions,
@@ -139,8 +142,8 @@ public class User {
 
 	/** The customer type. Customer, Merchant, Employee, Manager, Admin */
 	@Size(min = 5, max = 8)
-	@Column(name = "CustomerType", nullable = true, length = 8)
-	private String customerType;
+	@Column(name = "UserType", nullable = true, length = 8)
+	private String userType;
 
 	/** The created at. */
 	@NotNull
@@ -450,18 +453,18 @@ public class User {
 	 *
 	 * @return the customer type
 	 */
-	public String getCustomerType() {
-		return customerType;
+	public String getuserType() {
+		return userType;
 	}
 
 	/**
 	 * Sets the customer type.
 	 *
-	 * @param customerType
+	 * @param userType
 	 *            the new customer type
 	 */
-	public void setCustomerType(String customerType) {
-		this.customerType = customerType;
+	public void setuserType(String userType) {
+		this.userType = userType;
 	}
 
 	/**
