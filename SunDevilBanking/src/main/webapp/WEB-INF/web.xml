@@ -55,6 +55,11 @@
 			<web-resource-name>SBS Application</web-resource-name>
 			<url-pattern>/*</url-pattern>
 		</web-resource-collection>
+		<!-- 
+			Transport guarantee is used for http/https
+			To allow http traffic use NONE
+			To restrict to just HTTPS use CONFIDENTIAL
+		 -->
 		<user-data-constraint>
 			<transport-guarantee>NONE</transport-guarantee>
 		</user-data-constraint>
