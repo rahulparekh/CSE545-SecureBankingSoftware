@@ -13,7 +13,8 @@
 ## Resources:
 1. [WebMystique tutorial used for Spring/Hibernate Setup](http://websystique.com/springmvc/spring-4-mvc-and-hibernate4-integration-example-using-annotations/)
 2. We are using the Java/Hibernate Validator. Found [here](https://docs.oracle.com/javaee/7/api/javax/validation/constraints/package-summary.html)
-3. SSL setup for tomcat on your local machine [here](https://dzone.com/articles/setting-ssl-tomcat-5-minutes)
+3. SSL/HTTPS setup for tomcat server on local machine [here](https://dzone.com/articles/setting-ssl-tomcat-5-minutes)
+4. Enabling Run-Jetty-Run to use SSL/HTTPS: http://prntscr.com/8tx2pc (this is my config)
 
 
 ## Project setup information
