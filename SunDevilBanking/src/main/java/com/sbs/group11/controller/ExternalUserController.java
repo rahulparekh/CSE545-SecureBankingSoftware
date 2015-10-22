@@ -138,14 +138,18 @@ public class ExternalUserController {
 				"pending",
 				request.getParameter("type"),
 				transactionService.getBigDecimal(request.getParameter("amount")));
-
+		
+		// Validate the model
 		validator.validate(transaction, result);
 		if (result.hasErrors()) {
 			logger.debug(result);
+			
+			// attributes for validation failures
 			attr.addFlashAttribute(
 					"org.springframework.validation.BindingResult.transaction",
 					result);
 			attr.addFlashAttribute("transaction", transaction);
+			
 			// redirect to the credit debit view page
 			return "redirect:/home/credit-debit"; 
 		}
