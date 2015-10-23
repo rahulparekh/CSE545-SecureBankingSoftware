@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.sbs.group11.model.Account;
+import com.sbs.group11.model.StatementMonthYear;
 import com.sbs.group11.model.Transaction;
 import com.sbs.group11.model.User;
 import com.sbs.group11.service.AccountService;
@@ -86,6 +87,21 @@ public class ExternalUserController {
 		return "customer/creditdebit";
 	}
 
+	/**
+	 * Post credit debit.
+	 *
+	 * @param model
+	 *            The Spring ModelMap
+	 * @param request
+	 *            HttpServlet request
+	 * @param transaction
+	 *            ModelAttribute transaction
+	 * @param result
+	 *            the BindingResult used for validation
+	 * @param attr
+	 *            RedirectAttribute used to pass error/success messages
+	 * @return the string
+	 */
 	@RequestMapping(value = "/credit-debit", method = RequestMethod.POST)
 	public String postCreditDebit(ModelMap model, HttpServletRequest request,
 			@ModelAttribute("transaction") Transaction transaction,
@@ -103,31 +119,18 @@ public class ExternalUserController {
 		model.addAttribute("title", "Welcome " + user.getFirstName());
 
 		// If account is empty or null, skip the account service check
-		if (request.getParameter("number") != null
-				&& !request.getParameter("number").isEmpty()) {
+		boolean isAccount = accountService.isAccountNumberValid(
+				request.getParameter("number"), accounts);
 
-			// See if the account submitted in the request
-			// is belongs to the user. This will protect us against
-			// updating any user account through any other user
-			boolean isAccount = false;
-			for (Account account : accounts) {
-				if (account.getNumber().equals(request.getParameter("number"))) {
-					isAccount = true;
-					break;
-				}
-			}
-
-			// Exit the transaction if Account doesn't exist
-			if (!isAccount) {
-				logger.warn("Someone tried credit/debit functionality for some other account. Details:");
-				logger.warn("Credit/Debit Acc No: "
-						+ request.getParameter("number"));
-				logger.warn("Customer ID: " + user.getCustomerID());
-				model.addAttribute("failureMsg",
-						"Could not process your transaction. Please try again or contact the bank.");
-				return "customer/creditdebit";
-			}
-
+		// Exit the transaction if Account doesn't exist
+		if (!isAccount) {
+			logger.warn("Someone tried credit/debit functionality for some other account. Details:");
+			logger.warn("Credit/Debit Acc No: "
+					+ request.getParameter("number"));
+			logger.warn("Customer ID: " + user.getCustomerID());
+			attr.addFlashAttribute("failureMsg",
+					"Could not process your transaction. Please try again or contact the bank.");
+			return "redirect:/home/credit-debit";
 		}
 
 		// create the transaction object
@@ -138,20 +141,20 @@ public class ExternalUserController {
 				"pending",
 				request.getParameter("type"),
 				transactionService.getBigDecimal(request.getParameter("amount")));
-		
+
 		// Validate the model
 		validator.validate(transaction, result);
 		if (result.hasErrors()) {
 			logger.debug(result);
-			
+
 			// attributes for validation failures
 			attr.addFlashAttribute(
 					"org.springframework.validation.BindingResult.transaction",
 					result);
 			attr.addFlashAttribute("transaction", transaction);
-			
+
 			// redirect to the credit debit view page
-			return "redirect:/home/credit-debit"; 
+			return "redirect:/home/credit-debit";
 		}
 
 		transactionService.addTransaction(transaction);
@@ -159,8 +162,55 @@ public class ExternalUserController {
 		attr.addFlashAttribute(
 				"successMsg",
 				"Transaction completed successfully. Transaction should show up on your account shortly.");
-		
+
 		// redirect to the credit debit view page
 		return "redirect:/home/credit-debit";
+	}
+
+	@RequestMapping(value = "/statements", method = RequestMethod.GET)
+	public String getStatements(ModelMap model, HttpServletRequest request) {
+		User user = userService.getUserDetails();
+		List<Account> accounts = accountService.getAccountsByCustomerID(user
+				.getCustomerID());
+		model.addAttribute("title", "Account Statements");
+		model.addAttribute("accounts", accounts);
+
+		return "customer/statements";
+	}
+
+	@RequestMapping(value = "/statements", method = RequestMethod.POST)
+	public String postStatements(ModelMap model, HttpServletRequest request,
+			RedirectAttributes attr) {
+		User user = userService.getUserDetails();
+		List<Account> accounts = accountService.getAccountsByCustomerID(user
+				.getCustomerID());
+		model.addAttribute("title", "Account Statements " + user.getFirstName());
+		model.addAttribute("fullname",
+				user.getFirstName() + " " + user.getLastName());
+		model.addAttribute("accounts", accounts);
+
+		// If account is empty or null, skip the account service check
+		boolean isAccount = accountService.isAccountNumberValid(
+				request.getParameter("number"), accounts);
+		// Exit the transaction if Account doesn't exist
+		if (!isAccount) {
+			logger.warn("Someone tried credit/debit functionality for some other account. Details:");
+			logger.warn("Credit/Debit Acc No: "
+					+ request.getParameter("number"));
+			logger.warn("Customer ID: " + user.getCustomerID());
+			attr.addFlashAttribute("statementFailureMsg",
+					"Could not process your request. Please try again or contact the bank.");
+			return "redirect:/home/statements";
+		}
+
+		List<StatementMonthYear> statements = transactionService
+				.getStatementMonths(request.getParameter("number"));
+		if (statements.size() > 0) {
+			logger.debug("Received statements: " + statements.get(0).getMonth());
+		}
+		model.addAttribute("statements", statements);
+		model.addAttribute("accNumber", request.getParameter("number"));
+
+		return "customer/statements";
 	}
 }

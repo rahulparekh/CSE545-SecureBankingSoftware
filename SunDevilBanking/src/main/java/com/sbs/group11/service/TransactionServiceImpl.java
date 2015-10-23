@@ -1,6 +1,10 @@
+/*
+ * 
+ */
 package com.sbs.group11.service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 import org.apache.log4j.Logger;
@@ -9,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.sbs.group11.dao.TransactionDao;
+import com.sbs.group11.model.StatementMonthYear;
 import com.sbs.group11.model.Transaction;
 
 @Service("transactionService")
@@ -46,6 +51,10 @@ public class TransactionServiceImpl implements TransactionService {
 		} catch (NumberFormatException nfe) {
 			return null;
 		}
+	}
+
+	public List<StatementMonthYear> getStatementMonths(String accNumber) {
+		return dao.getStatementMonths(accNumber);
 	}
 
 }
