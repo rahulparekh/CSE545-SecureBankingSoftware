@@ -39,12 +39,12 @@
         <div class="col-sm-3 col-md-2 sidebar">
 
           <ul class="nav nav-sidebar">
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Manage Employees</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/sysadmin-home">Home</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/manage-employee">Manage Employees</a></li>
             <li><a href="#">System Log</a></li>
             <li><a href="#">Pending Requests</a></li>
-            <li><a href="#">Settings</a></li>
-            <li><a href="#">Logout</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/sysadmin-setting">Settings</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
           </ul>
           
         </div> <!-- sidebar -->
@@ -59,7 +59,7 @@
 		  <br>
 
           <div id="sysadmin">
-          <form:form method="POST" modelAttribute="empSearch" action="">
+          <form:form method="POST" modelAttribute="empSearch">
             <p>
               <label>Employee ID:</label>
               <form:input  path = "employeeID" type="text" class="form-control" placeholder="ex: 123456789"></form:input>

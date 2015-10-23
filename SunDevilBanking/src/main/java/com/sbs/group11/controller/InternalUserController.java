@@ -1,6 +1,7 @@
 package com.sbs.group11.controller;
 
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,6 +10,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.sbs.group11.model.*;
 import com.sbs.group11.service.InternalUserService;
@@ -41,12 +43,16 @@ public class InternalUserController {
 
 	@RequestMapping(value = "/manage-employee", method = RequestMethod.GET)
 	public String getHome(ModelMap model,@ModelAttribute("user") User user) {
-		model.addAttribute("title", "Welcome System Admin:");
-		model.addAttribute("fullname", "Arun the Boss");
+		Map<String,String> userTypes = new LinkedHashMap<String,String>();
+		System.out.println("user name is"+user.getCustomerID());
+		userTypes.put("regular", "regular");
+		userTypes.put("manager", "manager");
+		model.addAttribute("user", user);
+		model.addAttribute("userTypes", userTypes);
 		return "employee/manage_employees";
 	}
 
-	@RequestMapping(value = "/manage-employee", method = RequestMethod.POST)
+	@RequestMapping(value = "/manage-employee_success", method = RequestMethod.POST)
 	public String AddInternalUser(ModelMap model,
 			@ModelAttribute("user") User user, BindingResult result) {
 		System.out.println("inside controller");
@@ -56,7 +62,7 @@ public class InternalUserController {
 		model.addAttribute("user",new User());
 		internalUserService.addInternalUser(user);
 		
-		return "employee/manage_employees";
+		return "redirect:/sysadmin-home";
 	}
 	
 	@RequestMapping(value = "/sysadmin-home", method = RequestMethod.GET)
@@ -67,25 +73,32 @@ public class InternalUserController {
 		
 	}
 	
-	
-	
 	@RequestMapping(value = "/sysadmin-home", method = RequestMethod.POST)
 	public String SearchInternalUser(ModelMap model,
-			@ModelAttribute("empSearch") EmployeeSearch empSearch, BindingResult result) {
+			@ModelAttribute("empSearch") EmployeeSearch empSearch, BindingResult result,RedirectAttributes redirectAttrs) {
 		
-		//model.addAttribute("title", "Welcome System Admin:");
 		User user = internalUserService.searchInternalUser(empSearch.getEmployeeID());
 		System.out.println(user.getFirstName());
-		model.addAttribute("user", user);
+		redirectAttrs.addFlashAttribute("user", user);
 		return "redirect:/manage-employee";
 	}
 	
-	@RequestMapping(value = "/internalemployee-home" , method = RequestMethod.GET)
-     public String getInternalEmployeeHome(ModelMap model){
+	
+	@RequestMapping(value = "/sysadmin-setting", method = RequestMethod.GET)
+	public String getAdminSetting(ModelMap model,@ModelAttribute("user") User user) {
 		
-		  System.out.println("HI i am here");
-        // TODO : add the internal employee's name
-    	 return "employee/home_int_employee";
+		User sysadmin = internalUserService.searchInternalUserByType("admin");
+		model.addAttribute("user", sysadmin);
+		return "employee/setting_sys_admin";
+	}
+		@RequestMapping(value = "/sysadmin-setting_success", method = RequestMethod.POST)
+	public String changeAdminSetting(ModelMap model,
+			@ModelAttribute("user") User user,BindingResult result) {
+		
+		System.out.println("id is "+user.getCustomerID());
+		user.setuserType("admin");
+		internalUserService.updateInternalUser(user);
+		return "redirect:/sysadmin-home";
 	}
 	
 	@RequestMapping(value = "/internalemployee-home", method = RequestMethod.POST)
