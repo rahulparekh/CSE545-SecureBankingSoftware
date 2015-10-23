@@ -77,7 +77,6 @@ public class InternalUserController {
 		User user = internalUserService.searchInternalUser(empSearch.getEmployeeID());
 		System.out.println(user.getFirstName());
 		model.addAttribute("user", user);
-		
 		return "redirect:/manage-employee";
 	}
 	
@@ -104,6 +103,7 @@ public class InternalUserController {
 		
 		List<Transaction> pendingTransaction = transactionService.getPendingTransactions();
 		System.out.println("Pending Transaction" + pendingTransaction.get(0).getTransactionID());
+		model.addAttribute("pendingTransaction", pendingTransaction);
 		return "employee/int_employee_pending_transaction";
 		
 	}
