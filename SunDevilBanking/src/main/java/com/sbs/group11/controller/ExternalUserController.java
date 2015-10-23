@@ -1,5 +1,6 @@
 package com.sbs.group11.controller;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -119,17 +120,27 @@ public class ExternalUserController {
 		model.addAttribute("title", "Welcome " + user.getFirstName());
 
 		// If account is empty or null, skip the account service check
-		boolean isAccount = accountService.isAccountNumberValid(
+		Account account = accountService.getValidAccountByNumber(
 				request.getParameter("number"), accounts);
 
 		// Exit the transaction if Account doesn't exist
-		if (!isAccount) {
+		if (account == null) {
 			logger.warn("Someone tried credit/debit functionality for some other account. Details:");
 			logger.warn("Credit/Debit Acc No: "
 					+ request.getParameter("number"));
 			logger.warn("Customer ID: " + user.getCustomerID());
 			attr.addFlashAttribute("failureMsg",
 					"Could not process your transaction. Please try again or contact the bank.");
+			return "redirect:/home/credit-debit";
+		}
+		
+		BigDecimal amount = transactionService.getBigDecimal(request.getParameter("amount"));
+		
+		// Check if Debit amount is  < balance in the account
+		if(request.getParameter("type").equalsIgnoreCase("debit")
+			&& amount.compareTo(account.getBalance()) >= 0) {
+			attr.addFlashAttribute("failureMsg",
+					"Could not process your transaction. Debit amount cannot be higher than account balance");
 			return "redirect:/home/credit-debit";
 		}
 
@@ -141,7 +152,7 @@ public class ExternalUserController {
 				request.getParameter("number"),
 				"pending",
 				request.getParameter("type"),
-				transactionService.getBigDecimal(request.getParameter("amount")));
+				amount);
 
 		// Validate the model
 		validator.validate(transaction, result);
@@ -191,10 +202,10 @@ public class ExternalUserController {
 		model.addAttribute("accounts", accounts);
 
 		// If account is empty or null, skip the account service check
-		boolean isAccount = accountService.isAccountNumberValid(
+		Account account = accountService.getValidAccountByNumber(
 				request.getParameter("number"), accounts);
 		// Exit the transaction if Account doesn't exist
-		if (!isAccount) {
+		if (account == null) {
 			logger.warn("Someone tried statements functionality for some other account. Details:");
 			logger.warn("Acc No: " + request.getParameter("number"));
 			logger.warn("Customer ID: " + user.getCustomerID());
@@ -223,10 +234,10 @@ public class ExternalUserController {
 				.getCustomerID());
 
 		// If account is empty or null, skip the account service check
-		boolean isAccount = accountService.isAccountNumberValid(
+		Account account = accountService.getValidAccountByNumber(
 				request.getParameter("number"), accounts);
 
-		if (!isAccount) {
+		if (account == null) {
 			logger.warn("Someone tried view statement functionality for some other account. Details:");
 			logger.warn("Acc No: " + request.getParameter("number"));
 			logger.warn("Customer ID: " + user.getCustomerID());
@@ -235,8 +246,6 @@ public class ExternalUserController {
 			return "redirect:/home/statements";
 		}
 
-		Account account = accountService.getAccountByNumber(request
-				.getParameter("number"));
 		List<Transaction> transactions = transactionService
 				.getCompletedTransactionsByAccountNummber(
 						request.getParameter("number"),

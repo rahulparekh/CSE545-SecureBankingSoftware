@@ -22,7 +22,7 @@ public class AccountServiceImpl implements AccountService {
 
 	}
 
-	public boolean isAccountNumberValid(String accNumber, List<Account> accounts) {
+	public Account getValidAccountByNumber(String accNumber, List<Account> accounts) {
 		if (accNumber != null && !accNumber.isEmpty()) {
 
 			// See if the account submitted in the request
@@ -30,13 +30,13 @@ public class AccountServiceImpl implements AccountService {
 			// any authenticated user request some other account number details
 			for (Account account : accounts) {
 				if (account.getNumber().equals(accNumber)) {
-					return true;
+					return account;
 				}
 			}
 
 		}
 
-		return false;
+		return null;
 	}
 
 	public Account getAccountByNumber(String accNumber) {
