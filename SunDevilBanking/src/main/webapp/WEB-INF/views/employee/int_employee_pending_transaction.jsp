@@ -1,7 +1,5 @@
-<%@page language="java" contentType="text/html" pageEncoding="UTF-8"%>
-<%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -13,7 +11,7 @@
     <meta name="author" content="">
     <link rel="icon" href="${pageContext.servletContext.contextPath}/static/favicon.ico">
 
-    <title>SBS System Admin Home - Group 11</title>
+    <title>SBS Internal Employee Pending Transactions- Group 11</title>
 
     <!-- Bootstrap core CSS -->
     <link href="${pageContext.servletContext.contextPath}/static/css/bootstrap.min.css" rel="stylesheet">
@@ -40,9 +38,10 @@
 
           <ul class="nav nav-sidebar">
             <li><a href="#">Home</a></li>
-            <li><a href="#">Manage Employees</a></li>
-            <li><a href="#">System Log</a></li>
-            <li><a href="#">Pending Requests</a></li>
+            <li><a href="#">Pending Transactions</a></li>
+            <li><a href="#">Add Transactions</a></li>
+            <li><a href="#">Request Manager</a></li>
+            <li><a href="#">Request Admin</a></li>
             <li><a href="#">Settings</a></li>
             <li><a href="#">Logout</a></li>
           </ul>
@@ -52,23 +51,43 @@
         <div class="col-sm-9 col-md-10 main">
 
           <div class="page-header">
-            <h1>SBS - Welcome System Admin</h1>
+            <h1>SBS - Welcome Andrew </h1>
           </div>
 
-          <h2>Search By:</h2>
+          <h2>Pending Transactions:</h2>
 		  <br>
 
-          <div id="sysadmin">
-          <form:form method="POST" modelAttribute="empSearch" action="">
-            <p>
-              <label>Employee ID:</label>
-              <form:input  path = "employeeID" type="text" class="form-control" placeholder="ex: 123456789"></form:input>
-            </p>
-			<div class="modal-footer" >                
-              <button type="submit" class="btn btn-success">Search</button>
-            </div>
-		   </form:form>
-          </div><!-- /payment -->
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Name</th>
+				<th>Account No.</th>
+                <th>Transaction ID</th>              
+			    <th>Amount</th>
+              	<th>Date</th>				
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><a title="Go to Account" href="#">Christy Walton</a></td>
+                <td>123456789</td>
+				<td>1234567890987654321</td>
+				<td>$20.50</td>
+				<td>09/09/2015</td>
+                <td><button type="button" class="btn btn-success">Approve</button></td>
+				<td><button type="button" class="btn btn-danger">Decline</button></td>
+              </tr>
+              <tr>
+                <td><a title="Go to Account" href="#">Bill Steve</a></td>
+                <td>987654321</td>
+				<td>9876543210123456789</td>
+				<td>$77.43</td>
+				<td>01/10/2015</td>
+                <td><button type="button" class="btn btn-success">Approve</button></td>
+				<td><button type="button" class="btn btn-danger">Decline</button></td>
+              </tr>
+            </tbody>
+          </table>
           
         </div> <!-- /main -->
 

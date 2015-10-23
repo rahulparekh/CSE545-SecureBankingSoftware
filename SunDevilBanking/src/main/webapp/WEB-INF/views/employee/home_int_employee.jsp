@@ -1,10 +1,9 @@
 <%@page language="java" contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-
-<!DOCTYPE html>
-<html lang="en">
-  <head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,7 +12,7 @@
     <meta name="author" content="">
     <link rel="icon" href="${pageContext.servletContext.contextPath}/static/favicon.ico">
 
-    <title>SBS System Admin Home - Group 11</title>
+    <title>SBS Internal Employee Home - Group 11</title>
 
     <!-- Bootstrap core CSS -->
     <link href="${pageContext.servletContext.contextPath}/static/css/bootstrap.min.css" rel="stylesheet">
@@ -40,9 +39,10 @@
 
           <ul class="nav nav-sidebar">
             <li><a href="#">Home</a></li>
-            <li><a href="#">Manage Employees</a></li>
-            <li><a href="#">System Log</a></li>
-            <li><a href="#">Pending Requests</a></li>
+            <li><a href="#">Pending Transactions</a></li>
+            <li><a href="#">Add Transactions</a></li>
+            <li><a href="#">Request Manager</a></li>
+            <li><a href="#">Request Admin</a></li>
             <li><a href="#">Settings</a></li>
             <li><a href="#">Logout</a></li>
           </ul>
@@ -52,22 +52,31 @@
         <div class="col-sm-9 col-md-10 main">
 
           <div class="page-header">
-            <h1>SBS - Welcome System Admin</h1>
+            <h1>SBS - Welcome Andrew </h1>
           </div>
 
           <h2>Search By:</h2>
 		  <br>
 
-          <div id="sysadmin">
-          <form:form method="POST" modelAttribute="empSearch" action="">
+          <div id="payment">
             <p>
-              <label>Employee ID:</label>
-              <form:input  path = "employeeID" type="text" class="form-control" placeholder="ex: 123456789"></form:input>
+              <label>Customer ID:</label>
+              <input type="text" class="form-control" placeholder="ex: 123456789">
             </p>
-			<div class="modal-footer" >                
+			<div class="modal-footer">                
+              <button type="button" class="btn btn-success">Search</button>
+            </div>
+			<div id="transactionSearch">
+			 <form:form method="POST" modelAttribute="transactionSearch">
+            <p>
+              <label>Transaction ID:</label>
+              <form:input path="transactionID"  type="text" class="form-control" placeholder="ex: 9876543210123456789"/>
+            </p>
+           </div>
+            <div class="modal-footer">                
               <button type="submit" class="btn btn-success">Search</button>
             </div>
-		   </form:form>
+            </form:form>
           </div><!-- /payment -->
           
         </div> <!-- /main -->

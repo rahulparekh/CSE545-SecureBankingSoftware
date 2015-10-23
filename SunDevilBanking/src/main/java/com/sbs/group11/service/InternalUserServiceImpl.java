@@ -28,23 +28,16 @@ public class InternalUserServiceImpl implements InternalUserService {
 	public void addInternalUser(User user) {
 		// Logic here to add a user
 		
-		
-			Random ran = new Random();
-			int x = ran.nextInt(10) + 5;
-			String customerID = ""+x;
-			user.setCustomerID(customerID);
-			user.setCreatedAt(LocalDateTime.now());
-			user.setLastLoginAt(LocalDateTime.now());
-			user.setUpdatedAt(LocalDateTime.now());
-			user.setUpdatedAt(LocalDateTime.now());
-			dao.saveInternalUser(user);
-	}
-	
-	public void updateInternalUser(User user) {
-		// Logic here to add a user
+		Random ran = new Random();
+		int x = ran.nextInt(10) + 5;
+		String customerID = ""+x;
+		user.setCustomerID(customerID);
+		user.setCreatedAt(LocalDateTime.now());
+		user.setLastLoginAt(LocalDateTime.now());
+		user.setUpdatedAt(LocalDateTime.now());
 		
 		
-			dao.updateInternalUser(user);
+		dao.saveInternalUser(user);
 	}
 	
 	public User searchInternalUser(String EmployeeID)
@@ -53,10 +46,5 @@ public class InternalUserServiceImpl implements InternalUserService {
 		
 	}
 	
-	public User searchInternalUserByType(String userType)
-	{
-		return dao.findUserByType(userType);
-		
-	}
 
 }
