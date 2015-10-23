@@ -42,4 +42,5 @@ public class AccountServiceImpl implements AccountService {
 	public Account getAccountByNumber(String accNumber) {
 		return dao.findByAccountNumber(accNumber);
 	}
+	
 }

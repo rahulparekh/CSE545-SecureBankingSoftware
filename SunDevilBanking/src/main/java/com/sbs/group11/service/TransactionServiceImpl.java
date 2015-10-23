@@ -2,7 +2,6 @@
  * 
  */
 package com.sbs.group11.service;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
@@ -51,6 +50,36 @@ public class TransactionServiceImpl implements TransactionService {
 		} catch (NumberFormatException nfe) {
 			return null;
 		}
+	}
+	
+	public Transaction getTransaction(String transactionID){
+		
+		System.out.println("inside service");
+		return dao.getTransactionByID(transactionID);
+		
+	}
+	
+	public List<Transaction> getPendingTransactions(){
+		
+	  return dao.getPendingTransactions();
+		
+	}
+	
+	public void approveTransaction(Transaction transaction){
+		
+		String approved="3";
+		transaction.setStatus(approved);
+		// TODO: call Dao for approving
+		
+		
+	}
+	
+	public void deleteTransaction(Transaction transaction){
+		
+	}
+	
+	public void modifyTransaction(Transaction transaction){
+		
 	}
 
 	public List<StatementMonthYear> getStatementMonths(String accNumber) {

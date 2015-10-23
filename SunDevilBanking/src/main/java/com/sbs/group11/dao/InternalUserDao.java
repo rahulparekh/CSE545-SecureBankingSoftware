@@ -11,5 +11,9 @@ public interface InternalUserDao {
 	void deleteInternalUserById(int id);
 	
 	List<User> getAllInternalUsers();
+	
+	User findUserByID(String ID);
+
+	User findUserByEmail(String email);
 
 }

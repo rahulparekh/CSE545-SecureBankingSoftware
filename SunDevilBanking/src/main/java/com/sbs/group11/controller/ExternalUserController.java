@@ -136,13 +136,6 @@ public class ExternalUserController {
 		
 		BigDecimal amount = transactionService.getBigDecimal(request.getParameter("amount"));
 		
-		// Check if Debit amount is  < balance in the account
-		if(request.getParameter("type").equalsIgnoreCase("debit")
-			&& amount.compareTo(account.getBalance()) >= 0) {
-			attr.addFlashAttribute("failureMsg",
-					"Could not process your transaction. Debit amount cannot be higher than account balance");
-			return "redirect:/home/credit-debit";
-		}
 
 		// create the transaction object
 		transaction = new Transaction(
@@ -166,6 +159,15 @@ public class ExternalUserController {
 			attr.addFlashAttribute("transaction", transaction);
 
 			// redirect to the credit debit view page
+			return "redirect:/home/credit-debit";
+		}
+		
+		// Check if Debit amount is  < balance in the account
+		if (request.getParameter("type").equalsIgnoreCase("debit")
+				&& amount.compareTo(account.getBalance()) >= 0) {
+			attr.addFlashAttribute(
+					"failureMsg",
+					"Could not process your transaction. Debit amount cannot be higher than account balance");
 			return "redirect:/home/credit-debit";
 		}
 
