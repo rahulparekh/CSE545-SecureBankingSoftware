@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
+<%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -60,32 +62,25 @@
           <table class="table">
             <thead>
               <tr>
-                <th>Name</th>
-				<th>Account No.</th>
+                <th>Sender Account No.</th>
+				<th>Receiver Account No.</th>
                 <th>Transaction ID</th>              
 			    <th>Amount</th>
               	<th>Date</th>				
               </tr>
             </thead>
             <tbody>
+        	  <c:forEach var="transaction" items="${pendingTransaction}" varStatus="loopCounter">
               <tr>
-                <td><a title="Go to Account" href="#">Christy Walton</a></td>
-                <td>123456789</td>
-				<td>1234567890987654321</td>
-				<td>$20.50</td>
-				<td>09/09/2015</td>
+                <td>${transaction.senderAccNumber}</td>
+				<td>${transaction.receiverAccNumber}</td>
+				<td>${transaction.transactionID}</td>
+				<td>${transaction.amount}</td>
+				<td>${transaction.createdAt}</td>
                 <td><button type="button" class="btn btn-success">Approve</button></td>
 				<td><button type="button" class="btn btn-danger">Decline</button></td>
               </tr>
-              <tr>
-                <td><a title="Go to Account" href="#">Bill Steve</a></td>
-                <td>987654321</td>
-				<td>9876543210123456789</td>
-				<td>$77.43</td>
-				<td>01/10/2015</td>
-                <td><button type="button" class="btn btn-success">Approve</button></td>
-				<td><button type="button" class="btn btn-danger">Decline</button></td>
-              </tr>
+             </c:forEach>
             </tbody>
           </table>
           
