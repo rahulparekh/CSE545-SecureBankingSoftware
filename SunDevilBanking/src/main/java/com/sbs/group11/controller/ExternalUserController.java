@@ -136,6 +136,7 @@ public class ExternalUserController {
 		// create the transaction object
 		transaction = new Transaction(
 				transactionService.getUniqueTransactionID(),
+				"Self " + request.getParameter("type"),
 				request.getParameter("number"),
 				request.getParameter("number"),
 				"pending",
@@ -194,9 +195,8 @@ public class ExternalUserController {
 				request.getParameter("number"), accounts);
 		// Exit the transaction if Account doesn't exist
 		if (!isAccount) {
-			logger.warn("Someone tried credit/debit functionality for some other account. Details:");
-			logger.warn("Credit/Debit Acc No: "
-					+ request.getParameter("number"));
+			logger.warn("Someone tried statements functionality for some other account. Details:");
+			logger.warn("Acc No: " + request.getParameter("number"));
 			logger.warn("Customer ID: " + user.getCustomerID());
 			attr.addFlashAttribute("statementFailureMsg",
 					"Could not process your request. Please try again or contact the bank.");
@@ -212,5 +212,42 @@ public class ExternalUserController {
 		model.addAttribute("accNumber", request.getParameter("number"));
 
 		return "customer/statements";
+	}
+
+	@RequestMapping(value = "/statements/view", method = RequestMethod.POST)
+	public String postViewStatement(ModelMap model, HttpServletRequest request,
+			RedirectAttributes attr) {
+
+		User user = userService.getUserDetails();
+		List<Account> accounts = accountService.getAccountsByCustomerID(user
+				.getCustomerID());
+
+		// If account is empty or null, skip the account service check
+		boolean isAccount = accountService.isAccountNumberValid(
+				request.getParameter("number"), accounts);
+
+		if (!isAccount) {
+			logger.warn("Someone tried view statement functionality for some other account. Details:");
+			logger.warn("Acc No: " + request.getParameter("number"));
+			logger.warn("Customer ID: " + user.getCustomerID());
+			attr.addFlashAttribute("statementFailureMsg",
+					"Could not process your request. Please try again or contact the bank.");
+			return "redirect:/home/statements";
+		}
+
+		Account account = accountService.getAccountByNumber(request
+				.getParameter("number"));
+		List<Transaction> transactions = transactionService
+				.getCompletedTransactionsByAccountNummber(
+						request.getParameter("number"),
+						request.getParameter("month"),
+						Integer.parseInt(request.getParameter("year")));
+
+		model.addAttribute("title", "Account Statements");
+		model.addAttribute("user", user);
+		model.addAttribute("account", account);
+		model.addAttribute("transactions", transactions);
+
+		return "customer/statement";
 	}
 }

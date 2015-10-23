@@ -10,5 +10,5 @@ public interface TransactionDao {
 	void addTransaction(Transaction transaction);	
 	boolean isUniqueTransactionID(String transactionID);
 	List<StatementMonthYear> getStatementMonths(String accNumber);
-	
+	List<Transaction> getCompletedTransactionsByAccountNummber(String accNumber, String month, int year);
 }

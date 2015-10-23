@@ -57,4 +57,8 @@ public class TransactionServiceImpl implements TransactionService {
 		return dao.getStatementMonths(accNumber);
 	}
 
+	public List<Transaction> getCompletedTransactionsByAccountNummber(String accNumber, String month, int year) {
+		return dao.getCompletedTransactionsByAccountNummber(accNumber, month, year);
+	}
+
 }

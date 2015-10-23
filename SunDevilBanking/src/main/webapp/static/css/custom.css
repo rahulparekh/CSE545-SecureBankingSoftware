@@ -64,6 +64,11 @@ form label.error {
   color: red; margin-top: 5px; font-weight: normal;
 }
 
+.no-bullets {
+  list-style-type: none;
+  padding-left: 0;
+}
+
 .container-main {
   margin-top: 20px;
 }

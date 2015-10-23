@@ -38,4 +38,8 @@ public class AccountServiceImpl implements AccountService {
 
 		return false;
 	}
+
+	public Account getAccountByNumber(String accNumber) {
+		return dao.findByAccountNumber(accNumber);
+	}
 }

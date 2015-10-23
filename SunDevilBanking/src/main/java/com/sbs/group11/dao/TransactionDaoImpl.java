@@ -37,21 +37,20 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction>
 
 	@SuppressWarnings("unchecked")
 	public List<StatementMonthYear> getStatementMonths(String accNumber) {
-		
+
 		List<StatementMonthYear> statements = new ArrayList<StatementMonthYear>();
 		List<Object> result = (List<Object>) getSession()
 				.createSQLQuery(
 						"SELECT DISTINCT MONTHNAME(createdAt) AS Month, YEAR(createdAt) as Year "
-						+ "from Transaction "
-						+ "where "
-						+ "(ReceiverAccNumber = :receiverAccNumber or SenderAccNumber = :senderAccNumber) "
-						+ "and MONTH(createdAt) <= MONTH(CURRENT_DATE - INTERVAL 1 MONTH)")
+								+ "from Transaction "
+								+ "where "
+								+ "(ReceiverAccNumber = :receiverAccNumber or SenderAccNumber = :senderAccNumber) "
+								+ "and MONTH(createdAt) <= MONTH(CURRENT_DATE - INTERVAL 1 MONTH)")
 				.setParameter("receiverAccNumber", accNumber)
-				.setParameter("senderAccNumber", accNumber)
-				.list();
-		
+				.setParameter("senderAccNumber", accNumber).list();
+
 		Iterator itr = result.iterator();
-		while(itr.hasNext()){
+		while (itr.hasNext()) {
 			Object[] obj = (Object[]) itr.next();
 			String month = String.valueOf(obj[0]);
 			String year = String.valueOf(obj[1]);
@@ -59,6 +58,31 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction>
 		}
 
 		return statements;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Transaction> getCompletedTransactionsByAccountNummber(String accNumber, String month, int year) {
+		
+		List<Transaction> transactions = new ArrayList<Transaction>();
+		transactions = getSession()
+				.createQuery(
+						"from Transaction "
+						+ "where "
+						+ "(ReceiverAccNumber = :receiverAccNumber "
+						+ "or "
+						+ "SenderAccNumber = :senderAccNumber) "
+						+ "and status = 'completed' "
+						+ "and MONTHNAME(createdAt) = :month "
+						+ "and YEAR(createdAt) = :year "
+						+ "ORDER BY CreatedAt DESC")
+				.setParameter("receiverAccNumber", accNumber)
+				.setParameter("senderAccNumber", accNumber)
+				.setParameter("month", month)
+				.setParameter("year", year)
+				.list();
+		
+		return transactions;
+
 	}
 
 }

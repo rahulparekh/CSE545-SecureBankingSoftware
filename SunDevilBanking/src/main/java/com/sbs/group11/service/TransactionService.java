@@ -12,4 +12,5 @@ public interface TransactionService {
 	String getUniqueTransactionID();
 	BigDecimal getBigDecimal(String accNumber);
 	List<StatementMonthYear> getStatementMonths(String accNumber);
+	List<Transaction> getCompletedTransactionsByAccountNummber(String accNumber, String month, int year);
 }

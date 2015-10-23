@@ -30,11 +30,12 @@ public class Transaction {
 
 	}
 
-	public Transaction(String transactionID, String receiverAccNumber,
+	public Transaction(String transactionID, String name, String receiverAccNumber,
 			String senderAccNumber, String status, String type,
 			BigDecimal amount) {
 		super();
 		this.transactionID = transactionID;
+		this.name = name;
 		this.receiverAccNumber = receiverAccNumber;
 		this.senderAccNumber = senderAccNumber;
 		this.status = status;
@@ -50,6 +51,12 @@ public class Transaction {
 	@Size(min = 17, max = 17)
 	@Column(name = "TransactionID", nullable = false, length = 17, unique = true)
 	private String transactionID;
+	
+	/** The transaction name. */
+	@NotNull
+	@Size(min = 3, max = 255)
+	@Column(name = "Name", nullable = false, length = 255, unique = false)
+	private String name;
 
 	/** The receiver account number. */
 	@NotEmpty
@@ -118,6 +125,20 @@ public class Transaction {
 	 */
 	public void setTransactionID(String transactionID) {
 		this.transactionID = transactionID;
+	}
+
+	/**
+	 * @return
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name
+	 */
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/**
