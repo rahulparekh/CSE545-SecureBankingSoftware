@@ -6,4 +6,6 @@ import com.sbs.group11.model.Account;
 
 public interface AccountService {
 	List<Account> getAccountsByCustomerID(String customerID);
+	Account getAccountByNumber(String accNumber);
+	Account getValidAccountByNumber(String accNumber, List<Account> accounts);
 }

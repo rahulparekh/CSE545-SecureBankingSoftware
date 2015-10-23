@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
@@ -24,16 +25,17 @@ import org.joda.time.LocalDateTime;
 @Entity
 @Table(name = "Transaction")
 public class Transaction {
-	
+
 	public Transaction() {
-		
+
 	}
-	
-	public Transaction(String transactionID, String receiverAccNumber,
+
+	public Transaction(String transactionID, String name, String receiverAccNumber,
 			String senderAccNumber, String status, String type,
 			BigDecimal amount) {
 		super();
 		this.transactionID = transactionID;
+		this.name = name;
 		this.receiverAccNumber = receiverAccNumber;
 		this.senderAccNumber = senderAccNumber;
 		this.status = status;
@@ -43,7 +45,6 @@ public class Transaction {
 		this.updatedAt = new DateTime().toLocalDateTime();
 	}
 
-
 	/** The transaction id. */
 	@Id
 	@NotEmpty
@@ -51,37 +52,43 @@ public class Transaction {
 	@Column(name = "TransactionID", nullable = false, length = 17, unique = true)
 	private String transactionID;
 	
+	/** The transaction name. */
+	@NotNull
+	@Size(min = 3, max = 255)
+	@Column(name = "Name", nullable = false, length = 255, unique = false)
+	private String name;
+
 	/** The receiver account number. */
 	@NotEmpty
 	@Size(min = 17, max = 17)
 	@Column(name = "ReceiverAccNumber", nullable = false, length = 17)
 	private String receiverAccNumber;
-	
+
 	/** The sender acc number. */
 	@NotEmpty
 	@Size(min = 17, max = 17)
 	@Column(name = "SenderAccNumber", nullable = false, length = 17)
 	private String senderAccNumber;
-	
+
 	/** The status. */
 	@NotEmpty
 	@Size(min = 0, max = 10)
 	@Column(name = "Status", nullable = false, length = 10)
 	private String status;
-	
+
 	/** The type: Can be credit or debit */
 	@NotEmpty
 	@Size(min = 0, max = 10)
 	@Column(name = "Type", nullable = false, length = 6)
 	private String type;
-	
+
 	/** The amount. */
 	@NotNull
-    @Digits(integer=11, fraction=2)
+	@Digits(integer = 11, fraction = 2)
 	@DecimalMin("0.01")
-    @Column(name = "Amount", nullable = false)
-    private BigDecimal amount;
-	
+	@Column(name = "Amount", nullable = false)
+	private BigDecimal amount;
+
 	/** The created at. */
 	@NotNull
 	@Column(name = "CreatedAt", nullable = false)
@@ -95,6 +102,13 @@ public class Transaction {
 	private LocalDateTime updatedAt;
 
 	/**
+	 * The month. This is not to be part of the database table as we can easily
+	 * query it with MySQLs "monthname"
+	 */
+	@Transient
+	private String month;
+
+	/**
 	 * Gets the transaction id.
 	 *
 	 * @return the transaction id
@@ -106,10 +120,25 @@ public class Transaction {
 	/**
 	 * Sets the transaction id.
 	 *
-	 * @param transactionID the new transaction id
+	 * @param transactionID
+	 *            the new transaction id
 	 */
 	public void setTransactionID(String transactionID) {
 		this.transactionID = transactionID;
+	}
+
+	/**
+	 * @return
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name
+	 */
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/**
@@ -124,7 +153,8 @@ public class Transaction {
 	/**
 	 * Sets the receiver acc number.
 	 *
-	 * @param receiverAccNumber the new receiver acc number
+	 * @param receiverAccNumber
+	 *            the new receiver acc number
 	 */
 	public void setReceiverAccNumber(String receiverAccNumber) {
 		this.receiverAccNumber = receiverAccNumber;
@@ -142,7 +172,8 @@ public class Transaction {
 	/**
 	 * Sets the sender acc number.
 	 *
-	 * @param senderAccNumber the new sender acc number
+	 * @param senderAccNumber
+	 *            the new sender acc number
 	 */
 	public void setSenderAccNumber(String senderAccNumber) {
 		this.senderAccNumber = senderAccNumber;
@@ -160,7 +191,8 @@ public class Transaction {
 	/**
 	 * Sets the status.
 	 *
-	 * @param status the new status
+	 * @param status
+	 *            the new status
 	 */
 	public void setStatus(String status) {
 		this.status = status;
@@ -173,7 +205,8 @@ public class Transaction {
 	/**
 	 * Sets the type.
 	 *
-	 * @param type the new type
+	 * @param type
+	 *            the new type
 	 */
 	public void setType(String type) {
 		this.type = type;
@@ -191,7 +224,8 @@ public class Transaction {
 	/**
 	 * Sets the amount.
 	 *
-	 * @param amount the new amount
+	 * @param amount
+	 *            the new amount
 	 */
 	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
@@ -209,7 +243,8 @@ public class Transaction {
 	/**
 	 * Sets the created at.
 	 *
-	 * @param createdAt the new created at
+	 * @param createdAt
+	 *            the new created at
 	 */
 	public void setCreatedAt(LocalDateTime createdAt) {
 		this.createdAt = createdAt;
@@ -227,7 +262,8 @@ public class Transaction {
 	/**
 	 * Sets the updated at.
 	 *
-	 * @param updatedAt the new updated at
+	 * @param updatedAt
+	 *            the new updated at
 	 */
 	public void setUpdatedAt(LocalDateTime updatedAt) {
 		this.updatedAt = updatedAt;
@@ -241,6 +277,13 @@ public class Transaction {
 				+ ", type=" + type + ", amount=" + amount + ", createdAt="
 				+ createdAt + ", updatedAt=" + updatedAt + "]";
 	}
-	
+
+	public String getMonth() {
+		return month;
+	}
+
+	public void setMonth(String month) {
+		this.month = month;
+	}
 
 }

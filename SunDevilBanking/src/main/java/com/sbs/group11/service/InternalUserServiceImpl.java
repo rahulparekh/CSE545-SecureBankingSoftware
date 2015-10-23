@@ -1,5 +1,7 @@
 package com.sbs.group11.service;
 
+import java.util.Random;
+
 import javax.transaction.Transactional;
 
 import org.joda.time.LocalDateTime;
@@ -7,11 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import com.sbs.group11.dao.InternalUserDao;
 import com.sbs.group11.dao.InternalUserDaoImpl;
 import com.sbs.group11.model.User;
-
-import java.util.Random;
 /*
  * InternalUserServiceImpl: Used to implement various methods which internal
  * users perform. Do not use this for general user methods like collecting the

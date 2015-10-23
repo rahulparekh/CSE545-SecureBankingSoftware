@@ -2,6 +2,7 @@
 	description="Page template for all pages when user has logged in"
 	language="java" pageEncoding="UTF-8"%>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -42,6 +43,7 @@
 
 		<div class="row">
 
+			<c:if test="${!fn:endsWith(pageContext.request.requestURI, 'statement.jsp')}">
 			<div class="col-sm-3 col-md-2 sidebar">
 
 				<ul class="nav nav-sidebar">
@@ -65,8 +67,9 @@
 
 			</div>
 			<!-- sidebar -->
+			</c:if>
 
-			<div class="col-sm-9 col-md-10 main">
+			<div class="${fn:endsWith(pageContext.request.requestURI, 'statement.jsp') ? 'col-sm-12 col-md-12':'col-sm-9 col-md-10'} main">
 
 				<jsp:doBody />
 

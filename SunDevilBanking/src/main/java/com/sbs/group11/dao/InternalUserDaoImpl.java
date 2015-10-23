@@ -3,8 +3,6 @@ package com.sbs.group11.dao;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.transaction.Transactional;
-
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.joda.time.LocalDateTime;

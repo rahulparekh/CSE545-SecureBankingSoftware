@@ -14,13 +14,33 @@ import com.sbs.group11.model.Account;
 public class AccountServiceImpl implements AccountService {
 
 	@Autowired
-    private AccountDao dao;
-     
-	public List<Account> getAccountsByCustomerID(String customerID){
-        
-        return dao.findByCustomerID(customerID);
-        
-    }
-	
+	private AccountDao dao;
+
+	public List<Account> getAccountsByCustomerID(String customerID) {
+
+		return dao.findByCustomerID(customerID);
+
+	}
+
+	public Account getValidAccountByNumber(String accNumber, List<Account> accounts) {
+		if (accNumber != null && !accNumber.isEmpty()) {
+
+			// See if the account submitted in the request
+			// is belongs to the user. This will protect us against
+			// any authenticated user request some other account number details
+			for (Account account : accounts) {
+				if (account.getNumber().equals(accNumber)) {
+					return account;
+				}
+			}
+
+		}
+
+		return null;
+	}
+
+	public Account getAccountByNumber(String accNumber) {
+		return dao.findByAccountNumber(accNumber);
+	}
 	
 }
