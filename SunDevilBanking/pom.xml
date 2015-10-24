@@ -16,6 +16,7 @@
 		<springsecurityconfig.version>4.0.2.RELEASE</springsecurityconfig.version>
 		<itext.version>5.5.7</itext.version>
 		<joda-time-jsptags.version>1.1.1</joda-time-jsptags.version>
+		<javax.mail.version>1.5.4</javax.mail.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -103,6 +104,14 @@
 			<artifactId>itextpdf</artifactId>
 			<version>${itext.version}</version>
 		</dependency>
+		
+		<!-- java mail api -->
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>javax.mail-api</artifactId>
+			<version>${javax.mail.version}</version>
+		</dependency>
+
 
 		<!-- Below declared dependencies are included for the servers who may complain 
 			about servlet/jstl missing dependency -->
