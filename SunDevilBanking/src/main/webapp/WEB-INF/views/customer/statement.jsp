@@ -32,28 +32,18 @@
 			</tr>
 		</thead>
 		<tbody>
-			<c:if test="${!empty transactions}">
-				<c:set var="balance"
-					value="${account.balance - transactions[0].amount}" scope="page" />
-			</c:if>
 			<c:forEach items="${transactions}" var="transaction">
 				<tr>
 					<td>
-						<joda:format var="createdAt"
-							value="${transaction.createdAt}" pattern="dd MMM, yyyy"
+						<joda:format var="updatedAt"
+							value="${transaction.updatedAt}" pattern="dd MMM, yyyy"
 							style="F-" dateTimeZone="America/Phoenix" />
-						${createdAt}
+						${updatedAt}
 					</td>
 					<td>${transaction.name}</td>
 					<td>${transaction.type == 'Debit' ? transaction.amount : ''}</td>
 					<td>${transaction.type == 'Credit' ? transaction.amount : ''}</td>
-					<td><c:if test="${transaction.type == 'Debit'}">
-							<c:set var="balance" value="${balance - transaction.amount}"
-								scope="page" />
-						</c:if> <c:if test="${transaction.type == 'Credit'}">
-							<c:set var="balance" value="${balance + transaction.amount}"
-								scope="page" />
-						</c:if> ${balance}</td>
+					<td>${transaction.balance}</td>
 				</tr>
 			</c:forEach>
 		</tbody>

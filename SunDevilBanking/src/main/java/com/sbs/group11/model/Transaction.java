@@ -52,8 +52,8 @@ public class Transaction {
 	@Column(name = "TransactionID", nullable = false, length = 17, unique = true)
 	private String transactionID;
 	
-	/** The transaction name. */
-	@NotNull
+	/** The transaction name (description). */
+	@NotEmpty
 	@Size(min = 3, max = 255)
 	@Column(name = "Name", nullable = false, length = 255, unique = false)
 	private String name;
@@ -234,6 +234,24 @@ public class Transaction {
 	 */
 	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
+	}
+
+	/**
+	 * Gets the balance.
+	 *
+	 * @return the balance
+	 */
+	public BigDecimal getBalance() {
+		return balance;
+	}
+
+	/**
+	 * Sets the balance.
+	 *
+	 * @param balance the new balance
+	 */
+	public void setBalance(BigDecimal balance) {
+		this.balance = balance;
 	}
 
 	/**

@@ -86,15 +86,19 @@ public class PDFBuilder extends AbstractITextPdfView {
 
 		cell.setPhrase(new Phrase("Balance", font));
 		table.addCell(cell);
-
+		
 		for (Transaction transaction : transactions) {
+			String balance = "";
+			if (transaction.getBalance() != null) {
+				balance = transaction.getBalance().toString();
+			}
 			table.addCell(DateTimeFormat.forPattern("dd MMM, yyyy").print(transaction.getCreatedAt()));
 			table.addCell(transaction.getName());
 			table.addCell(transaction.getType().equalsIgnoreCase("debit") ? transaction
 					.getAmount().toString() : "");
 			table.addCell(transaction.getType().equalsIgnoreCase("credit") ? transaction
 					.getAmount().toString() : "");
-			table.addCell("Balance");
+			table.addCell(balance);
 		}
 
 		doc.add(table);

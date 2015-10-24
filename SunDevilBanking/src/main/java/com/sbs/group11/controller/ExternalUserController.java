@@ -142,10 +142,14 @@ public class ExternalUserController {
 
 		// create the transaction object
 		transaction = new Transaction(
-				transactionService.getUniqueTransactionID(), "Self "
-						+ request.getParameter("type"),
-				request.getParameter("number"), request.getParameter("number"),
-				"pending", request.getParameter("type"), amount);
+				transactionService.getUniqueTransactionID(),
+				"Self " + request.getParameter("type"),
+				request.getParameter("number"),
+				request.getParameter("number"),
+				"pending",
+				request.getParameter("type"),
+				amount
+			);
 
 		// Validate the model
 		validator.validate(transaction, result);
