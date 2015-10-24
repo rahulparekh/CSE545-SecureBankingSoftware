@@ -71,9 +71,9 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 						+ "or "
 						+ "SenderAccNumber = :senderAccNumber) "
 						+ "and status = 'completed' "
-						+ "and MONTHNAME(createdAt) = :month "
-						+ "and YEAR(createdAt) = :year "
-						+ "ORDER BY CreatedAt DESC")
+						+ "and MONTHNAME(updatedAt) = :month "
+						+ "and YEAR(updatedAt) = :year "
+						+ "ORDER BY UpdatedAt ASC")
 				.setParameter("receiverAccNumber", accNumber)
 				.setParameter("senderAccNumber", accNumber)
 				.setParameter("month", month)
