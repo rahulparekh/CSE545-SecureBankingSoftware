@@ -38,8 +38,8 @@ public class InternalUserDaoImpl extends AbstractDao<Integer, User> implements I
 
 	public void deleteInternalUserById(int id) {
 		Query query = getSession().createSQLQuery(
-				"delete from Employee where EmployeeID = :id");
-		query.setInteger(id, id);
+				"delete from User where CustomerID = :id");
+		query.setInteger(0, id);
 		query.executeUpdate();
 	}
 
