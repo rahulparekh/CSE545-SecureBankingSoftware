@@ -88,6 +88,11 @@ public class Transaction {
 	@DecimalMin("0.01")
 	@Column(name = "Amount", nullable = false)
 	private BigDecimal amount;
+	
+	/** The amount. */
+	@Digits(integer = 11, fraction = 2)
+	@Column(name = "Balance", nullable = true)
+	private BigDecimal balance;
 
 	/** The created at. */
 	@NotNull
