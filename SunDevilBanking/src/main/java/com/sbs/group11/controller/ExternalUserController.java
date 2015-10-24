@@ -1,6 +1,8 @@
 package com.sbs.group11.controller;
 
+import java.awt.print.Book;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +16,7 @@ import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.sbs.group11.model.Account;
@@ -133,19 +136,16 @@ public class ExternalUserController {
 					"Could not process your transaction. Please try again or contact the bank.");
 			return "redirect:/home/credit-debit";
 		}
-		
-		BigDecimal amount = transactionService.getBigDecimal(request.getParameter("amount"));
-		
+
+		BigDecimal amount = transactionService.getBigDecimal(request
+				.getParameter("amount"));
 
 		// create the transaction object
 		transaction = new Transaction(
-				transactionService.getUniqueTransactionID(),
-				"Self " + request.getParameter("type"),
-				request.getParameter("number"),
-				request.getParameter("number"),
-				"pending",
-				request.getParameter("type"),
-				amount);
+				transactionService.getUniqueTransactionID(), "Self "
+						+ request.getParameter("type"),
+				request.getParameter("number"), request.getParameter("number"),
+				"pending", request.getParameter("type"), amount);
 
 		// Validate the model
 		validator.validate(transaction, result);
@@ -161,8 +161,8 @@ public class ExternalUserController {
 			// redirect to the credit debit view page
 			return "redirect:/home/credit-debit";
 		}
-		
-		// Check if Debit amount is  < balance in the account
+
+		// Check if Debit amount is < balance in the account
 		if (request.getParameter("type").equalsIgnoreCase("debit")
 				&& amount.compareTo(account.getBalance()) >= 0) {
 			attr.addFlashAttribute(
@@ -258,7 +258,46 @@ public class ExternalUserController {
 		model.addAttribute("user", user);
 		model.addAttribute("account", account);
 		model.addAttribute("transactions", transactions);
+		model.addAttribute("statementName", request.getParameter("month")
+				+ " " + request.getParameter("year"));
 
 		return "customer/statement";
+	}
+
+	@RequestMapping(value = "/statements/download", method = RequestMethod.POST)
+	public ModelAndView postDownloadStatement(ModelMap model,
+			HttpServletRequest request, RedirectAttributes attr) {
+
+		User user = userService.getUserDetails();
+		List<Account> accounts = accountService.getAccountsByCustomerID(user
+				.getCustomerID());
+
+		// If account is empty or null, skip the account service check
+		Account account = accountService.getValidAccountByNumber(
+				request.getParameter("number"), accounts);
+		
+		if (account == null) {
+			logger.warn("Someone tried view statement functionality for some other account. Details:");
+			logger.warn("Acc No: " + request.getParameter("number"));
+			logger.warn("Customer ID: " + user.getCustomerID());
+			attr.addFlashAttribute("statementFailureMsg",
+					"Could not process your request. Please try again or contact the bank.");
+			return  new ModelAndView("redirect:/home/statements");
+		}
+
+		List<Transaction> transactions = transactionService
+				.getCompletedTransactionsByAccountNummber(
+						request.getParameter("number"),
+						request.getParameter("month"),
+						Integer.parseInt(request.getParameter("year")));
+
+		model.addAttribute("title", "Account Statements");
+		model.addAttribute("user", user);
+		model.addAttribute("account", account);
+		model.addAttribute("transactions", transactions);
+		model.addAttribute("statementName", request.getParameter("month")
+				+ " " + request.getParameter("year"));
+
+		return new ModelAndView("pdfView", "model", model);
 	}
 }

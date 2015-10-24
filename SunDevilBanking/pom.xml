@@ -14,6 +14,7 @@
 		<joda-time.version>2.8.2</joda-time.version>
 		<springsecurity.version>4.0.2.RELEASE</springsecurity.version>
 		<springsecurityconfig.version>4.0.2.RELEASE</springsecurityconfig.version>
+		<itext.version>5.5.7</itext.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -81,11 +82,18 @@
 			<version>${joda-time.version}</version>
 		</dependency>
 
-		<!-- To map JodaTime with database type -->
+		<!-- To map JodaTime with database time -->
 		<dependency>
 			<groupId>org.jadira.usertype</groupId>
 			<artifactId>usertype.core</artifactId>
 			<version>3.0.0.CR1</version>
+		</dependency>
+		
+		<!-- iText PDF -->
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itextpdf</artifactId>
+			<version>${itext.version}</version>
 		</dependency>
 
 		<!-- Below declared dependencies are included for the servers who may complain 

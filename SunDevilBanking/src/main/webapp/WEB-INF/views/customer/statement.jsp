@@ -8,7 +8,7 @@
 <t:page>
 
     <div class="page-header">
-        <h1>Account Statement: September 2015</h1>
+        <h1>Account Statement: ${statementName}</h1>
         <ul class="no-bullets">
             <li><strong>${user.firstName} ${!empty user.middleName ? user.middleName: ''} ${user.lastName}</strong></li>
             <li>${user.addressLine1} ${user.addressLine2}</li>

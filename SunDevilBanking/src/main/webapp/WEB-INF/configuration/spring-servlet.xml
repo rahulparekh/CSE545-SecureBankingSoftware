@@ -10,6 +10,13 @@
 	<mvc:annotation-driven />
 
 	<mvc:resources mapping="/static/**" location="/static/" />
+	
+	<bean class="org.springframework.web.servlet.view.XmlViewResolver">
+	   <property name="location">
+	       <value>/WEB-INF/configuration/spring-pdf.xml</value>
+	   </property>
+	   <property name="order" value="0" />
+	</bean>
 
 	<bean
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -19,6 +26,7 @@
 		<property name="suffix">
 			<value>.jsp</value>
 		</property>
+		<property name="order" value="1" />
 	</bean>
 
 	<bean id="messageSource"
