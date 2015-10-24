@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.joda.time.format.DateTimeFormat;
 import org.springframework.ui.ModelMap;
 
 import com.itextpdf.text.BaseColor;
@@ -87,7 +88,7 @@ public class PDFBuilder extends AbstractITextPdfView {
 		table.addCell(cell);
 
 		for (Transaction transaction : transactions) {
-			table.addCell(transaction.getCreatedAt().toString());
+			table.addCell(DateTimeFormat.forPattern("dd MMM, yyyy").print(transaction.getCreatedAt()));
 			table.addCell(transaction.getName());
 			table.addCell(transaction.getType().equalsIgnoreCase("debit") ? transaction
 					.getAmount().toString() : "");

@@ -15,6 +15,7 @@
 		<springsecurity.version>4.0.2.RELEASE</springsecurity.version>
 		<springsecurityconfig.version>4.0.2.RELEASE</springsecurityconfig.version>
 		<itext.version>5.5.7</itext.version>
+		<joda-time-jsptags.version>1.1.1</joda-time-jsptags.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -82,13 +83,20 @@
 			<version>${joda-time.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time-jsptags</artifactId>
+			<version>${joda-time-jsptags.version}</version>
+		</dependency>
+
+
 		<!-- To map JodaTime with database time -->
 		<dependency>
 			<groupId>org.jadira.usertype</groupId>
 			<artifactId>usertype.core</artifactId>
 			<version>3.0.0.CR1</version>
 		</dependency>
-		
+
 		<!-- iText PDF -->
 		<dependency>
 			<groupId>com.itextpdf</groupId>
