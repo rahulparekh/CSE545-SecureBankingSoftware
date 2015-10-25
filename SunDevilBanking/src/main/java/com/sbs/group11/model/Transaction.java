@@ -44,6 +44,22 @@ public class Transaction {
 		this.createdAt = new DateTime().toLocalDateTime();
 		this.updatedAt = new DateTime().toLocalDateTime();
 	}
+	
+	public Transaction(String transactionID, String name, String receiverAccNumber,
+			String senderAccNumber, String status, String type,
+			BigDecimal amount, BigDecimal balance) {
+		super();
+		this.transactionID = transactionID;
+		this.name = name;
+		this.receiverAccNumber = receiverAccNumber;
+		this.senderAccNumber = senderAccNumber;
+		this.status = status;
+		this.type = type;
+		this.amount = amount;
+		this.createdAt = new DateTime().toLocalDateTime();
+		this.updatedAt = new DateTime().toLocalDateTime();
+		this.balance = balance;
+	}
 
 	/** The transaction id. */
 	@Id

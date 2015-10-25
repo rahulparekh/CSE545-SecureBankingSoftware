@@ -31,18 +31,26 @@ $(function() {
 
         $(this).addClass('active');
 
-        return false;
     });
 
     // get balance based on the acount selected
-    $('#select-account-creditdebit').change(function() {
+    $('#select-account').change(function() {
         var id = "#" + $(this).find('option:selected').prop('id') + "bal";
-        $('#current-balance-credit-debit').find('p').addClass('hide');
+        var creditId = "#" + $(this).find('option:selected').prop('id') + "credit";
+        $('#current-balance').find('p').addClass('hide');
         if(id === '#bal') {
             $('#please-select-account').removeClass('hide');
         } else {
             $(id).removeClass('hide');
-        }        
+        }
+        if ($('#select-receiver-account').length) {
+            $('#select-receiver-account')
+                .find('option')
+                .removeClass('hide')
+                .parent()
+                .prop('selectedIndex',0);
+            $(creditId).addClass("hide");
+        }
         return false;
     });
 

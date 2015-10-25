@@ -29,7 +29,7 @@
 				<div class="modal-body">
 					<p>
 						<label>Account:</label> 
-						<select class="form-control" id="select-account-creditdebit" name="number">
+						<select class="form-control" id="select-account" name="number">
 							<option value="">Select an Account</option>
 							<c:set var="count" value="0" scope="page" />
 							<c:forEach items="${accounts}" var="account">
@@ -43,7 +43,7 @@
 					</p>
 					<hr>
 					<label>Current Balance:</label>
-					<div id="current-balance-credit-debit">
+					<div id="current-balance">
 						<p id="please-select-account"><i> Please select an account above </i></p>
 						<c:set var="count" value="0" scope="page" />
 						<c:forEach items="${accounts}" var="account">

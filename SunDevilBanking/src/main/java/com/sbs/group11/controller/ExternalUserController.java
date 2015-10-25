@@ -1,8 +1,6 @@
 package com.sbs.group11.controller;
 
-import java.awt.print.Book;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -142,14 +140,10 @@ public class ExternalUserController {
 
 		// create the transaction object
 		transaction = new Transaction(
-				transactionService.getUniqueTransactionID(),
-				"Self " + request.getParameter("type"),
-				request.getParameter("number"),
-				request.getParameter("number"),
-				"pending",
-				request.getParameter("type"),
-				amount
-			);
+				transactionService.getUniqueTransactionID(), "Self "
+						+ request.getParameter("type"),
+				request.getParameter("number"), request.getParameter("number"),
+				"pending", request.getParameter("type"), amount);
 
 		// Validate the model
 		validator.validate(transaction, result);
@@ -262,8 +256,8 @@ public class ExternalUserController {
 		model.addAttribute("user", user);
 		model.addAttribute("account", account);
 		model.addAttribute("transactions", transactions);
-		model.addAttribute("statementName", request.getParameter("month")
-				+ " " + request.getParameter("year"));
+		model.addAttribute("statementName", request.getParameter("month") + " "
+				+ request.getParameter("year"));
 
 		return "customer/statement";
 	}
@@ -279,14 +273,14 @@ public class ExternalUserController {
 		// If account is empty or null, skip the account service check
 		Account account = accountService.getValidAccountByNumber(
 				request.getParameter("number"), accounts);
-		
+
 		if (account == null) {
 			logger.warn("Someone tried view statement functionality for some other account. Details:");
 			logger.warn("Acc No: " + request.getParameter("number"));
 			logger.warn("Customer ID: " + user.getCustomerID());
 			attr.addFlashAttribute("statementFailureMsg",
 					"Could not process your request. Please try again or contact the bank.");
-			return  new ModelAndView("redirect:/home/statements");
+			return new ModelAndView("redirect:/home/statements");
 		}
 
 		List<Transaction> transactions = transactionService
@@ -299,9 +293,117 @@ public class ExternalUserController {
 		model.addAttribute("user", user);
 		model.addAttribute("account", account);
 		model.addAttribute("transactions", transactions);
-		model.addAttribute("statementName", request.getParameter("month")
-				+ " " + request.getParameter("year"));
+		model.addAttribute("statementName", request.getParameter("month") + " "
+				+ request.getParameter("year"));
 
 		return new ModelAndView("pdfView", "model", model);
 	}
+
+	@RequestMapping(value = "/fund-transfer", method = RequestMethod.GET)
+	public String getFundTransfer(ModelMap model) {
+		User user = userService.getUserDetails();
+		List<Account> accounts = accountService.getAccountsByCustomerID(user
+				.getCustomerID());
+		model.addAttribute("title", "Welcome " + user.getFirstName());
+		model.addAttribute("fullname",
+				user.getFirstName() + " " + user.getLastName());
+		model.addAttribute("accounts", accounts);
+		return "customer/fundtransfer";
+	}
+
+	@RequestMapping(value = "/fund-transfer", method = RequestMethod.POST)
+	public String postFundTransfer(ModelMap model, HttpServletRequest request,
+			@ModelAttribute("transaction") Transaction transaction,
+			BindingResult result, RedirectAttributes attr) {
+
+		// Get user details
+		User user = userService.getUserDetails();
+
+		// Get user accounts and other data for display
+		List<Account> accounts = accountService.getAccountsByCustomerID(user
+				.getCustomerID());
+		model.addAttribute("fullname",
+				user.getFirstName() + " " + user.getLastName());
+		model.addAttribute("accounts", accounts);
+		model.addAttribute("title", "Welcome " + user.getFirstName());
+
+		// If account is empty or null, skip the account service check
+		Account account = accountService.getValidAccountByNumber(
+				request.getParameter("senderAccNumber"), accounts);
+
+		// Exit the transaction if Account doesn't exist
+		if (account == null) {
+			logger.warn("Someone tried credit/debit functionality for some other account. Details:");
+			logger.warn("Credit/Debit Acc No: "
+					+ request.getParameter("number"));
+			logger.warn("Customer ID: " + user.getCustomerID());
+			attr.addFlashAttribute("failureMsg",
+					"Could not process your transaction. Please try again or contact the bank.");
+			return "redirect:/home/credit-debit";
+		}
+
+		boolean isTransferAccountValid = transactionService.isTransferAccountValid(
+				accountService, transactionService, accounts, accounts,
+				request, model, user, attr);
+		
+		if (isTransferAccountValid) {
+
+			BigDecimal amount = transactionService.getBigDecimal(request
+					.getParameter("amount"));
+	
+			// create the transaction object
+			transaction = new Transaction(
+					transactionService.getUniqueTransactionID(), "Fund Transfer",
+					request.getParameter("receiverAccNumber"),
+					request.getParameter("senderAccNumber"), "completed", "Credit",
+					amount);
+	
+			// Validate the model
+			validator.validate(transaction, result);
+			if (result.hasErrors()) {
+				logger.debug(result);
+	
+				// attributes for validation failures
+				attr.addFlashAttribute(
+						"org.springframework.validation.BindingResult.transaction",
+						result);
+				attr.addFlashAttribute("transaction", transaction);
+	
+				// redirect to the credit debit view page
+				return "redirect:/home/fundtransfer";
+			}
+	
+			// Check if Debit amount is < balance in the account
+			if ( amount.compareTo(account.getBalance()) >= 0) {
+				attr.addFlashAttribute(
+						"failureMsg",
+						"Could not process your transaction. Debit amount cannot be higher than account balance");
+				return "redirect:/home/fundtransfer";
+			}
+			
+			Transaction receiverTransaction = new Transaction(
+					transactionService.getUniqueTransactionID(), "Fund Transfer",
+					request.getParameter("senderAccNumber"),
+					request.getParameter("receiverAccNumber"), "completed", "Debit",
+					amount);
+			
+			try {
+				accountService.transferFunds(transactionService, accountService, transaction, receiverTransaction, amount);
+			} catch (Exception e) {
+				logger.warn(e);
+				attr.addFlashAttribute(
+						"failureMsg",
+						"Transfer unsucessful. Please try again or contact the bank.");
+			}
+	
+			attr.addFlashAttribute(
+					"successMsg",
+					"Transaction completed successfully. Transaction should show up on your account shortly.");
+			
+		} 
+
+		// redirect to the view page
+		return "redirect:/home/fundtransfer";
+	}
+
 }
