@@ -51,14 +51,14 @@ public class AccountServiceImpl implements AccountService {
 			Transaction receiverTransaction, BigDecimal amount) {
 		
 		Account senderAccount = accountService.getAccountByNumber(senderTransaction.getSenderAccNumber());
-		Account receiverAccount = accountService.getAccountByNumber(receiverTransaction.getSenderAccNumber());
+		Account receiverAccount = accountService.getAccountByNumber(senderTransaction.getReceiverAccNumber());
 		
 		// update account balances
 		senderAccount.setBalance(senderAccount.getBalance().subtract(amount));
 		receiverAccount.setBalance(receiverAccount.getBalance().add(amount));
 		
 		// update transaction balances
-		senderTransaction.setBalance(receiverAccount.getBalance());
+		senderTransaction.setBalance(senderAccount.getBalance());
 		receiverTransaction.setBalance(receiverAccount.getBalance());
 		
 		// create transactions

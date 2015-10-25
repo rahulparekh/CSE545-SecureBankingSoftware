@@ -32,7 +32,7 @@ public class Transaction {
 
 	public Transaction(String transactionID, String name, String receiverAccNumber,
 			String senderAccNumber, String status, String type,
-			BigDecimal amount) {
+			BigDecimal amount, String  transactionOwner) {
 		super();
 		this.transactionID = transactionID;
 		this.name = name;
@@ -43,11 +43,12 @@ public class Transaction {
 		this.amount = amount;
 		this.createdAt = new DateTime().toLocalDateTime();
 		this.updatedAt = new DateTime().toLocalDateTime();
+		this.transactionOwner = transactionOwner;
 	}
 	
 	public Transaction(String transactionID, String name, String receiverAccNumber,
 			String senderAccNumber, String status, String type,
-			BigDecimal amount, BigDecimal balance) {
+			BigDecimal amount, BigDecimal balance, String  transactionOwner) {
 		super();
 		this.transactionID = transactionID;
 		this.name = name;
@@ -59,6 +60,7 @@ public class Transaction {
 		this.createdAt = new DateTime().toLocalDateTime();
 		this.updatedAt = new DateTime().toLocalDateTime();
 		this.balance = balance;
+		this.transactionOwner = transactionOwner;
 	}
 
 	/** The transaction id. */
@@ -109,6 +111,12 @@ public class Transaction {
 	@Digits(integer = 11, fraction = 2)
 	@Column(name = "Balance", nullable = true)
 	private BigDecimal balance;
+	
+	/** The transaction owner */
+	@NotEmpty
+	@Size(min = 17, max = 17)
+	@Column(name = "TransactionOwner", nullable = false, length = 17)
+	private String transactionOwner;
 
 	/** The created at. */
 	@NotNull
@@ -268,6 +276,24 @@ public class Transaction {
 	 */
 	public void setBalance(BigDecimal balance) {
 		this.balance = balance;
+	}
+
+	/**
+	 * Gets the transaction owner.
+	 *
+	 * @return the transaction owner
+	 */
+	public String getTransactionOwner() {
+		return transactionOwner;
+	}
+
+	/**
+	 * Sets the transaction owner.
+	 *
+	 * @param transactionOwner the new transaction owner
+	 */
+	public void setTransactionOwner(String transactionOwner) {
+		this.transactionOwner = transactionOwner;
 	}
 
 	/**

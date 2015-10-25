@@ -140,10 +140,15 @@ public class ExternalUserController {
 
 		// create the transaction object
 		transaction = new Transaction(
-				transactionService.getUniqueTransactionID(), "Self "
-						+ request.getParameter("type"),
-				request.getParameter("number"), request.getParameter("number"),
-				"pending", request.getParameter("type"), amount);
+				transactionService.getUniqueTransactionID(), 
+				"Self " + request.getParameter("type"),
+				request.getParameter("number"), 
+				request.getParameter("number"),
+				"pending", 
+				request.getParameter("type"),
+				amount,
+				request.getParameter("number")
+				);
 
 		// Validate the model
 		validator.validate(transaction, result);
@@ -339,7 +344,7 @@ public class ExternalUserController {
 			logger.warn("Customer ID: " + user.getCustomerID());
 			attr.addFlashAttribute("failureMsg",
 					"Could not process your transaction. Please try again or contact the bank.");
-			return "redirect:/home/credit-debit";
+			return "redirect:/home/fund-transfer";
 		}
 
 		boolean isTransferAccountValid = transactionService.isTransferAccountValid(
@@ -353,10 +358,15 @@ public class ExternalUserController {
 	
 			// create the transaction object
 			transaction = new Transaction(
-					transactionService.getUniqueTransactionID(), "Fund Transfer",
+					transactionService.getUniqueTransactionID(), 
+					"Fund Transfer",
 					request.getParameter("receiverAccNumber"),
-					request.getParameter("senderAccNumber"), "completed", "Credit",
-					amount);
+					request.getParameter("senderAccNumber"), 
+					"completed", 
+					"Debit",
+					amount,
+					request.getParameter("receiverAccNumber")
+				);
 	
 			// Validate the model
 			validator.validate(transaction, result);
@@ -370,7 +380,7 @@ public class ExternalUserController {
 				attr.addFlashAttribute("transaction", transaction);
 	
 				// redirect to the credit debit view page
-				return "redirect:/home/fundtransfer";
+				return "redirect:/home/fund-transfer";
 			}
 	
 			// Check if Debit amount is < balance in the account
@@ -378,14 +388,19 @@ public class ExternalUserController {
 				attr.addFlashAttribute(
 						"failureMsg",
 						"Could not process your transaction. Debit amount cannot be higher than account balance");
-				return "redirect:/home/fundtransfer";
+				return "redirect:/home/fund-transfer";
 			}
 			
 			Transaction receiverTransaction = new Transaction(
-					transactionService.getUniqueTransactionID(), "Fund Transfer",
-					request.getParameter("senderAccNumber"),
-					request.getParameter("receiverAccNumber"), "completed", "Debit",
-					amount);
+					transactionService.getUniqueTransactionID(), 
+					"Fund Transfer",
+					request.getParameter("receiverAccNumber"),
+					request.getParameter("senderAccNumber"), 
+					"completed", 
+					"Credit",
+					amount,
+					request.getParameter("senderAccNumber")
+				);
 			
 			try {
 				accountService.transferFunds(transactionService, accountService, transaction, receiverTransaction, amount);
@@ -403,7 +418,7 @@ public class ExternalUserController {
 		} 
 
 		// redirect to the view page
-		return "redirect:/home/fundtransfer";
+		return "redirect:/home/fund-transfer";
 	}
 
 }

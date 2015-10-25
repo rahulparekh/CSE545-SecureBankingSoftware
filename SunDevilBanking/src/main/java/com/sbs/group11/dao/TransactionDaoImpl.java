@@ -40,13 +40,12 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 		List<StatementMonthYear> statements = new ArrayList<StatementMonthYear>();
 		List<Object> result = (List<Object>) getSession()
 				.createSQLQuery(
-						"SELECT DISTINCT MONTHNAME(createdAt) AS Month, YEAR(createdAt) as Year "
+						"SELECT DISTINCT MONTHNAME(updatedAt) AS Month, YEAR(updatedAt) as Year "
 								+ "from Transaction "
 								+ "where "
-								+ "(ReceiverAccNumber = :receiverAccNumber or SenderAccNumber = :senderAccNumber) "
-								+ "and MONTH(createdAt) <= MONTH(CURRENT_DATE - INTERVAL 1 MONTH)")
-				.setParameter("receiverAccNumber", accNumber)
-				.setParameter("senderAccNumber", accNumber).list();
+								+ "TransactionOwner = :accNumber "
+								+ "and MONTH(updatedAt) <= MONTH(CURRENT_DATE - INTERVAL 1 MONTH)")
+				.setParameter("accNumber", accNumber).list();
 
 		Iterator itr = result.iterator();
 		while (itr.hasNext()) {
@@ -67,15 +66,12 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 				.createQuery(
 						"from Transaction "
 						+ "where "
-						+ "(ReceiverAccNumber = :receiverAccNumber "
-						+ "or "
-						+ "SenderAccNumber = :senderAccNumber) "
+						+ "TransactionOwner = :accNumber "
 						+ "and status = 'completed' "
 						+ "and MONTHNAME(updatedAt) = :month "
 						+ "and YEAR(updatedAt) = :year "
 						+ "ORDER BY UpdatedAt ASC")
-				.setParameter("receiverAccNumber", accNumber)
-				.setParameter("senderAccNumber", accNumber)
+				.setParameter("accNumber", accNumber)
 				.setParameter("month", month)
 				.setParameter("year", year)
 				.list();
