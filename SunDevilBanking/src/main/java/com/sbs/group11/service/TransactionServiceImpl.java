@@ -105,11 +105,14 @@ public class TransactionServiceImpl implements TransactionService {
 		if (request.getParameter("type") == null
 			|| request.getParameter("receiverAccNumber") == null
 			|| request.getParameter("senderAccNumber") == null ) {
+			logger.debug("Null checks returned null!");
 			return false;
 		}
 		
 		// get the transfer type
 		if (request.getParameter("type").equalsIgnoreCase("internal")) {
+			logger.debug("Internal Transfer inside valid transfer");
+			
 			Account senderAccount = accountService.getValidAccountByNumber(
 					request.getParameter("senderAccNumber"), senderAccounts);
 			
@@ -127,13 +130,17 @@ public class TransactionServiceImpl implements TransactionService {
 		}
 		
 		// Exit the transaction if Account to be transferred to doesn't exist
+		logger.debug("Receiver account number: " + request
+				.getParameter("receiverAccNumber"));
 		Account receiverAccount = accountService.getAccountByNumber(request
-						.getParameter("receiverAccNumber"));
+						.getParameter("receiverAccNumberExternal"));
 		
-		if( receiverAccount != null ) {
+		if( receiverAccount != null && !receiverAccount.toString().isEmpty() ) {
+			logger.debug("Receiver Account: " + receiverAccount.toString());
 			return true;
 		}		
 		
+		logger.debug("receiverAccount was not returned");
 		return false;
 	}
 

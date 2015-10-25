@@ -178,5 +178,12 @@ public class Account {
 	public LocalDateTime getUpdatedAt() {
 		return updatedAt;
 	}
+
+	@Override
+	public String toString() {
+		return "Account [customerID=" + customerID + ", number=" + number
+				+ ", name=" + name + ", type=" + type + ", balance=" + balance
+				+ ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + "]";
+	}
 	
 }

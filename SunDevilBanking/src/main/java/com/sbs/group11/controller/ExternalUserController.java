@@ -351,26 +351,43 @@ public class ExternalUserController {
 				accountService, transactionService, accounts, accounts,
 				request, model, user, attr);
 		
+		logger.debug("isTransferAccountValid: " + isTransferAccountValid);
 		if (isTransferAccountValid) {
-
+			
 			BigDecimal amount = transactionService.getBigDecimal(request
 					.getParameter("amount"));
+			
+			String receiverAccNumber = "";
+			if (request.getParameter("type").equalsIgnoreCase("internal")) {
+				receiverAccNumber = request.getParameter("receiverAccNumber");
+				logger.info("internal transfer");
+			} else {
+				receiverAccNumber = request.getParameter("receiverAccNumberExternal");
+				logger.info("external transfer");
+			}
+			
+			logger.debug("receiverAccNumber: " + receiverAccNumber);
 	
 			// create the transaction object
 			senderTransaction = new Transaction(
 					transactionService.getUniqueTransactionID(), 
 					"Fund Transfer",
-					request.getParameter("receiverAccNumber"),
+					receiverAccNumber,
 					request.getParameter("senderAccNumber"), 
 					"completed", 
 					"Debit",
-					amount,
+					amount, 
 					request.getParameter("senderAccNumber")
 				);
+			
+			logger.debug("Sender Transaction created: " + senderTransaction);
 	
 			// Validate the model
 			validator.validate(senderTransaction, result);
+			logger.debug("Validated model");
+			
 			if (result.hasErrors()) {
+				logger.debug("Validation errors: ");
 				logger.debug(result);
 	
 				// attributes for validation failures
@@ -382,9 +399,12 @@ public class ExternalUserController {
 				// redirect to the credit debit view page
 				return "redirect:/home/fund-transfer";
 			}
+			
+			logger.debug("No validation errors");
 	
 			// Check if Debit amount is < balance in the account
 			if ( amount.compareTo(account.getBalance()) >= 0) {
+				logger.debug("Debit < Balance");
 				attr.addFlashAttribute(
 						"failureMsg",
 						"Could not process your transaction. Debit amount cannot be higher than account balance");
@@ -394,21 +414,25 @@ public class ExternalUserController {
 			Transaction receiverTransaction = new Transaction(
 					transactionService.getUniqueTransactionID(), 
 					"Fund Transfer",
-					request.getParameter("receiverAccNumber"),
+					receiverAccNumber,
 					request.getParameter("senderAccNumber"), 
 					"completed", 
 					"Credit",
 					amount,
-					request.getParameter("receiverAccNumber")
+					receiverAccNumber
 				);
 			
+			logger.debug("Receiver Transaction created: " + receiverTransaction);
+			
 			try {
+				logger.debug("Trying to transfer funds");
 				accountService.transferFunds(transactionService, accountService, senderTransaction, receiverTransaction, amount);
 			} catch (Exception e) {
 				logger.warn(e);
 				attr.addFlashAttribute(
 						"failureMsg",
 						"Transfer unsucessful. Please try again or contact the bank.");
+				return "redirect:/home/fund-transfer";
 			}
 	
 			attr.addFlashAttribute(
@@ -416,6 +440,8 @@ public class ExternalUserController {
 					"Transaction completed successfully. Transaction should show up on your account shortly.");
 			
 		} 
+		
+		logger.debug("Done successfully");
 
 		// redirect to the view page
 		return "redirect:/home/fund-transfer";
