@@ -318,7 +318,7 @@ public class ExternalUserController {
 
 	@RequestMapping(value = "/fund-transfer", method = RequestMethod.POST)
 	public String postFundTransfer(ModelMap model, HttpServletRequest request,
-			@ModelAttribute("transaction") Transaction transaction,
+			@ModelAttribute("transaction") Transaction senderTransaction,
 			BindingResult result, RedirectAttributes attr) {
 
 		// Get user details
@@ -357,7 +357,7 @@ public class ExternalUserController {
 					.getParameter("amount"));
 	
 			// create the transaction object
-			transaction = new Transaction(
+			senderTransaction = new Transaction(
 					transactionService.getUniqueTransactionID(), 
 					"Fund Transfer",
 					request.getParameter("receiverAccNumber"),
@@ -365,11 +365,11 @@ public class ExternalUserController {
 					"completed", 
 					"Debit",
 					amount,
-					request.getParameter("receiverAccNumber")
+					request.getParameter("senderAccNumber")
 				);
 	
 			// Validate the model
-			validator.validate(transaction, result);
+			validator.validate(senderTransaction, result);
 			if (result.hasErrors()) {
 				logger.debug(result);
 	
@@ -377,7 +377,7 @@ public class ExternalUserController {
 				attr.addFlashAttribute(
 						"org.springframework.validation.BindingResult.transaction",
 						result);
-				attr.addFlashAttribute("transaction", transaction);
+				attr.addFlashAttribute("transaction", senderTransaction);
 	
 				// redirect to the credit debit view page
 				return "redirect:/home/fund-transfer";
@@ -399,11 +399,11 @@ public class ExternalUserController {
 					"completed", 
 					"Credit",
 					amount,
-					request.getParameter("senderAccNumber")
+					request.getParameter("receiverAccNumber")
 				);
 			
 			try {
-				accountService.transferFunds(transactionService, accountService, transaction, receiverTransaction, amount);
+				accountService.transferFunds(transactionService, accountService, senderTransaction, receiverTransaction, amount);
 			} catch (Exception e) {
 				logger.warn(e);
 				attr.addFlashAttribute(

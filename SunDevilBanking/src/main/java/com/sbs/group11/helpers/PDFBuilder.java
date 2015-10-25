@@ -55,7 +55,8 @@ public class PDFBuilder extends AbstractITextPdfView {
 		
 		doc.add(new Paragraph(user.getAddressLine1() + " " + addressLine2));
 		doc.add(new Paragraph(user.getState() + " " + user.getZipCode() ));
-		doc.add(new Paragraph(account.getBalance().toString() ));
+		doc.add(new Paragraph("Balance: " + account.getBalance().toString() ));
+		doc.add(new Paragraph("Acc Number: " + account.getNumber()));
 
 		PdfPTable table = new PdfPTable(5);
 		table.setWidthPercentage(100.0f);
