@@ -16,6 +16,7 @@
 			<li>${user.addressLine1}${user.addressLine2}</li>
 			<li>${user.state} ${user.zipCode}</li>
 			<li><strong>Balance:</strong> $${account.balance}</li>
+			<li><strong>Account Number:</strong> ${account.number}</li>
 		</ul>
 	</div>
 
