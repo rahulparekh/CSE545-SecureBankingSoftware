@@ -348,7 +348,7 @@ public class ExternalUserController {
 		}
 
 		boolean isTransferAccountValid = transactionService.isTransferAccountValid(
-				accountService, transactionService, accounts, accounts,
+				accountService, transactionService, accounts,
 				request, model, user, attr);
 		
 		logger.debug("isTransferAccountValid: " + isTransferAccountValid);
@@ -439,9 +439,11 @@ public class ExternalUserController {
 					"successMsg",
 					"Transaction completed successfully. Transaction should show up on your account shortly.");
 			
-		} 
-		
-		logger.debug("Done successfully");
+		} else {
+			attr.addFlashAttribute(
+					"failureMsg",
+					"Transfer unsucessful. Please try again or contact the bank.");
+		}
 
 		// redirect to the view page
 		return "redirect:/home/fund-transfer";

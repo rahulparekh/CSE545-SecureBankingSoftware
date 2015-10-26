@@ -38,7 +38,7 @@ public interface TransactionService {
 
 	boolean isTransferAccountValid(AccountService accountService,
 			TransactionService transactionService,
-			List<Account> receiverAccounts, List<Account> senderAccounts,
+			List<Account> senderAccounts,
 			HttpServletRequest request,
 			ModelMap model, User user, RedirectAttributes attr);
 
