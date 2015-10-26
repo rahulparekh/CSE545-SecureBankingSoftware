@@ -491,6 +491,11 @@ public class ExternalUserController {
 		model.put("user", user);
 		model.addAttribute("title", "Payment Requests");
 		
+		// get all the pending requests
+		
+		
+		// add them to the model to be displayed
+		
 		return "customer/customerpaymentrequests";
 		 
 	}

@@ -15,8 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.sbs.group11.dao.PaymentRequestDao;
 import com.sbs.group11.dao.TransactionDao;
 import com.sbs.group11.model.Account;
+import com.sbs.group11.model.PaymentRequest;
 import com.sbs.group11.model.StatementMonthYear;
 import com.sbs.group11.model.Transaction;
 import com.sbs.group11.model.User;
@@ -28,6 +30,9 @@ public class TransactionServiceImpl implements TransactionService {
 
 	@Autowired
 	private TransactionDao dao;
+	
+	@Autowired
+	private PaymentRequestDao paymentRequestDao;
 
 	public void addTransaction(Transaction transaction) {
 		dao.addTransaction(transaction);
@@ -165,6 +170,26 @@ public class TransactionServiceImpl implements TransactionService {
 		
 		logger.debug("receiverAccount was not returned");
 		return false;
+	}
+
+	public void initiatePayment(PaymentRequest paymentRequest) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void acceptPayment(PaymentRequest paymentRequest) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void completePayment(PaymentRequest paymentRequest) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public List<PaymentRequest> getPaymentsByAccNumber(String accNumber) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
