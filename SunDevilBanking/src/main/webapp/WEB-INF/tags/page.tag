@@ -55,14 +55,22 @@
 						class="${fn:endsWith(pageContext.request.requestURI, 'creditdebit.jsp') ? 'active':''}"><a
 						href="${pageContext.servletContext.contextPath}/home/credit-debit">Credit/Debit</a></li>
 					<li class="${fn:endsWith(pageContext.request.requestURI, 'fundtransfer.jsp') ? 'active':''}"><a
-						href="${pageContext.servletContext.contextPath}/home/fund-transfer">Fund Transfer</a></li>
-					<sec:authorize access="hasRole('ROLE_CUSTOMER')">
+						href="${pageContext.servletContext.contextPath}/home/fund-transfer">Fund Transfer</a></li>					
+					<sec:authorize access="hasRole('ROLE_CUSTOMER')">						
 					<li class="${fn:endsWith(pageContext.request.requestURI, 'customerpayments.jsp') ? 'active':''}"><a
+						href="${pageContext.servletContext.contextPath}/home/payments">Payments</a></li>
+					</sec:authorize>					
+					<sec:authorize access="hasRole('ROLE_CUSTOMER')">						
+					<li class="${fn:endsWith(pageContext.request.requestURI, 'customerpaymentrequests.jsp') ? 'active':''}"><a
 						href="${pageContext.servletContext.contextPath}/home/payment-requests">Payment Requests</a></li>
 					</sec:authorize>
-					<sec:authorize access="hasRole('ROLE_MERCHANT')">						
+					<sec:authorize access="hasRole('ROLE_MERCHANT')">
 					<li class="${fn:endsWith(pageContext.request.requestURI, 'merchantpayments.jsp') ? 'active':''}"><a
-						href="${pageContext.servletContext.contextPath}/home/payments">Payments</a></li>
+						href="${pageContext.servletContext.contextPath}/home/merchant-payments">Merchant Payments</a></li>
+					</sec:authorize>
+					<sec:authorize access="hasRole('ROLE_MERCHANT')">
+					<li class="${fn:endsWith(pageContext.request.requestURI, 'merchantpaymentrequests.jsp') ? 'active':''}"><a
+						href="${pageContext.servletContext.contextPath}/home/merchant-payment-requests">Merchant Payment Requests</a></li>
 					</sec:authorize>
 					<li class="${fn:endsWith(pageContext.request.requestURI, 'statements.jsp') ? 'active':''}"><a
 						href="${pageContext.servletContext.contextPath}/home/statements">Statements</a></li>

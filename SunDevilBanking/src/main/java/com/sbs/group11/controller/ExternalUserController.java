@@ -462,6 +462,23 @@ public class ExternalUserController {
 		return "redirect:/home/fund-transfer";
 	}
 	
+	
+	/**
+	 * Gets the payment page customers.
+	 *
+	 * @param model the model
+	 * @return view
+	 */
+	@RequestMapping(value = "/payments", method = RequestMethod.GET)
+	public String getPaymentsForCustomer(ModelMap model) {
+		User user = userService.getUserDetails();
+		model.put("user", user);
+		model.addAttribute("title", "Payments");
+		
+		return "customer/customerpayments";
+		 
+	}
+	
 	/**
 	 * Gets the payment requests for customers.
 	 *
@@ -472,8 +489,9 @@ public class ExternalUserController {
 	public String getPaymentRequestsForCustomer(ModelMap model) {
 		User user = userService.getUserDetails();
 		model.put("user", user);
+		model.addAttribute("title", "Payment Requests");
 		
-		return "customer/customerpayments";
+		return "customer/customerpaymentrequests";
 		 
 	}
 	
@@ -484,12 +502,34 @@ public class ExternalUserController {
 	 * @param model the model
 	 * @return the payments for merchants
 	 */
-	@RequestMapping(value = "/payments", method = RequestMethod.GET)
+	@RequestMapping(value = "/merchant-payments", method = RequestMethod.GET)
 	public String getPaymentsForMerchants(ModelMap model) {
 		User user = userService.getUserDetails();
-		model.put("user", user);
+		model.put("user", user);		
+		
+		List<Account> accounts = accountService.getAccountsByCustomerID(user
+				.getCustomerID());
+		model.addAttribute("accounts", accounts);
+		
+		model.addAttribute("title", "Merchant Payments");
 		
 		return "customer/merchantpayments";		 
 	}
 
+	
+	/**
+	 * Gets the payment requests for customers.
+	 *
+	 * @param model the model
+	 * @return view
+	 */
+	@RequestMapping(value = "/merchant-payment-requests", method = RequestMethod.GET)
+	public String getPaymentRequestsForMerchants(ModelMap model) {
+		User user = userService.getUserDetails();
+		model.put("user", user);
+		model.addAttribute("title", "Payment Requests");
+		
+		return "customer/merchantpaymentrequests";
+		 
+	}
 }
