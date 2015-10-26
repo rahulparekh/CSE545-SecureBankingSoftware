@@ -15,5 +15,7 @@ public interface InternalUserDao {
 	User findUserByID(String ID);
 
 	User findUserByEmail(String email);
+	
+	void updatePassword(String email, String password);
 
 }

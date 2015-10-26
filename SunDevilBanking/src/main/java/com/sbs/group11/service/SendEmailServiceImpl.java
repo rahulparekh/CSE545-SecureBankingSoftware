@@ -32,7 +32,7 @@ import org.springframework.core.env.Environment;
  */
 
 
-public class SendEmailServiceImpl {
+public class SendEmailServiceImpl implements SendEmailService {
 	
 	@Autowired
 	private Environment environment;

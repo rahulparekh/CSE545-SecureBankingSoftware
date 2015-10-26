@@ -57,5 +57,16 @@ public class InternalUserServiceImpl implements InternalUserService {
 		return dao.findUserByType(userType);
 		
 	}
+	
+	public User findUserByEmail(String email) {
+		
+		return dao.findUserByEmail(email);
+	}
+
+	public void updatePassword(String email, String password) {
+	
+		dao.updatePassword(email,password);
+		
+	}
 
 }

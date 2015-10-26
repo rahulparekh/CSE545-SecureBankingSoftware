@@ -7,4 +7,6 @@ public interface InternalUserService {
 	User searchInternalUser(String EmployeeID);
 	User searchInternalUserByType(String userType);
 	void updateInternalUser(User user);
-}
+	User findUserByEmail(String email);
+	void updatePassword(String email,String password);
+} 
