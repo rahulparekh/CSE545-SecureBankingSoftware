@@ -36,7 +36,7 @@ public class Account {
 	@Column(name = "Number", nullable = false, length = 17, unique = true)
 	private String number;
 	
-	/** The name. */
+	/** The name of the account. EG: Sun Devil Checking Account */
 	@NotNull
 	@Size(min = 5, max = 100)
 	@Column(name = "Name", nullable = false, length = 100)

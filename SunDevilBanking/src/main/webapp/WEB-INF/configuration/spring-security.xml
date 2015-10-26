@@ -19,7 +19,11 @@
 		<csrf />
 
 		<!-- Interception rules as per roles -->
-		<intercept-url pattern="/home/**" access="hasAnyRole('ROLE_CUSTOMER')" />
+		<intercept-url pattern="/home/payment-requests" access="hasRole('ROLE_CUSTOMER')" />
+		<intercept-url pattern="/home/payments" access="hasRole('ROLE_CUSTOMER')" />
+		<intercept-url pattern="/home/merchant-payment-requests" access="hasRole('ROLE_MERCHANT')" />
+		<intercept-url pattern="/home/merchant-payments" access="hasRole('ROLE_MERCHANT')" />
+		<intercept-url pattern="/home/**" access="hasAnyRole('ROLE_CUSTOMER,ROLE_MERCHANT')" />
 	</http>
 
 	<authentication-manager>

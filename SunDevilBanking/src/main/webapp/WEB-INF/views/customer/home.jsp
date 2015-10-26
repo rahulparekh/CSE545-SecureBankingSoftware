@@ -6,7 +6,7 @@
 <t:page>
 
 	<div class="page-header">
-		<h1>SBS HOME - Welcome ${fn:escapeXml(fullname)}</h1>
+		<h1>Welcome ${fn:escapeXml(fullname)}</h1>
 	</div>
 
 	<h2>Accounts:</h2>
