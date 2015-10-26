@@ -453,7 +453,7 @@ public class User {
 	 *
 	 * @return the customer type
 	 */
-	public String getuserType() {
+	public String getUserType() {
 		return userType;
 	}
 
@@ -463,7 +463,7 @@ public class User {
 	 * @param userType
 	 *            the new customer type
 	 */
-	public void setuserType(String userType) {
+	public void setUserType(String userType) {
 		this.userType = userType;
 	}
 

@@ -31,7 +31,7 @@ public class InternalUserDaoImpl extends AbstractDao<Integer, User> implements I
 			current_user.setPhone(user.getPhone());
 			current_user.setZipCode(user.getZipCode());
 			current_user.setState(user.getState());
-			current_user.setuserType(user.getuserType());
+			current_user.setUserType(user.getUserType());
 			current_user.setUpdatedAt(LocalDateTime.now());
 		}
 	}

@@ -80,6 +80,7 @@ public class ExternalUserController {
 	@RequestMapping(value = "/credit-debit", method = RequestMethod.GET)
 	public String getCreditDebit(ModelMap model) {
 		User user = userService.getUserDetails();
+		model.put("user", user);
 		List<Account> accounts = accountService.getAccountsByCustomerID(user
 				.getCustomerID());
 		model.addAttribute("title", "Welcome " + user.getFirstName());
@@ -111,6 +112,7 @@ public class ExternalUserController {
 
 		// Get user details
 		User user = userService.getUserDetails();
+		model.put("user", user);
 
 		// Get user accounts and other data for display
 		List<Account> accounts = accountService.getAccountsByCustomerID(user
@@ -187,6 +189,8 @@ public class ExternalUserController {
 	@RequestMapping(value = "/statements", method = RequestMethod.GET)
 	public String getStatements(ModelMap model, HttpServletRequest request) {
 		User user = userService.getUserDetails();
+		model.put("user", user);
+		
 		List<Account> accounts = accountService.getAccountsByCustomerID(user
 				.getCustomerID());
 		model.addAttribute("title", "Account Statements");
@@ -199,6 +203,8 @@ public class ExternalUserController {
 	public String postStatements(ModelMap model, HttpServletRequest request,
 			RedirectAttributes attr) {
 		User user = userService.getUserDetails();
+		model.put("user", user);
+		
 		List<Account> accounts = accountService.getAccountsByCustomerID(user
 				.getCustomerID());
 		model.addAttribute("title", "Account Statements " + user.getFirstName());
@@ -235,6 +241,8 @@ public class ExternalUserController {
 			RedirectAttributes attr) {
 
 		User user = userService.getUserDetails();
+		model.put("user", user);
+		
 		List<Account> accounts = accountService.getAccountsByCustomerID(user
 				.getCustomerID());
 
@@ -272,6 +280,8 @@ public class ExternalUserController {
 			HttpServletRequest request, RedirectAttributes attr) {
 
 		User user = userService.getUserDetails();
+		model.put("user", user);
+		
 		List<Account> accounts = accountService.getAccountsByCustomerID(user
 				.getCustomerID());
 
@@ -307,6 +317,8 @@ public class ExternalUserController {
 	@RequestMapping(value = "/fund-transfer", method = RequestMethod.GET)
 	public String getFundTransfer(ModelMap model) {
 		User user = userService.getUserDetails();
+		model.put("user", user);
+		
 		List<Account> accounts = accountService.getAccountsByCustomerID(user
 				.getCustomerID());
 		model.addAttribute("title", "Welcome " + user.getFirstName());
@@ -323,7 +335,8 @@ public class ExternalUserController {
 
 		// Get user details
 		User user = userService.getUserDetails();
-
+		model.put("user", user);
+		
 		// Get user accounts and other data for display
 		List<Account> accounts = accountService.getAccountsByCustomerID(user
 				.getCustomerID());
@@ -445,6 +458,36 @@ public class ExternalUserController {
 
 		// redirect to the view page
 		return "redirect:/home/fund-transfer";
+	}
+	
+	/**
+	 * Gets the payment requests for customers.
+	 *
+	 * @param model the model
+	 * @return view
+	 */
+	@RequestMapping(value = "/payment-requests", method = RequestMethod.GET)
+	public String getPaymentRequestsForCustomer(ModelMap model) {
+		User user = userService.getUserDetails();
+		model.put("user", user);
+		
+		return "customer/customerpayments";
+		 
+	}
+	
+	
+	/**
+	 * Gets the payments for merchants.
+	 *
+	 * @param model the model
+	 * @return the payments for merchants
+	 */
+	@RequestMapping(value = "/payments", method = RequestMethod.GET)
+	public String getPaymentsForMerchants(ModelMap model) {
+		User user = userService.getUserDetails();
+		model.put("user", user);
+		
+		return "customer/merchantpayments";		 
 	}
 
 }
