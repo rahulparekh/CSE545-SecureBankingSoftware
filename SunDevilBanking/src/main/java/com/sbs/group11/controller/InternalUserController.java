@@ -98,7 +98,7 @@ public class InternalUserController {
 			@ModelAttribute("user") User user,BindingResult result) {
 		
 		System.out.println("id is "+user.getCustomerID());
-		user.setuserType("admin");
+		user.setUserType("admin");
 		internalUserService.updateInternalUser(user);
 		return "redirect:/sysadmin-home";
 	}
