@@ -42,7 +42,7 @@ public class Account {
 	@Column(name = "Name", nullable = false, length = 100)
 	private String name;
 	
-	/** The type. */
+	/** The type. 0 is for Checking account and 1 is for Savings. */
 	@NotNull
 	@Digits(integer = 1, fraction = 0)
 	@Column(name = "Type", nullable = false, columnDefinition = "int(1) DEFAULT '0'")
