@@ -1,12 +1,16 @@
 package com.sbs.group11.dao;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Repository;
 
 import com.sbs.group11.model.Account;
+import com.sbs.group11.model.Transaction;
 
 @Repository("accountDao")
 public class AccountDaoImpl extends AbstractDao<Integer, Account> implements
@@ -34,6 +38,60 @@ public class AccountDaoImpl extends AbstractDao<Integer, Account> implements
 		account = (Account) getSession().get(Account.class, accNumber);
 
 		return account;
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public BigDecimal getBalance(String accNumber){
+		
+		
+		List<Account> accountlist = getSession()
+				.createQuery("from Account where Number = :accNumber")
+				.setParameter("accNumber", accNumber).list();
+		
+		Account account = null;
+		
+		if (accountlist.size() > 0) {
+			account = accountlist.get(0);
+		} else {
+			return null;
+		}		
+			
+		return account.getBalance();
+	}
+	public boolean creditorDebit(Transaction transaction){
+		
+		if(transaction==null) return false;
+				
+		
+		Account senderAcc = findByAccountNumber(transaction.getSenderAccNumber());
+		Account recieverAcc = findByAccountNumber(transaction.getReceiverAccNumber());
+		String type = transaction.getType();
+		BigDecimal amount = transaction.getAmount();
+		BigDecimal zero = new BigDecimal("" + 0);
+		LocalDateTime now = LocalDateTime.now();
+        
+		System.out.println("amount.compare: "+amount.compareTo(zero) + " amount:balance "+amount.compareTo(senderAcc.getBalance()));
+		
+		if(amount.compareTo(zero)==1 && senderAcc.getBalance().compareTo(amount)==1){
+			System.out.println("Inside Account updation");
+			senderAcc.setBalance(senderAcc.getBalance().subtract(amount));
+			senderAcc.setUpdatedAt(now);
+			recieverAcc.setBalance(recieverAcc.getBalance().add(amount));
+			recieverAcc.setUpdatedAt(now);
+			getSession().update(senderAcc);
+			getSession().update(recieverAcc);
+			return true;
+			
+		}
+		else{
+			
+			
+			return false;
+			
+		}
+		
+		// Don't know why type is required
 		
 	}
 }

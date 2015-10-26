@@ -47,6 +47,21 @@ public class AccountServiceImpl implements AccountService {
 	public Account getAccountByNumber(String accNumber) {
 		return dao.findByAccountNumber(accNumber);
 	}
+	
+	
+	public boolean creditorDebit(Transaction transaction){
+		
+		return dao.creditorDebit(transaction);
+	}
+	
+	
+	public BigDecimal getBalance(String accNumber){
+		
+		return dao.getBalance(accNumber);
+	}
+
+	
+	
 
 	public void transferFunds(TransactionService transactionService,
 			AccountService accountService, Transaction senderTransaction,

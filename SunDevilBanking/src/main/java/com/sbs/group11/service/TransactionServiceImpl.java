@@ -71,16 +71,28 @@ public class TransactionServiceImpl implements TransactionService {
 		
 	}
 	
-	public void approveTransaction(Transaction transaction){
+	public List<Transaction> getPendingCriticalTransaction(){
 		
-		String approved="3";
-		transaction.setStatus(approved);
-		// TODO: call Dao for approving
+		return dao.getPendingCriticalTransactions();
+	}
+	
+	public boolean approveTransaction(String transactionID){
+		
+		Transaction transaction = getTransaction(transactionID);
+		return dao.approveTransaction(transaction);
+		
 		
 		
 	}
 	
-	public void deleteTransaction(Transaction transaction){
+	public void declineTransaction(String transactionID){
+		
+		String status="declined";
+		Transaction transaction = getTransaction(transactionID);
+		transaction.setStatus(status);
+		dao.declineTransaction(transaction);
+		
+		
 		
 	}
 	

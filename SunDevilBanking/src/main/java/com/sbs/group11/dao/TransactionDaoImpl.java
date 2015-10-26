@@ -1,21 +1,35 @@
 package com.sbs.group11.dao;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.log4j.Logger;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.sbs.group11.model.StatementMonthYear;
 import com.sbs.group11.model.Transaction;
+import com.sbs.group11.service.AccountService;
 
 @Repository("transactionDaoImpl")
 public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implements TransactionDao {
 	
+	@Autowired
+    public AccountService accountService;
+	
 	final static Logger logger = Logger.getLogger(UserDaoImpl.class);
 
 	public void addTransaction(Transaction transaction) {
+		
+		if(isCriticalTransaction(transaction)){
+			
+			transaction.setIsCritical("Yes");
+		}
+		else{
+			transaction.setIsCritical("No");
+		}
+		
 		getSession().save(transaction);
 	}
 
@@ -84,7 +98,6 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 	@SuppressWarnings("unchecked")
 	public Transaction getTransactionByID(String transactionID){
 		
-		System.out.print("Inside gettransaction");
 		List<Transaction> transactions = new ArrayList<Transaction>();		
 		transactions = getSession()
 				.createQuery("from Transaction where TransactionID = :transactionID")
@@ -100,12 +113,12 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 	@SuppressWarnings("unchecked")
 	public List<Transaction> getPendingTransactions(){
 		
-		String pending_status="2";
-		System.out.print("Inside gettransaction");
+		String isCriticalValue = "No";
+		String pending_status="pending";
 		List<Transaction> transactions = new ArrayList<Transaction>();		
 		transactions = getSession()
-				.createQuery("from Transaction where status = :pending_status")
-				.setParameter("pending_status", pending_status)
+				.createQuery("from Transaction where status = :pending_status and isCritical = :isCriticalValue")
+				.setParameter("pending_status", pending_status).setParameter("isCriticalValue",isCriticalValue)
 				.list();
 		if (transactions.size() > 0) {
 			return transactions;
@@ -115,10 +128,72 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 	}
 	
 	
-    public void approveTransaction(Transaction transaction){
+	
+	@SuppressWarnings("unchecked")
+	public boolean isTransactionPending(String transactionID){
+		
+	   
+	   List<Transaction> status = getSession().
+			         createQuery("from Transaction where TransactionID = :transactionID")
+				     .setParameter("transactionID", transactionID)
+				     .list();
+	   
+	   if (status.size() > 0) {
+			
+		   if(status.get(0).getStatus().equals("pending")){
+			   
+			   
+			   
+			   return true;
+			   
+		   }
+		   else{
+			   return false;
+		   }
+		   
+		} else {
+			return false;
+		}
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Transaction> getPendingCriticalTransactions(){
+		
+		String isCriticalValue = "Yes";
+		String pending_status="pending";
+		System.out.print("Inside gettransaction");
+		List<Transaction> transactions = new ArrayList<Transaction>();		
+		transactions = getSession()
+				.createQuery("from Transaction where status = :pending_status and isCritical = :isCriticalValue")
+				.setParameter("pending_status", pending_status).setParameter("isCriticalValue",isCriticalValue)
+				.list();
+		if (transactions.size() > 0) {
+			return transactions;
+		} else {
+			return null;
+		}		
+	}
+	
+	
+    public boolean approveTransaction(Transaction transaction){
     	
-		    getSession().update(transaction);
+		  
     	
+    	if(!isTransactionPending(transaction.getTransactionID())) return false; 
+    	
+		    boolean result = accountService.creditorDebit(transaction);
+		    if(result){
+		    	transaction.setStatus("approved");
+		    	 getSession().update(transaction);
+		    	 return result;
+		    	 
+		    }
+		    else{
+		    	transaction.setStatus("pending");
+		    	getSession().update(transaction);
+		    	return result;
+		    }
     	
     }
 	
@@ -133,10 +208,22 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 		
 	}
 	
-
-	public void  deleteTransaction(Transaction transaction){
+	public boolean isCriticalTransaction(Transaction transaction){
 		
-		getSession().delete(transaction);
+		BigDecimal amount = transaction.getAmount();
+		BigDecimal critical_amount = new BigDecimal(500.00);
+		
+		if(amount.compareTo(critical_amount)==1)
+			return true;
+		else
+			return false;
+	}
+	
+
+	public void  declineTransaction(Transaction transaction){
+		
+		transaction.setStatus("declined");
+		getSession().update(transaction);
 	}
 
 }

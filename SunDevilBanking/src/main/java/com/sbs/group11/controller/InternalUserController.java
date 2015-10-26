@@ -1,8 +1,11 @@
 package com.sbs.group11.controller;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,11 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.sbs.group11.model.EmployeeSearch;
-import com.sbs.group11.model.SystemLog;
-import com.sbs.group11.model.Transaction;
-import com.sbs.group11.model.TransactionSearch;
-import com.sbs.group11.model.User;
+import com.sbs.group11.model.*;
 import com.sbs.group11.service.InternalUserService;
 import com.sbs.group11.service.SystemLogService;
 import com.sbs.group11.service.TransactionService;
@@ -51,6 +50,11 @@ public class InternalUserController {
 	@ModelAttribute("transactionSearch")
 	public TransactionSearch getTransactionObject(){
 		return new TransactionSearch();
+	}
+	
+	@ModelAttribute("ModificationTransaction")
+	public  ModificationTransaction getModificationTransaction(){
+		return new ModificationTransaction();
 	}
 
 	@RequestMapping(value = "/manage-employee", method = RequestMethod.GET)
@@ -127,12 +131,97 @@ public class InternalUserController {
 	public String getPendingTransactions(ModelMap model){
 		
 		List<Transaction> pendingTransaction = transactionService.getPendingTransactions();
-		System.out.println("Pending Transaction" + pendingTransaction.get(0).getTransactionID());
+		//System.out.println("Pending Transaction" + pendingTransaction.get(0).getTransactionID());
 		model.addAttribute("pendingTransaction", pendingTransaction);
 		return "employee/int_employee_pending_transaction";
-		
+
 	}
 	
+	@RequestMapping(value = "/approve", method = RequestMethod.POST)
+	public String TransactionApprove( ModelMap model,
+			  HttpServletRequest request, RedirectAttributes attr) {
+	    
+		boolean result = transactionService.approveTransaction(request.getParameter("transactionID"));
+		
+		System.out.print(result);
+		if(!result){
+		attr.addFlashAttribute(
+				"failureMsg",
+				"Could not process your transaction. Debit amount cannot be higher than account balance. Please decline this transaction");
+		}
+		
+		return "redirect:/internalemployee-pendingtransaction";
+		
+			
+	}
+	
+	@RequestMapping(value = "/decline", method = RequestMethod.POST)
+	public String TransactionDecline( ModelMap model,
+			  HttpServletRequest request) {
+	    
+		transactionService.declineTransaction(request.getParameter("transactionID"));
+		
+		return "redirect:/internalemployee-pendingtransaction";
+			
+	}
+	
+	@RequestMapping(value = "/internalemployee-pending-critical-transaction", method = RequestMethod.GET)
+	public String getPendingCriticalTransactions(ModelMap model){
+		
+		List<Transaction> pendingTransaction = transactionService.getPendingCriticalTransaction();
+		model.addAttribute("pendingCriticalTransaction", pendingTransaction);
+		return "employee/int_employee_pending_critical_transaction";
+
+	}
+	
+	@RequestMapping(value = "/critical-approve", method = RequestMethod.POST)
+	public String CriticalTransactionApprove( ModelMap model,
+			  HttpServletRequest request, RedirectAttributes attr) {
+	    
+		boolean result = transactionService.approveTransaction(request.getParameter("transactionID"));
+		
+		System.out.print(result);
+		if(!result){
+		attr.addFlashAttribute(
+				"failureMsg",
+				"Could not process your transaction. Debit amount cannot be higher than account balance. Please decline this transaction");
+		}
+		
+		return "redirect:/internalemployee-pending-critical-transaction";
+		
+			
+	}
+	
+	@RequestMapping(value = "/critical-decline", method = RequestMethod.POST)
+	public String CriticalTransactionDecline( ModelMap model,
+			  HttpServletRequest request) {
+	    
+		transactionService.declineTransaction(request.getParameter("transactionID"));
+		
+		return "redirect:/internalemployee-pending-critical-transaction";
+			
+	}
+	
+	
+	@RequestMapping(value = "/modify", method = RequestMethod.POST)
+	public String ModifyTransactions( ModelMap model,
+			  HttpServletRequest request) {
+		
+		ModificationTransaction modificationTransaction = getModificationTransaction();
+		modificationTransaction.setAmount(request.getParameter("amount"));
+		modificationTransaction.setSenderAccNumber(request.getParameter("senderAccNumber"));
+		modificationTransaction.setRecieverAccNumber(request.getParameter("receiverAccNumber"));
+		model.addAttribute("modificationTransaction", modificationTransaction);
+		
+		
+		return "employee/int_employee_modify_transaction";
+	
+   }
+
+
+
+
+
 	@RequestMapping(value = "/systemLog-sys-admin", method = RequestMethod.GET)
 	public String getAllLogs(ModelMap model){
 		

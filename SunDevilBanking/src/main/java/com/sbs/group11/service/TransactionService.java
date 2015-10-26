@@ -30,10 +30,12 @@ public interface TransactionService {
 
 	List<Transaction> getPendingTransactions();
 
-	void approveTransaction(Transaction transaction);
-
-	void deleteTransaction(Transaction transaction);
-
+	public List<Transaction> getPendingCriticalTransaction();
+	
+	boolean approveTransaction(String transactionID);
+	
+	void declineTransaction(String transactionID);
+	
 	void modifyTransaction(Transaction transaction);
 
 	boolean isTransferAccountValid(AccountService accountService,

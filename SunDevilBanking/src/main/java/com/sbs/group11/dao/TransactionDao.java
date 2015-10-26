@@ -11,15 +11,19 @@ public interface TransactionDao {
 	
 	boolean isUniqueTransactionID(String transactionID);
 	
+	boolean isCriticalTransaction(Transaction transaction);
+	
 	Transaction getTransactionByID(String transactionID);
 	
 	List<Transaction> getPendingTransactions();
 	
-	void approveTransaction(Transaction transaction);
+	public List<Transaction> getPendingCriticalTransactions();
+	
+	boolean approveTransaction(Transaction transaction);
 	
 	void modifyTransaction(Transaction transaction);
 	
-	void deleteTransaction(Transaction transaction);
+	void declineTransaction(Transaction transaction);
 	
 	List<StatementMonthYear> getStatementMonths(String accNumber);
 	

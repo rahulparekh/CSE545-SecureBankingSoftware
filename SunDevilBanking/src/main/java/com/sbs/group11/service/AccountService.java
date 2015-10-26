@@ -13,6 +13,10 @@ public interface AccountService {
 
 	Account getValidAccountByNumber(String accNumber, List<Account> accounts);
 
+	public boolean creditorDebit(Transaction transaction);  
+	
+	public BigDecimal getBalance(String accNumber);
+	
 	void transferFunds(TransactionService transactionService,
 			AccountService accountService, Transaction senderTransaction,
 			Transaction receiverTransaction, BigDecimal amount);

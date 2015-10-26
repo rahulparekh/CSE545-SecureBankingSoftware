@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html lang="en">
@@ -71,16 +73,32 @@
             </thead>
             <tbody>
         	  <c:forEach var="transaction" items="${pendingTransaction}" varStatus="loopCounter">
+        	   
               <tr>
                 <td>${transaction.senderAccNumber}</td>
 				<td>${transaction.receiverAccNumber}</td>
 				<td>${transaction.transactionID}</td>
 				<td>${transaction.amount}</td>
 				<td>${transaction.createdAt}</td>
-                <td><button type="button" class="btn btn-success">Approve</button></td>
-				<td><button type="button" class="btn btn-danger">Decline</button></td>
+				<form:form method="POST" action="approve" >
+				<input type="hidden" name="transactionID" value="${transaction.transactionID}"></input>
+				<td><button type="submit" class="btn btn-success" name>Approve</button></td>
+				</form:form>
+				<form:form method="POST" action="decline">
+				<input type="hidden" name="transactionID" value="${transaction.transactionID}"></input>
+				<td><button type="submit" class="btn btn-danger">Decline</button></td>
+				</form:form>
+				<form:form method="POST" action="modify">
+				<input type="hidden" name="transactionID" value="${transaction.transactionID}"></input>
+				<input type="hidden" name="senderAccNumber" value="${transaction.senderAccNumber}"></input>
+				<input type="hidden" name="receiverAccNumber" value="${transaction.receiverAccNumber}"></input>
+				<input type="hidden" name="amount" value="${transaction.amount}"></input>
+				<td><button type="submit" class="btn btn-primary">Modify</button></td>
+				</form:form>
               </tr>
+              
              </c:forEach>
+             
             </tbody>
           </table>
           

@@ -66,6 +66,10 @@ public class Account {
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
 	private LocalDateTime updatedAt;
 
+	public void setUpdatedAt(LocalDateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
 	/**
 	 * Gets the customer id.
 	 *

@@ -66,7 +66,7 @@ public class Transaction {
 	/** The transaction id. */
 	@Id
 	@NotEmpty
-	@Size(min = 17, max = 17)
+	@Size(min = 1, max = 17)
 	@Column(name = "TransactionID", nullable = false, length = 17, unique = true)
 	private String transactionID;
 	
@@ -78,13 +78,13 @@ public class Transaction {
 
 	/** The receiver account number. */
 	@NotEmpty
-	@Size(min = 17, max = 17)
+	@Size(min = 1, max = 17)
 	@Column(name = "ReceiverAccNumber", nullable = false, length = 17)
 	private String receiverAccNumber;
 
 	/** The sender acc number. */
 	@NotEmpty
-	@Size(min = 17, max = 17)
+	@Size(min = 1, max = 17)
 	@Column(name = "SenderAccNumber", nullable = false, length = 17)
 	private String senderAccNumber;
 
@@ -113,10 +113,23 @@ public class Transaction {
 	private BigDecimal balance;
 	
 	/** The transaction owner */
-	@NotEmpty
-	@Size(min = 17, max = 17)
+	
+	@Size(min = 0, max = 17)
 	@Column(name = "TransactionOwner", nullable = false, length = 17)
 	private String transactionOwner;
+	
+		@NotEmpty
+	@Size(min = 0, max = 10)
+	@Column(name = "isCritical", nullable = false, length = 6)
+	private String isCritical;
+
+	public String getIsCritical() {
+		return isCritical;
+	}
+
+	public void setIsCritical(String isCritical) {
+		this.isCritical = isCritical;
+	}
 
 	/** The created at. */
 	@NotNull
