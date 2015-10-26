@@ -97,8 +97,7 @@ public class TransactionServiceImpl implements TransactionService {
 	}
 
 	public boolean isTransferAccountValid(AccountService accountService,
-			TransactionService transactionService,
-			List<Account> receiverAccounts, List<Account> senderAccounts,
+			TransactionService transactionService, List<Account> accounts,
 			HttpServletRequest request, ModelMap model, User user, RedirectAttributes attr) {
 		
 		// null pointer checks
@@ -109,14 +108,18 @@ public class TransactionServiceImpl implements TransactionService {
 			return false;
 		}
 		
+		
 		// get the transfer type
 		if (request.getParameter("type").equalsIgnoreCase("internal")) {
 			logger.debug("Internal Transfer inside valid transfer");
 			
-			Account senderAccount = accountService.getValidAccountByNumber(
-					request.getParameter("senderAccNumber"), senderAccounts);
+			logger.debug("Receiver account number: " + request
+					.getParameter("receiverAccNumber"));
+			Account receiverAccount = accountService.getAccountByNumber(request
+							.getParameter("receiverAccNumber"));
 			
-			if (senderAccount == null) {
+			
+			if (receiverAccount == null) {
 				logger.warn("Someone tried fund transfer functionality for some other account. Details:");
 				logger.warn("Credit/Debit Acc No: "
 						+ request.getParameter("senderAccNumber"));
@@ -130,13 +133,21 @@ public class TransactionServiceImpl implements TransactionService {
 		}
 		
 		// Exit the transaction if Account to be transferred to doesn't exist
-		logger.debug("Receiver account number: " + request
-				.getParameter("receiverAccNumber"));
-		Account receiverAccount = accountService.getAccountByNumber(request
-						.getParameter("receiverAccNumberExternal"));
+		Account receiverAccountExt = accountService.getAccountByNumber(
+				request.getParameter("receiverAccNumberExternal"));
 		
-		if( receiverAccount != null && !receiverAccount.toString().isEmpty() ) {
-			logger.debug("Receiver Account: " + receiverAccount.toString());
+		if( receiverAccountExt != null 
+				&& !receiverAccountExt.toString().isEmpty() ) {
+			
+			// Check if the external account belongs to the current user
+			// Then external transfer doesnt apply at all
+			for(Account userAccount : accounts) {
+				if( userAccount.getNumber().equals(receiverAccountExt.getNumber())) {
+					return false;
+				}
+			}
+			
+			logger.debug("Receiver Account: " + receiverAccountExt.toString());
 			return true;
 		}		
 		
