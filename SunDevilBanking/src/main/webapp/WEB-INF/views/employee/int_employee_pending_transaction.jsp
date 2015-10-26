@@ -41,13 +41,12 @@
         <div class="col-sm-3 col-md-2 sidebar">
 
           <ul class="nav nav-sidebar">
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Pending Transactions</a></li>
-            <li><a href="#">Add Transactions</a></li>
-            <li><a href="#">Request Manager</a></li>
-            <li><a href="#">Request Admin</a></li>
-            <li><a href="#">Settings</a></li>
-            <li><a href="#">Logout</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/int-employee-home">Home</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/">Add Transaction</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/">Pending Transactions</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/int-employee-customer-search">View-Edit-Delete Users</a></li>
+			<li><a href="${pageContext.servletContext.contextPath}/">Settings</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
           </ul>
           
         </div> <!-- sidebar -->

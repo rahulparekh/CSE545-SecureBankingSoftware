@@ -1,9 +1,12 @@
-<%@page language="java" contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,7 +15,7 @@
     <meta name="author" content="">
     <link rel="icon" href="${pageContext.servletContext.contextPath}/static/favicon.ico">
 
-    <title>SBS Internal Employee Home - Group 11</title>
+    <title>SBS Pending Requests- Group 11</title>
 
     <!-- Bootstrap core CSS -->
     <link href="${pageContext.servletContext.contextPath}/static/css/bootstrap.min.css" rel="stylesheet">
@@ -38,10 +41,12 @@
         <div class="col-sm-3 col-md-2 sidebar">
 
           <ul class="nav nav-sidebar">
-            <li><a href="${pageContext.servletContext.contextPath}/int-employee-home">Home</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/">Add Transaction</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/manager-home">Home</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/">Pending Transactions</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/int-employee-customer-search">View-Edit-Delete Users</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/">Critical Transactions</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/manage-customer">Add Users</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/manager-customer-search">View-Edit-Delete Users</a></li>
+			<li><a href="${pageContext.servletContext.contextPath}/requests-pending-ext">Pending Requests</a></li>
 			<li><a href="${pageContext.servletContext.contextPath}/">Settings</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
           </ul>
@@ -51,28 +56,46 @@
         <div class="col-sm-9 col-md-10 main">
 
           <div class="page-header">
-            <h1>SBS - Welcome Regular Employee </h1>
+            <h1>SBS - Welcome Manager</h1>
           </div>
 
-          <h2>Search By:</h2>
+          <h2>Pending Requests:</h2>
 		  <br>
 
-          <div id="payment">
-            <p>
-              <label>Customer ID:</label>
-              <input type="text" class="form-control" placeholder="ex: 123456789">
-            </p>
-			<div class="modal-footer">                
-              <button type="button" class="btn btn-success">Search</button>
-            </div>
-          </div><!-- /payment -->
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Name as per the modification request </th>
+				<th>Type of Employee</th>
+                <th>User ID</th>              
+			    <th>Date</th>	
+				<th>Issue</th>
+					
+				
+              </tr>
+            </thead>
+            <tbody>
+			<c:forEach var="modification" items="${pendingModifications}" varStatus="loopCounter">
+              <tr>
+                <td>${modification.firstName}</td>
+                <td>${modification.userType}</td>
+			    <td>${modification.customerID}</td>
+				<td>${modification.updatedAt}</td>
+				<td>Personal Details Change</td>
+				<form:form method="POST"  action="requests-view-ext">
+				<input type="hidden" name="modificationuserID" value="${modification.customerID}"></input>
+                <td><button type="submit" class="btn btn-success">View Details</button></td>
+				</form:form>
+              </tr>
+              </c:forEach>
+            </tbody>
+          </table>
           
         </div> <!-- /main -->
 
       </div> <!-- /row -->
 
-      <div id="virtualKeyboard">        
-      </div>
+      
 
     </div> <!-- /container -->
 
@@ -80,7 +103,7 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script
     <script src="${pageContext.servletContext.contextPath}/static/js/bootstrap.min.js"></script>
     <script src="${pageContext.servletContext.contextPath}/static/js/jsKeyboard.js"></script>
     <script src="${pageContext.servletContext.contextPath}/static/js/common.js"></script>

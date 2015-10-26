@@ -17,7 +17,7 @@ import com.sbs.group11.model.User;
  * user details or saving the user as those will be performed the user service.
  */
 @Component
-@Service("InternalUserService")
+@Service("InternalUserServiceImpl")
 @Transactional
 public class InternalUserServiceImpl implements InternalUserService {
 
@@ -29,8 +29,12 @@ public class InternalUserServiceImpl implements InternalUserService {
 		
 		
 			Random ran = new Random();
-			int x = ran.nextInt(10) + 5;
-			String customerID = ""+x;
+			char[] digits = new char[11];
+		    digits[0] = (char) (ran.nextInt(9) + '1');
+		    for (int i = 1; i < 11; i++) {
+		        digits[i] = (char) (ran.nextInt(10) + '0');
+		    }
+			String customerID = ""+Long.parseLong(new String(digits));
 			user.setCustomerID(customerID);
 			user.setCreatedAt(LocalDateTime.now());
 			user.setLastLoginAt(LocalDateTime.now());
@@ -58,6 +62,19 @@ public class InternalUserServiceImpl implements InternalUserService {
 		
 	}
 	
+	
+		
+	
+	public  void deleteInternalUserById(String id){
+		// TODO Auto-generated method stub
+		dao.deleteInternalUserById(id);
+	}
+	
+	
+	public User findUserByID(String ID) {
+		// TODO Auto-generated method stub
+		return dao.findUserByID(ID);
+	}
 	public User findUserByEmail(String email) {
 		
 		return dao.findUserByEmail(email);

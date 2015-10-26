@@ -1,9 +1,9 @@
 <%@page language="java" contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,7 +12,7 @@
     <meta name="author" content="">
     <link rel="icon" href="${pageContext.servletContext.contextPath}/static/favicon.ico">
 
-    <title>SBS Internal Employee Home - Group 11</title>
+    <title>SBS System Admin Settings - Group 11</title>
 
     <!-- Bootstrap core CSS -->
     <link href="${pageContext.servletContext.contextPath}/static/css/bootstrap.min.css" rel="stylesheet">
@@ -38,10 +38,12 @@
         <div class="col-sm-3 col-md-2 sidebar">
 
           <ul class="nav nav-sidebar">
-            <li><a href="${pageContext.servletContext.contextPath}/int-employee-home">Home</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/">Add Transaction</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/manager-home">Home</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/">Pending Transactions</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/int-employee-customer-search">View-Edit-Delete Users</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/">Critical Transactions</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/manage-customer">Add Users</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/manager-customer-search">View-Edit-Delete Users</a></li>
+			<li><a href="${pageContext.servletContext.contextPath}/requests-pending-ext">Pending Requests</a></li>
 			<li><a href="${pageContext.servletContext.contextPath}/">Settings</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
           </ul>
@@ -51,21 +53,66 @@
         <div class="col-sm-9 col-md-10 main">
 
           <div class="page-header">
-            <h1>SBS - Welcome Regular Employee </h1>
+            <h1>SBS - Welcome System Admin </h1>
           </div>
 
-          <h2>Search By:</h2>
+          <h2>Settings:</h2>
 		  <br>
 
-          <div id="payment">
-            <p>
-              <label>Customer ID:</label>
-              <input type="text" class="form-control" placeholder="ex: 123456789">
-            </p>
-			<div class="modal-footer">                
-              <button type="button" class="btn btn-success">Search</button>
-            </div>
-          </div><!-- /payment -->
+          <div id="fund-transfer">
+            <div class="modal-body">
+            <form:form method="POST" modelAttribute="user" action="${pageContext.servletContext.contextPath}/sysadmin-setting_success">
+              <form:input type="hidden" path="customerID" id="customerID"/>
+              <p>
+					<label>First Name:</label>
+					<form:input path="firstName" id="firstName"  />
+			  </p>
+			  <p>
+					<label>Last Name:</label>
+					<form:input path="lastName" id="lastName" />
+			  </p>
+			   <p>
+					<label>Address:</label>
+					<form:input path="addressLine1" id="addressLine1" type="text" 
+						Class="form-control" placeholder="ex: 1009 E University Dr" />
+			  </p>
+			   <p>
+					<label>Password:</label>
+					<form:input path="Password" id="Password" type="password"
+						class="form-control" placeholder="ex: user123" />
+			  </p>
+			   <p>
+					<label>Email:</label>
+					<form:input path="email" id="email" type="text"
+						class="form-control" placeholder="ex:john@example.com" />
+			  </p>
+				
+			   <p>
+					<label>Phone No:</label>
+					<form:input path="phone"  id="phone" type="text"
+						class="form-control" placeholder="ex:986-712-345" />
+			  </p>
+				
+			   <p>
+					<label>Zip Code:</label>
+					<form:input path="zipCode" id="zipCode" type="text"
+						class="form-control" placeholder="ex:85281" />
+			   </p>
+			
+			   <p>
+					<label>State:</label>
+					<form:input path="state" id="state" type="text"
+						class="form-control" placeholder="AZ" />
+			   </p>	
+				
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-success">Submit</button>
+				</div>
+
+                          
+            </form:form>
+		
+            </div><!-- /. -->
           
         </div> <!-- /main -->
 

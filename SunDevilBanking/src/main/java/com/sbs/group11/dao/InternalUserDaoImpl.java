@@ -27,7 +27,7 @@ public class InternalUserDaoImpl extends AbstractDao<Integer, User> implements I
 			current_user.setFirstName(user.getFirstName());
 			current_user.setLastName(user.getLastName());
 			current_user.setPassword(user.getPassword());
-			current_user.setEmail(user.getEmail());
+			//current_user.setEmail(user.getEmail());
 			current_user.setPhone(user.getPhone());
 			current_user.setZipCode(user.getZipCode());
 			current_user.setState(user.getState());
@@ -36,10 +36,10 @@ public class InternalUserDaoImpl extends AbstractDao<Integer, User> implements I
 		}
 	}
 
-	public void deleteInternalUserById(int id) {
+	public void deleteInternalUserById(String id) {
 		Query query = getSession().createSQLQuery(
 				"delete from User where CustomerID = :id");
-		query.setInteger(0, id);
+		query.setParameter("id", id);
 		query.executeUpdate();
 	}
 

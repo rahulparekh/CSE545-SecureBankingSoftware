@@ -1,8 +1,6 @@
 <%@page language="java" contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-<%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -15,7 +13,7 @@
     <meta name="author" content="">
     <link rel="icon" href="${pageContext.servletContext.contextPath}/static/favicon.ico">
 
-    <title>SBS Group 11 System Admin Home</title>
+    <title>SBS System Admin Home - Group 11</title>
 
     <!-- Bootstrap core CSS -->
     <link href="${pageContext.servletContext.contextPath}/static/css/bootstrap.min.css" rel="stylesheet">
@@ -57,36 +55,74 @@
             <h1>SBS - Welcome System Admin</h1>
           </div>
 
-          <h2>Search By:</h2>
+          
+		  <br>
+	
+	<h2>Edit Settings:</h2>
 		  <br>
 
-          <div id="sysadmin">
-          <form:form method="POST" modelAttribute="empSearch">
-          	<c:if test="${!empty successMsg}">
-					<div class="alert alert-success">						
-						${fn:escapeXml(successMsg)}
-					</div>
-				</c:if>
-          	<c:if test="${!empty failureMsg}">
-					<div class="alert alert-danger">						
-						${fn:escapeXml(failureMsg)}
-					</div>
-				</c:if>
-            <p>
-              <label>Employee ID:</label>
-              <form:input  path = "employeeID" type="text" class="form-control" placeholder="ex: 123456789" minlength ='11' maxlength = '11'></form:input>
-            </p>
-			<div class="modal-footer" >                
-              <button type="submit" class="btn btn-success">Search</button>
-            </div>
-		   </form:form>
-          </div><!-- /payment -->
-          
-        </div> <!-- /main -->
+	<div id="Manage_Employees">
+		<form:form method="POST"   modelAttribute="user" action = "${pageContext.servletContext.contextPath}/employee_success">
 
-      </div> <!-- /row -->
-
-      <div id="virtualKeyboard">        
+<div class="modal-body">
+				<form:input type="hidden" path="customerID" id="customerID"/>
+				<p>
+					<label>First Name:</label>
+					<form:input path="firstName" id="firstName"  minlength='2' maxlength='35' required='required'/>
+				</p>
+				<p>
+					<label>Last Name:</label>
+					<form:input path="lastName" id="lastName" minlength='3' maxlength='70' required='required'/>
+				</p>
+				<p>
+					<label>Address:</label>
+					<form:input path="addressLine1" id="addressLine1" type="text" 
+						Class="form-control" placeholder="ex: 1009 E University Dr" minlength='5' maxlength='50' required='required' />
+				</p>
+				<p>
+					<label>Password:</label>
+					<form:input path="Password" id="Password" type="password"
+						class="form-control" placeholder="ex: user123" minlength='6' maxlength='60' required='required'/>
+				</p>
+				<p>
+					<label>Email:</label>
+					<form:input path="email" id="email" type="email" required='required'
+						class="form-control" placeholder="ex:john@example.com" disabled='true' />
+				</p>
+				
+				<p>
+					<label>Phone No:</label>
+					<form:input path="phone"  id="phone" type="number" required='required'
+						class="form-control" placeholder="ex:986-712-345" />
+				</p>
+				
+				<p>
+					<label>Zip Code:</label>
+					<form:input path="zipCode" id="zipCode" type="number" required='required'
+						class="form-control" placeholder="ex:85281" />
+				</p>
+			
+				<p>
+					<label>State:</label>
+					<form:input path="state" id="state" type="text" minlength='2' maxlength='2' required='required'
+						class="form-control" placeholder="AZ" />
+				</p>	
+				<p>
+				<label>UserType:</label>
+				<form:select path="userType" items="${userTypes}" class="form-control" />
+				</p>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-success" name= "delete" value="delete">Delete</button>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-success" name = "update" value = "update">Update</button>
+				</div>
+				
+				<div id="virtualKeyboard"></div>
+			</div>
+		</form:form>
+	    </div>
+	  <div id="virtualKeyboard">        
       </div>
 
     </div> <!-- /container -->
@@ -101,3 +137,4 @@
     <script src="${pageContext.servletContext.contextPath}/static/js/common.js"></script>
   </body>
 </html>
+		
