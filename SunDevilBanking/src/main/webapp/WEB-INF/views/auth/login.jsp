@@ -1,10 +1,18 @@
 <%@page language="java" contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 <t:auth>
 
 	<form class="form-signin" method="post" action="${pageContext.servletContext.contextPath}/login">
+		<div>
+		<c:if test="${!empty successMsg}">
+					<div class="alert alert-success">						
+						${fn:escapeXml(successMsg)}
+					</div>
+				</c:if>
+		
 		<h2 class="form-signin-heading">Please Login</h2>
 
 		<c:if test="${not empty SPRING_SECURITY_LAST_EXCEPTION}">
@@ -13,6 +21,7 @@
 		        <c:out value="${SPRING_SECURITY_LAST_EXCEPTION.message}"/>.
 		      </div>
 		</c:if>
+		
 
 		<label for="inputEmail" class="sr-only">Email address</label> <input
 			name="email" type="text" id="inputEmail" class="form-control"
@@ -30,6 +39,7 @@
 		<p class="center">
 			<a href="forgotpass">Forgot Password?</a>
 		</p>
+		</div>
 	</form>
 
 	<div id="virtualKeyboard"></div>
