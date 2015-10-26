@@ -4,7 +4,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -14,8 +13,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.sbs.group11.model.*;
+import com.sbs.group11.model.EmployeeSearch;
+import com.sbs.group11.model.SystemLog;
+import com.sbs.group11.model.Transaction;
+import com.sbs.group11.model.TransactionSearch;
+import com.sbs.group11.model.User;
 import com.sbs.group11.service.InternalUserService;
+import com.sbs.group11.service.SystemLogService;
 import com.sbs.group11.service.TransactionService;
 
 @Controller
@@ -25,12 +29,18 @@ public class InternalUserController {
 	InternalUserService internalUserService;
 	@Autowired
 	TransactionService transactionService;
-
+	@Autowired
+	SystemLogService systemLogService;
 	
 
 	@ModelAttribute("user")
 	public User getUserObject() {
 		return new User();
+	}
+	
+	@ModelAttribute("systemlogs")
+	public SystemLog getSystemLogObject() {
+		return new SystemLog();
 	}
 	
 	@ModelAttribute("empSearch")
@@ -120,6 +130,19 @@ public class InternalUserController {
 		System.out.println("Pending Transaction" + pendingTransaction.get(0).getTransactionID());
 		model.addAttribute("pendingTransaction", pendingTransaction);
 		return "employee/int_employee_pending_transaction";
+		
+	}
+	
+	@RequestMapping(value = "/systemLog-sys-admin", method = RequestMethod.GET)
+	public String getAllLogs(ModelMap model){
+		
+		List<SystemLog> syslogs =  systemLogService.getAllLog();
+		
+		model.addAttribute("systemlogs", syslogs);
+		
+		
+		return "employee/systemLog_sys_admin";
+	
 		
 	}
 }
