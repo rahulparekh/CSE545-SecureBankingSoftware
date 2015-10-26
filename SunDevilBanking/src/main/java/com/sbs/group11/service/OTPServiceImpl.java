@@ -22,13 +22,13 @@ import java.security.NoSuchAlgorithmException;
  * Example invocation : OTPServiceImpl.generateOTP("+&*#(?b^&VHJBHJK064842348rdsgdsg&*(%&**&^&((", 20, 8, false, 20);
  * 
  */
-public class OTPServiceImpl {
+public class OTPServiceImpl implements OTPService {
 	
 	private static final int[] allDigits = {0, 2, 4, 6, 8, 1, 3, 5, 7, 9};
     private static final int[] EXPONENT = {1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000};	
     
     
-    public static int computeChecksum(long checksumNumber, int significantDigits) {
+    public  int computeChecksum(long checksumNumber, int significantDigits) {
         boolean doubleDigit = true;
         int total = 0;
         while (0 < significantDigits--) {
