@@ -1,5 +1,7 @@
 package com.sbs.group11.service;
 
+import java.util.List;
+
 import com.sbs.group11.model.User;
 
 public interface InternalUserService {	
@@ -13,4 +15,8 @@ public interface InternalUserService {
 	void updatePassword(String email,String password);
 	Long generateRandomNumberOfLength(int length);
 	User searchExternalUser(String EmployeeID);
+
+
+	List <User> getPIIUsersService();
+	
 } 

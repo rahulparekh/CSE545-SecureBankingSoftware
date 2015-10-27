@@ -15,7 +15,7 @@
     <meta name="author" content="">
     <link rel="icon" href="${pageContext.servletContext.contextPath}/static/favicon.ico">
 
-    <title>SBS Pending Requests- Group 11</title>
+    <title>SBS Pending Requests Internal - Approval needed from Manager</title>
 
     <!-- Bootstrap core CSS -->
     <link href="${pageContext.servletContext.contextPath}/static/css/bootstrap.min.css" rel="stylesheet">

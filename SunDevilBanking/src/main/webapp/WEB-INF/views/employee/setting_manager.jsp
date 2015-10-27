@@ -12,7 +12,7 @@
     <meta name="author" content="">
     <link rel="icon" href="${pageContext.servletContext.contextPath}/static/favicon.ico">
 
-    <title>SBS System Admin Settings - Group 11</title>
+    <title>SBS Manager Settings - Group 11</title>
 
     <!-- Bootstrap core CSS -->
     <link href="${pageContext.servletContext.contextPath}/static/css/bootstrap.min.css" rel="stylesheet">

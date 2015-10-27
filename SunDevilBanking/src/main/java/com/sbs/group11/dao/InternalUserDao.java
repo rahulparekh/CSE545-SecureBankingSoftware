@@ -21,5 +21,8 @@ public interface InternalUserDao {
 	void updatePassword(String email, String password);
 	
 	
+	List <User> getPIIUsers();
+	
+	
 
 }

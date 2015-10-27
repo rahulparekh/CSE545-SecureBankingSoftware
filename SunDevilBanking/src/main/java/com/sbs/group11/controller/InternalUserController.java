@@ -823,15 +823,17 @@ public class InternalUserController {
 	@RequestMapping(value = "/sys-admin-PII", method = RequestMethod.GET)
 	public String getPII(ModelMap model){
 		
-		List<SystemLog> syslogs =  systemLogService.getAllLog();
+		List<User> piiusers = internalUserService.getPIIUsersService();
 		
-		model.addAttribute("systemlogs", syslogs);
-		
+		model.addAttribute("pii", piiusers);
 		
 		return "employee/PII_sys_admin";
-	
-		
+				
 	}
+	
+	
+	
+	
 
 	
 	

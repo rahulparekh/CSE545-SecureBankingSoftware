@@ -13,7 +13,7 @@
     <meta name="author" content="">
     <link rel="icon" href="${pageContext.servletContext.contextPath}/static/favicon.ico">
 
-    <title>SBS System Admin Settings - Group 11</title>
+    <title>SBS System Admin - View PII Information </title>
 
     <!-- Bootstrap core CSS -->
     <link href="${pageContext.servletContext.contextPath}/static/css/bootstrap.min.css" rel="stylesheet">
@@ -44,6 +44,7 @@
             <li><a href="${pageContext.servletContext.contextPath}/systemLog-sys-admin">System Log</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/requests-pending">Pending Requests</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/sysadmin-setting">Settings</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/sys-admin-PII">Access PII</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
           </ul>
           
@@ -60,19 +61,27 @@
             <thead>
               <tr>
                 <th>Customer ID</th>
-				<th>Name</th>
+				<th>First Name</th>
+				<th>Last Name</th>
+				<th>Address</th>
+				<th>State</th>
+				<th>ZipCode</th>
 				<th>Phone no</th>
                 <th>Email</th>
                            			
               </tr>
             </thead>
             <tbody>
-        	  <c:forEach var="log" items="${systemlogs}" >
+        	  <c:forEach var="pii" items="${pii}" >
               <tr>
-                <td>${log.customerID}</td>
-                <td>${log.firstName}</td>
-                <td>${log.phone}</td>
-				<td>${log.email}</td>
+                <td>${pii.customerID}</td>
+                <td>${pii.firstName}</td>
+                <td>${pii.lastName}</td>
+                <td>${pii.addressLine1}</td>
+                <td>${pii.state}</td>
+                <td>${pii.zipCode}</td>
+                <td>${pii.phone}</td>
+				<td>${pii.email}</td>
               </tr>
              </c:forEach>
             </tbody>

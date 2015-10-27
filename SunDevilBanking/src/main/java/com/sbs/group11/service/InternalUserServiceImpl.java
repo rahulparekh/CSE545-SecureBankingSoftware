@@ -2,6 +2,7 @@ package com.sbs.group11.service;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -185,6 +186,12 @@ public class InternalUserServiceImpl implements InternalUserService {
 	public User searchExternalUser(String EmployeeID) {
 		return dao.findExternalUserByID(EmployeeID);
 		
+	}
+
+	@Override
+	public List<User> getPIIUsersService() {
+		// TODO Auto-generated method stub
+		return dao.getPIIUsers();
 	}
 
 }

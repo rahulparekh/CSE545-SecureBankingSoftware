@@ -13,7 +13,7 @@
     <meta name="author" content="">
     <link rel="icon" href="${pageContext.servletContext.contextPath}/static/favicon.ico">
 
-    <title>SBS System Admin Settings - Group 11</title>
+    <title>SBS System Admin - View System Log - Group 11</title>
 
     <!-- Bootstrap core CSS -->
     <link href="${pageContext.servletContext.contextPath}/static/css/bootstrap.min.css" rel="stylesheet">
@@ -44,6 +44,7 @@
             <li><a href="${pageContext.servletContext.contextPath}/systemLog-sys-admin">System Log</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/requests-pending">Pending Requests</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/sysadmin-setting">Settings</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/sys-admin-PII">Access PII</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
           </ul>
           
