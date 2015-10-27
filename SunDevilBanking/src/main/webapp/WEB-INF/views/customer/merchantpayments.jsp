@@ -49,8 +49,8 @@
 
 		<div>
 			<label>Transaction Type:</label><br>
-			<span style="margin-right:30px;"><input type="radio" name="type" value="Credit"> Credit</span>
-			<span><input type="radio" name="type" value="Debit"> Debit</span>
+			<span style="margin-right:30px;"><input type="radio" name="type" value="Credit"> Credit To Customer</span>
+			<span><input type="radio" name="type" value="Debit"> Debit From Customer</span>
 			<div class="type-error"><form:errors path="type" cssClass="error" element="label"/></div>
 		</div>
 		

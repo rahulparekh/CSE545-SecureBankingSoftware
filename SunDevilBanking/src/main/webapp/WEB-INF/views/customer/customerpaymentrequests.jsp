@@ -13,6 +13,47 @@
 	</div>
 
 	<div id="payment-requests">
+	
+		<table class="table table-bordered">
+    	<thead>
+        	<tr>
+        		<th>Date</th>
+            	<th width="40%">Payment Request By:</th>
+            	<th>Amount</th>
+            	<th>Type</th>
+            	<th>Action (Please enter otp sent in the email to approve the payment)</th>
+        	</tr>
+    	</thead>
+        <tbody>
+        	<c:forEach items="${paymentrequests}" var="payment">
+        	<tr>
+        		<td><joda:format var="createdAt"
+							value="${payment.createdAt}" pattern="dd MMM, yyyy hh:mm:ss"
+							style="F-" dateTimeZone="America/Phoenix" />
+					${createdAt}
+				</td>
+        		<td>Name: ${fn:escapeXml(payment.merchantName)} <br> Account No: ${fn:escapeXml(payment.merchantAccNumber)}</td>
+        		<td>$${fn:escapeXml(payment.amount)}</td>
+        		<td>${fn:escapeXml(payment.type)}</td>
+        		<td>
+        			<c:choose>
+        				<c:when test="${payment.OTPExpiry le currentTime}">
+        					Payment has expired
+        				</c:when>
+        				<c:otherwise>
+        				<form:form action="payment-requests" method="POST" modelAttribute="transaction">
+        					<input type="text" name="otp" value="" class="form-control" placeholder="OTP (required to approve)">
+		        			<br><button type="submit" name="submit" value="accept" class="btn btn-success">Accept</button>		        			
+		        			<input type="hidden" name="paymentrequest" value="${payment.id}">
+		        			<button type="submit" name="submit" value="decline" class="btn btn-danger">Decline</button>		        				        				
+        				</form:form>
+        				</c:otherwise>
+        			</c:choose>
+        		</td>
+        	</tr>
+        	</c:forEach>
+        </tbody>
+        </table>
 		
 	</div>
 </t:page>

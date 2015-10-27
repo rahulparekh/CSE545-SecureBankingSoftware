@@ -27,10 +27,11 @@ import com.sbs.group11.model.User;
 @Transactional
 public class TransactionServiceImpl implements TransactionService {
 	final static Logger logger = Logger.getLogger(TransactionServiceImpl.class);
+	final private BigDecimal CRITICAL_VALUE = new BigDecimal(500);
 	
 	@Autowired
 	private AccountService accountService;
-	
+		
 	@Autowired
 	private SendEmailService emailService;
 
@@ -219,7 +220,60 @@ public class TransactionServiceImpl implements TransactionService {
 	}
 
 	public void acceptPayment(PaymentRequest paymentRequest) {
-		// TODO Auto-generated method stub
+		String senderAccount = null;
+		String receiverAccount = null;
+		String type1 = null;
+		String type2 = null;
+		
+		// update the payment request
+		paymentRequestDao.savePaymentRequest(paymentRequest);
+		
+		String isCritical = isCritical(paymentRequest.getAmount(),
+				CRITICAL_VALUE);
+		
+		// 0 customer, 1 merchant
+		if (paymentRequest.getInitiatedBy() == 0 || paymentRequest.getType().equalsIgnoreCase("debit")) {
+			senderAccount = paymentRequest.getCustomerAccNumber();
+			receiverAccount = paymentRequest.getMerchantAccNumber();
+		} else {
+			senderAccount = paymentRequest.getMerchantAccNumber();
+			receiverAccount = paymentRequest.getCustomerAccNumber();
+		}
+		
+		if (paymentRequest.getType().equalsIgnoreCase("credit")) {
+			type1 = "Credit";
+			type2 = "Debit";
+		} else {
+			type2 = "Credit";
+			type1 = "Debit";
+		}
+			
+		
+		// Create two transactions
+		Transaction transaction1 = new Transaction(
+				getUniqueTransactionID(), 
+				"Payment From " + senderAccount + " To: " + receiverAccount, 
+				senderAccount, 
+				receiverAccount,
+				"pending", 
+				type1, 
+				paymentRequest.getAmount(), 
+				isCritical,
+				senderAccount);
+		
+		Transaction transaction2 = new Transaction(
+				getUniqueTransactionID(), 
+				"Payment From " + senderAccount + " To: " + receiverAccount, 
+				senderAccount, 
+				receiverAccount,
+				"pending", 
+				type2, 
+				paymentRequest.getAmount(), 
+				isCritical,
+				receiverAccount);
+		
+		addTransaction(transaction1);
+		addTransaction(transaction2);
 		
 	}
 
@@ -228,9 +282,8 @@ public class TransactionServiceImpl implements TransactionService {
 		
 	}
 
-	public List<PaymentRequest> getPaymentsByAccNumber(String accNumber) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<PaymentRequest> getPaymentsByAccNumber(String accNumber, int initiatedBy) {
+		return paymentRequestDao.getPaymentsByAccNumber(accNumber, initiatedBy);
 	}
 
 	public String isCritical(BigDecimal amount, BigDecimal critical_value) {
