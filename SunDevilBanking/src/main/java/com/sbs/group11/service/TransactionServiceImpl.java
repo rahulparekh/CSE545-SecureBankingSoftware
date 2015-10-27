@@ -15,8 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.sbs.group11.dao.PaymentRequestDao;
 import com.sbs.group11.dao.TransactionDao;
 import com.sbs.group11.model.Account;
+import com.sbs.group11.model.PaymentRequest;
 import com.sbs.group11.model.StatementMonthYear;
 import com.sbs.group11.model.Transaction;
 import com.sbs.group11.model.User;
@@ -25,9 +27,15 @@ import com.sbs.group11.model.User;
 @Transactional
 public class TransactionServiceImpl implements TransactionService {
 	final static Logger logger = Logger.getLogger(TransactionServiceImpl.class);
+	
+	@Autowired
+	private AccountService accountService;
 
 	@Autowired
 	private TransactionDao dao;
+	
+	@Autowired
+	private PaymentRequestDao paymentRequestDao;
 
 	public void addTransaction(Transaction transaction) {
 		dao.addTransaction(transaction);
@@ -165,6 +173,50 @@ public class TransactionServiceImpl implements TransactionService {
 		
 		logger.debug("receiverAccount was not returned");
 		return false;
+	}
+
+	public void initiatePayment(PaymentRequest paymentRequest, SendEmailService emailService) {
+		
+		paymentRequestDao.savePaymentRequest(paymentRequest);
+		String content = null;
+		
+		// check if the user has initiated the payment
+		// or merchant has
+		if ( paymentRequest.getUserAccepted() == 1 ) {
+			
+			content = "A new payment request has been made. "
+					+ "To process the payment, please go to "
+					+ "https://group11.mobicloud.asu.edu/home/merchant-payment-requests.\n\n"
+					+ "The payment request will expire in 2 hours from now.\n\n"
+					+ "Please use the following OTP to accept the payment: " + paymentRequest.getOtp();
+			
+			String email = accountService
+							.getAccountByNumber(paymentRequest.getMerchantAccNumber())
+							.getUser()
+							.getEmail();
+			
+			// send email to merchant
+			emailService.sendEmail(email, "Sun Devil Banking. New Request", content);
+		}
+		
+		// send email to user
+		
+		
+	}
+
+	public void acceptPayment(PaymentRequest paymentRequest, SendEmailService emailService) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void completePayment(PaymentRequest paymentRequest, SendEmailService emailService) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public List<PaymentRequest> getPaymentsByAccNumber(String accNumber) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

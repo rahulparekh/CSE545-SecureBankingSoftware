@@ -1,10 +1,16 @@
 package com.sbs.group11.model;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.DecimalMin;
@@ -62,6 +68,12 @@ public class Transaction {
 		this.balance = balance;
 		this.transactionOwner = transactionOwner;
 	}
+	
+	/** Payment Requests. For the One-to-Many relationship */
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "TransactionID")
+	private Set<PaymentRequest> paymentRequests = new HashSet<PaymentRequest>(
+			0);
 
 	/** The transaction id. */
 	@Id
@@ -118,7 +130,7 @@ public class Transaction {
 	@Column(name = "TransactionOwner", nullable = false, length = 17)
 	private String transactionOwner;
 	
-		@NotEmpty
+	@NotEmpty
 	@Size(min = 0, max = 10)
 	@Column(name = "isCritical", nullable = false, length = 6)
 	private String isCritical;
@@ -149,6 +161,14 @@ public class Transaction {
 	 */
 	@Transient
 	private String month;
+
+	public Set<PaymentRequest> getPaymentRequests() {
+		return paymentRequests;
+	}
+
+	public void setPaymentRequests(Set<PaymentRequest> paymentRequests) {
+		this.paymentRequests = paymentRequests;
+	}
 
 	/**
 	 * Gets the transaction id.

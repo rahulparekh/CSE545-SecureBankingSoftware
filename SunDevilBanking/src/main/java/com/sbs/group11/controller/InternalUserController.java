@@ -6,10 +6,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
-
 import javax.servlet.http.HttpServletRequest;
-
-
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -136,7 +134,15 @@ public class InternalUserController {
 			@ModelAttribute("user") User user, BindingResult result,RedirectAttributes redirectAttrs) {
 		System.out.println("inside controller");
 		model.addAttribute("user",new User());
+		if(internalUserService.findUserByEmail(user.getEmail())!= null){
+			redirectAttrs.addFlashAttribute(
+					"failureMsg",
+					"User Already Exists with the same Email Address");
+			return "redirect:/sysadmin-home"; 
+		}
 		internalUserService.addInternalUser(user);
+		SystemLog systemLog = new SystemLog(new DateTime().toLocalDateTime(),user.getFirstName(),user.getUserType(),"The user "+user.getFirstName()+" is created");
+		systemLogService.addLog(systemLog);
 		redirectAttrs.addFlashAttribute(
 				"successMsg",
 				"User Added Successfully");
@@ -149,6 +155,8 @@ public class InternalUserController {
 		model.addAttribute("user", user);
 		model.addAttribute("user",new User());
 		internalUserService.updateInternalUser(user);
+		SystemLog systemLog = new SystemLog(new DateTime().toLocalDateTime(),user.getFirstName(),user.getUserType(),"The user "+user.getFirstName()+" info is updated");
+		systemLogService.addLog(systemLog);
 		redirectAttrs.addFlashAttribute(
 				"successMsg",
 				"UserInformation updated Successfully");
@@ -162,6 +170,8 @@ public class InternalUserController {
 		model.addAttribute("user", user);
 		model.addAttribute("user",new User());
 		internalUserService.deleteInternalUserById(user.getCustomerID());
+		SystemLog systemLog = new SystemLog(new DateTime().toLocalDateTime(),user.getFirstName(),user.getUserType(),"The user "+user.getFirstName()+" is deleted");
+		systemLogService.addLog(systemLog);
 		redirectAttrs.addFlashAttribute(
 				"successMsg",
 				"Deleted the user Successfully");
@@ -188,7 +198,7 @@ public class InternalUserController {
 
 
 	
-//********************************MANAGER**************************		
+	//********************************MANAGER**************************		
 	
 	@RequestMapping(value = "/manager-home", method = RequestMethod.GET)
 	public String getManagerHome(ModelMap model) {
@@ -277,6 +287,12 @@ public class InternalUserController {
 			@ModelAttribute("user") User user, BindingResult result,RedirectAttributes redirectAttrs) {
 		System.out.println("inside controller");
 		model.addAttribute("user",new User());
+		if(internalUserService.findUserByEmail(user.getEmail())!= null){
+			redirectAttrs.addFlashAttribute(
+					"failureMsg",
+					"User Already Exists with the same Email Address");
+			return "redirect:/manager-customer-search"; 
+		}
 		internalUserService.addInternalUser(user);
 		redirectAttrs.addFlashAttribute(
 				"successMsg",
@@ -316,7 +332,7 @@ public class InternalUserController {
 			
 	}
 
-///***************EXTERNAL REQUESTS
+	///***************EXTERNAL REQUESTS
 	
 	@RequestMapping(value = "/requests-pending-ext", method = RequestMethod.GET)
 	public String getAdminSettingManager(ModelMap model) {
