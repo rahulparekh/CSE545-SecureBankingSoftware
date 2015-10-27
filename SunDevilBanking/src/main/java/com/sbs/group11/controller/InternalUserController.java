@@ -301,7 +301,7 @@ public class InternalUserController {
 		internalUserService.addInternalUser(user);
 		redirectAttrs.addFlashAttribute(
 				"successMsg",
-				"updated the userinfo Successfully");
+				"Added the User Successfully");
 		return "redirect:/manager-customer-search";
 	}
 	

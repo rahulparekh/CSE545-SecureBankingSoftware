@@ -1,5 +1,6 @@
 package com.sbs.group11.service;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import com.mysql.jdbc.log.Log;
 import com.sbs.group11.dao.InternalUserDaoImpl;
 import com.sbs.group11.dao.UserDaoImpl;
+import com.sbs.group11.model.Account;
 import com.sbs.group11.model.Role;
 import com.sbs.group11.model.User;
 /*
@@ -39,13 +41,7 @@ public class InternalUserServiceImpl implements InternalUserService {
 	public void addInternalUser(User user) {
 		// Logic here to add a user		
 		
-		Random ran = new Random();
-		char[] digits = new char[11];
-		digits[0] = (char) (ran.nextInt(9) + '1');
-		for (int i = 1; i < 11; i++) {
-			digits[i] = (char) (ran.nextInt(10) + '0');
-		}
-		String customerID = "" + Long.parseLong(new String(digits));
+		String customerID = "" + generateRandomNumberOfLength(11);
 		user.setCustomerID(customerID);
 		user.setCreatedAt(LocalDateTime.now());
 		user.setLastLoginAt(LocalDateTime.now());
@@ -64,6 +60,36 @@ public class InternalUserServiceImpl implements InternalUserService {
 		role.setRole("ROLE_" + user.getUserType().toUpperCase());
 		roles.add(role);
 		user.setRole(roles);
+		
+		
+		Set<Account> accounts = new HashSet<Account>();
+		Account account1 = new Account();
+		Account account2 = new Account();
+		String checking_account = "" + generateRandomNumberOfLength(17);
+		String saving_account = "" + generateRandomNumberOfLength(17);
+		
+		account1.setNumber(checking_account);
+		account1.setBalance(new BigDecimal(0.0));
+		account1.setCreatedAt(LocalDateTime.now());
+		account1.setUser(user);
+		account1.setName(user.getFirstName()+" checking account");
+		account1.setType(0);
+		account1.setUpdatedAt(LocalDateTime.now());
+		
+
+		account2.setNumber(saving_account);
+		account2.setBalance(new BigDecimal(0.0));
+		account2.setCreatedAt(LocalDateTime.now());
+		account2.setUser(user);
+		account2.setName(user.getFirstName()+" saving account");
+		account2.setType(1);
+		account2.setUpdatedAt(LocalDateTime.now());
+		
+		accounts.add(account1);
+		accounts.add(account2);
+		
+		user.setAccounts(accounts);
+		
 		
 		dao.saveInternalUser(user);
 	}
@@ -113,6 +139,18 @@ public class InternalUserServiceImpl implements InternalUserService {
 	
 		dao.updatePassword(email,password);
 		
+	}
+
+	@Override
+	public Long generateRandomNumberOfLength(int length) {
+		// TODO Auto-generated method stub
+		Random ran = new Random();
+		char[] digits = new char[length];
+		digits[0] = (char) (ran.nextInt(9) + '1');
+		for (int i = 1; i < length; i++) {
+			digits[i] = (char) (ran.nextInt(10) + '0');
+		}
+		return Long.parseLong(new String(digits));
 	}
 
 }

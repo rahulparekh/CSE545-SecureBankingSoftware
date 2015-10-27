@@ -11,4 +11,5 @@ public interface InternalUserService {
 	User findUserByID(String ID);
 	User findUserByEmail(String email);
 	void updatePassword(String email,String password);
+	Long generateRandomNumberOfLength(int length);
 } 
