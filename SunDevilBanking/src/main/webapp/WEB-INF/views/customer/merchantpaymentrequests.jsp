@@ -16,18 +16,26 @@
 		<table class="table table-bordered">
     	<thead>
         	<tr>
-            	<th width="40%">Payment Request By:</th>
+            	<th>Date</th>
+            	<th width="35%">Payment Request By:</th>
             	<th>Amount</th>
             	<th>Type</th>
-            	<th>Action (Please enter otp sent in the email to approve the payment)</th>
+            	<th>Your Account No:</th>
+            	<th width="30%">Action (Please enter otp sent in the email to approve the payment)</th>
         	</tr>
     	</thead>
         <tbody>
         	<c:forEach items="${paymentrequests}" var="payment">
         	<tr>
+        		<td><joda:format var="createdAt"
+							value="${payment.createdAt}" pattern="dd MMM, yyyy hh:mm:ss"
+							style="F-" dateTimeZone="America/Phoenix" />
+					${createdAt}
+				</td>
         		<td>Name: ${fn:escapeXml(payment.customerName)} <br> Account No: ${fn:escapeXml(payment.customerAccNumber)}</td>
         		<td>$${fn:escapeXml(payment.amount)}</td>
         		<td>Debit</td>
+        		<td>${fn:escapeXml(payment.merchantAccNumber)}</td>
         		<td>
         			<c:choose>
         				<c:when test="${payment.OTPExpiry le currentTime}">

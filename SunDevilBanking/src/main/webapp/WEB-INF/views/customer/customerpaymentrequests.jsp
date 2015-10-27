@@ -18,10 +18,11 @@
     	<thead>
         	<tr>
         		<th>Date</th>
-            	<th width="40%">Payment Request By:</th>
+            	<th width="35%">Payment Request By:</th>
             	<th>Amount</th>
             	<th>Type</th>
-            	<th>Action (Please enter otp sent in the email to approve the payment)</th>
+            	<th>Your Account No:</th>
+            	<th width="30%">Action (Please enter otp sent in the email to approve the payment)</th>
         	</tr>
     	</thead>
         <tbody>
@@ -35,6 +36,7 @@
         		<td>Name: ${fn:escapeXml(payment.merchantName)} <br> Account No: ${fn:escapeXml(payment.merchantAccNumber)}</td>
         		<td>$${fn:escapeXml(payment.amount)}</td>
         		<td>${fn:escapeXml(payment.type)}</td>
+        		<td>${fn:escapeXml(payment.customerAccNumber)}</td>
         		<td>
         			<c:choose>
         				<c:when test="${payment.OTPExpiry le currentTime}">
@@ -44,7 +46,7 @@
         				<form:form action="payment-requests" method="POST" modelAttribute="transaction">
         					<input type="text" name="otp" value="" class="form-control" placeholder="OTP (required to approve)">
 		        			<br><button type="submit" name="submit" value="accept" class="btn btn-success">Accept</button>		        			
-		        			<input type="hidden" name="paymentrequest" value="${payment.id}">
+		        			<input type="hidden" name="paymentrequest" value="${fn:escapeXml(payment.id)}">
 		        			<button type="submit" name="submit" value="decline" class="btn btn-danger">Decline</button>		        				        				
         				</form:form>
         				</c:otherwise>
