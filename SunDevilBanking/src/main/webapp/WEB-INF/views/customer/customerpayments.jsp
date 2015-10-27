@@ -13,13 +13,25 @@
 	</div>
 	
 	
-	<form:form id="payment" modelAttribute="paymentRequest" method="POST" action="payments">
+	<form:form id="payment" modelAttribute="paymentrequest" method="POST" action="payments">
 		<c:if test="${!empty successMsg}">
 			<div class="alert alert-success">${fn:escapeXml(successMsg)}</div>
 		</c:if>
 		<c:if test="${!empty failureMsg}">
 			<div class="alert alert-danger">${fn:escapeXml(failureMsg)}</div>
-		</c:if>
+		</c:if>		
+		<p>
+			<label>Debit Account:</label> <select class="form-control"
+				name="customerAccNumber" id="select-account">
+				<option value="">Select an Account</option>
+				<c:forEach items="${userAccounts}" var="account">
+					<option value="${fn:escapeXml(account.number)}">${fn:escapeXml(account.name)}
+						(*${fn:escapeXml(fn:substring(account.number, fn:length(account.number) - 4, fn:length(account.number)))})</option>
+				</c:forEach>
+			</select>
+			<form:errors path="customerAccNumber" cssClass="error" element="label" />
+		</p>
+		<hr>
 		<p>
 			<label>Select Merchant:</label> <select name="merchantAccNumber" class="form-control">
 				<option>Select Merchant</option>
@@ -32,18 +44,6 @@
 				</c:forEach>
 			</select>
 			<form:errors path="merchantAccNumber" cssClass="error" element="label" />
-		</p>
-		<hr>
-		<p>
-			<label>Debit Account:</label> <select class="form-control"
-				name="customerAccNumber" id="select-account">
-				<option value="">Select an Account</option>
-				<c:forEach items="${userAccounts}" var="account">
-					<option value="${fn:escapeXml(account.number)}">${fn:escapeXml(account.name)}
-						(*${fn:escapeXml(fn:substring(account.number, fn:length(account.number) - 4, fn:length(account.number)))})</option>
-				</c:forEach>
-			</select>
-			<form:errors path="customerAccNumber" cssClass="error" element="label" />
 		</p>
 		<p>
 			<label>Amount to be Transferred:</label> <input type="text"

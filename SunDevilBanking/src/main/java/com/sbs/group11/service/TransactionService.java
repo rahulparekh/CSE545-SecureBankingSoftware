@@ -14,7 +14,6 @@ import com.sbs.group11.model.StatementMonthYear;
 import com.sbs.group11.model.Transaction;
 import com.sbs.group11.model.User;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface TransactionService.
  */
@@ -144,7 +143,7 @@ public interface TransactionService {
 	 *
 	 * @param paymentRequest the payment request
 	 */
-	void initiatePayment(PaymentRequest paymentRequest);
+	void initiatePayment(PaymentRequest paymentRequest, SendEmailService emailService);
 
 	/**
 	 * Accept payment i.e. the user/merchant accepts the payment request made by
@@ -152,7 +151,7 @@ public interface TransactionService {
 	 *
 	 * @param paymentRequest the payment request
 	 */
-	void acceptPayment(PaymentRequest paymentRequest);
+	void acceptPayment(PaymentRequest paymentRequest, SendEmailService emailService);
 
 	/**
 	 * Complete payment i.e. after the payment has been accepted by both
@@ -161,7 +160,7 @@ public interface TransactionService {
 	 *
 	 * @param paymentRequest the payment request
 	 */
-	void completePayment(PaymentRequest paymentRequest);
+	void completePayment(PaymentRequest paymentRequest, SendEmailService emailService);
 	
 	List<PaymentRequest> getPaymentsByAccNumber(String accNumber);
 

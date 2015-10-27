@@ -27,6 +27,7 @@ import com.sbs.group11.model.Transaction;
 import com.sbs.group11.model.User;
 import com.sbs.group11.service.AccountService;
 import com.sbs.group11.service.OTPService;
+import com.sbs.group11.service.SendEmailService;
 import com.sbs.group11.service.TransactionService;
 import com.sbs.group11.service.UserService;
 
@@ -55,6 +56,9 @@ public class ExternalUserController {
 	
 	@Autowired
 	private OTPService otpService;
+	
+	@Autowired
+	private SendEmailService emailService;
 
 	@Autowired
 	SmartValidator validator;
@@ -498,7 +502,7 @@ public class ExternalUserController {
 	@RequestMapping(value = "/payments", method = RequestMethod.POST)
 	public String postPaymentsForCustomer(ModelMap model,
 			HttpServletRequest request,
-			@ModelAttribute("paymentRequest") PaymentRequest paymentRequest,
+			@ModelAttribute("paymentrequest") PaymentRequest paymentRequest,
 			BindingResult result, RedirectAttributes attr) {
 		User user = userService.getUserDetails();
 		model.put("user", user);
@@ -506,21 +510,6 @@ public class ExternalUserController {
 		
 		List<Account> customerAccounts = accountService.getAccountsByCustomerID(user
 				.getCustomerID());
-		
-		// If account is empty or null, skip the account service check
-		Account customerAccount = accountService.getValidAccountByNumber(
-				request.getParameter("senderAccNumber"), customerAccounts);
-
-		// Exit the transaction if Account doesn't exist
-		if (customerAccount == null) {
-			logger.warn("Someone tried credit/debit functionality for some other account. Details:");
-			logger.warn("Credit/Debit Acc No: "
-					+ request.getParameter("number"));
-			logger.warn("Customer ID: " + user.getCustomerID());
-			attr.addFlashAttribute("failureMsg",
-					"Could not process your transaction. Please try again or contact the bank.");
-			return "redirect:/home/payments";
-		}
 		
 		BigDecimal amount = transactionService.getBigDecimal(request
 				.getParameter("amount"));
@@ -530,7 +519,7 @@ public class ExternalUserController {
 		try {
 			String sessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
 			logger.debug("Got session id: " + sessionId);
-			otp = otpService.generateOTP(sessionId.getBytes(), 20, 8, false, 20);
+			otp = otpService.generateOTP(sessionId.getBytes(), 20, 7, false, 20);
 		} catch (InvalidKeyException e) {
 			logger.warn(e);
 			attr.addFlashAttribute("failureMsg",
@@ -548,6 +537,38 @@ public class ExternalUserController {
 				null, 1, 0,
 				amount, "Debit", otp);
 		
+		
+		validator.validate(paymentRequest, result);
+		if (result.hasErrors()) {
+			logger.debug(result);
+
+			// attributes for validation failures
+			attr.addFlashAttribute(
+					"org.springframework.validation.BindingResult.paymentrequest",
+					result);
+			attr.addFlashAttribute("paymentrequest", paymentRequest);
+			attr.addFlashAttribute("failureMsg",
+					"You have errors in your request.");
+
+			// redirect to the credit debit view page
+			return "redirect:/home/payments";
+		}
+		
+		// If account is empty or null, skip the account service check
+		Account customerAccount = accountService.getValidAccountByNumber(
+				request.getParameter("customerAccNumber"), customerAccounts);
+
+		// Exit the transaction if Account doesn't exist
+		if (customerAccount == null) {
+			logger.warn("Someone tried payments functionality for some other account. Details:");
+			logger.warn("Customer Acc No: "
+					+ request.getParameter("customerAccNumber"));
+			logger.warn("Customer ID: " + user.getCustomerID());
+			attr.addFlashAttribute("failureMsg",
+					"Could not process your request. Please try again or contact the bank.");
+			return "redirect:/home/payments";
+		}
+		
 		// verify that the merchant account exists and is of type merchant
 		Account merchantAccount = accountService.getAccountByNumber(
 				request.getParameter("merchantAccNumber"));
@@ -555,14 +576,25 @@ public class ExternalUserController {
 		if( merchantAccount != null 
 				&& !merchantAccount.toString().isEmpty() ) {
 			
+			transactionService.initiatePayment(paymentRequest, emailService);
 			
+			logger.debug("Valid transaction");
+			attr.addFlashAttribute("successMsg",
+					"Your payment request was made. You will a receive a notification shortly when your payment is approved.");
 			
 			return "redirect:/home/payments"; 
 			
 		}
 		
+		
+		// log the errors and throw and unsuccessful		
+		logger.warn("Someone tried payments functionality for some other account. Details:");
+		logger.warn("Merchant Acc No: "
+				+ request.getParameter("customerAccNumber"));
+		logger.warn("Customer ID: " + user.getCustomerID());
+		
 		attr.addFlashAttribute("failureMsg",
-				"Transfer unsucessful. Please try again or contact the bank.");
+				"Could not process your request. Please try again or contact the bank.");
 		
 		return "redirect:/home/payments";	
 		
@@ -627,17 +659,103 @@ public class ExternalUserController {
 	}
 	
 	@RequestMapping(value = "/merchant-payments", method = RequestMethod.POST)
-	public String postPaymentsForMerchants(ModelMap model) {
+	public String postPaymentsForMerchants(ModelMap model,
+			HttpServletRequest request,
+			@ModelAttribute("paymentrequest") PaymentRequest paymentRequest,
+			BindingResult result, RedirectAttributes attr) {
 		User user = userService.getUserDetails();
-		model.put("user", user);		
+		model.put("user", user);
+		model.addAttribute("title", "Payments");
 		
-		List<Account> accounts = accountService.getAccountsByCustomerID(user
+		List<Account> customerAccounts = accountService.getAccountsByCustomerID(user
 				.getCustomerID());
-		model.addAttribute("accounts", accounts);
 		
-		model.addAttribute("title", "Merchant Payments");
+		BigDecimal amount = transactionService.getBigDecimal(request
+				.getParameter("amount"));
 		
-		return "customer/merchantpayments";		 
+		// Generate OTP
+		String otp = null;
+		try {
+			String sessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
+			logger.debug("Got session id: " + sessionId);
+			otp = otpService.generateOTP(sessionId.getBytes(), 20, 7, false, 20);
+		} catch (InvalidKeyException e) {
+			logger.warn(e);
+			attr.addFlashAttribute("failureMsg",
+					"Could not process your transaction. Please try again or contact the bank.");
+			return "redirect:/home/merchant-payments";
+		} catch (NoSuchAlgorithmException e) {
+			logger.warn(e);			
+			attr.addFlashAttribute("failureMsg",
+					"Could not process your transaction. Please try again or contact the bank.");
+			return "redirect:/home/merchant-payments";
+		}
+		
+		// Validate the PaymentReques model
+		paymentRequest = new PaymentRequest(request.getParameter("merchantAccNumber"), request.getParameter("customerAccNumber"),
+				null, 1, 0,
+				amount, "Debit", otp);
+		
+		
+		validator.validate(paymentRequest, result);
+		if (result.hasErrors()) {
+			logger.debug(result);
+
+			// attributes for validation failures
+			attr.addFlashAttribute(
+					"org.springframework.validation.BindingResult.paymentrequest",
+					result);
+			attr.addFlashAttribute("paymentrequest", paymentRequest);
+			attr.addFlashAttribute("failureMsg",
+					"You have errors in your request.");
+
+			// redirect to the credit debit view page
+			return "redirect:/home/merchant-payments";
+		}
+		
+		// If account is empty or null, skip the account service check
+		Account customerAccount = accountService.getValidAccountByNumber(
+				request.getParameter("customerAccNumber"), customerAccounts);
+
+		// Exit the transaction if Account doesn't exist
+		if (customerAccount == null) {
+			logger.warn("Someone tried payments functionality for some other account. Details:");
+			logger.warn("Customer Acc No: "
+					+ request.getParameter("customerAccNumber"));
+			logger.warn("Customer ID: " + user.getCustomerID());
+			attr.addFlashAttribute("failureMsg",
+					"Could not process your request. Please try again or contact the bank.");
+			return "redirect:/home/merchant-payments";
+		}
+		
+		// verify that the merchant account exists and is of type merchant
+		Account merchantAccount = accountService.getAccountByNumber(
+				request.getParameter("merchantAccNumber"));
+		
+		if( merchantAccount != null 
+				&& !merchantAccount.toString().isEmpty() ) {
+			
+			
+			
+			logger.debug("Valid transaction");
+			attr.addFlashAttribute("successMsg",
+					"Your payment request was made. You will a receive a notification shortly when your payment is approved.");
+			
+			return "redirect:/home/merchant-payments"; 
+			
+		}
+		
+		
+		// log the errors and throw and unsuccessful		
+		logger.warn("Someone tried payments functionality for some other account. Details:");
+		logger.warn("Merchant Acc No: "
+				+ request.getParameter("customerAccNumber"));
+		logger.warn("Customer ID: " + user.getCustomerID());
+		
+		attr.addFlashAttribute("failureMsg",
+				"Could not process your request. Please try again or contact the bank.");
+		
+		return "redirect:/home/merchant-payments"; 
 	}
 
 	

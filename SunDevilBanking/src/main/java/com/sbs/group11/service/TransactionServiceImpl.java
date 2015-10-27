@@ -172,17 +172,36 @@ public class TransactionServiceImpl implements TransactionService {
 		return false;
 	}
 
-	public void initiatePayment(PaymentRequest paymentRequest) {
+	public void initiatePayment(PaymentRequest paymentRequest, SendEmailService emailService) {
+		
+		paymentRequestDao.savePaymentRequest(paymentRequest);
+		String content = null;
+		
+		// check if the user has initiated the payment
+		// or merchant has
+		if ( paymentRequest.getUserAccepted() == 1 ) {
+			
+			content = "A new payment request has been made. "
+					+ "To process the payment, please go to "
+					+ "https://group11.mobicloud.asu.edu/home/merchant-payment-requests.\n\n"
+					+ "The payment request will expire in 2 hours from now.\n\n"
+					+ "Please use the following OTP to accept the payment: " + paymentRequest.getOtp();
+			
+			// send email to merchant
+			emailService.sendEmail("test@rahulparekh.in", "Sun Devil Banking. New Request", content);
+		}
+		
+		// send email to user
+		
+		
+	}
+
+	public void acceptPayment(PaymentRequest paymentRequest, SendEmailService emailService) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public void acceptPayment(PaymentRequest paymentRequest) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void completePayment(PaymentRequest paymentRequest) {
+	public void completePayment(PaymentRequest paymentRequest, SendEmailService emailService) {
 		// TODO Auto-generated method stub
 		
 	}
