@@ -35,7 +35,7 @@ public class PaymentRequest {
 	public PaymentRequest(String merchantAccNumber, String customerAccNumber,
 			String transactionID, int userAccepted, int merchantAccepted,
 			BigDecimal amount, String type, String otp, int initiatedBy, 
-			String customerName, String merchantName) {
+			String customerName, String merchantName, String senderAccNumber, String receiverAccNumber) {
 		super();
 		this.merchantAccNumber = merchantAccNumber;
 		this.customerAccNumber = customerAccNumber;
@@ -51,6 +51,8 @@ public class PaymentRequest {
 		this.initiatedBy = initiatedBy;
 		this.customerName = customerName;
 		this.merchantName = merchantName;
+		this.senderAccNumber = senderAccNumber;
+		this.receiverAccNumber = receiverAccNumber;
 	}
 	
 	
@@ -68,6 +70,16 @@ public class PaymentRequest {
 	@Size(min = 17, max = 17)
 	@Column(name = "CustomerAccNumber", nullable = false, length = 17, unique = false)
 	private String customerAccNumber;
+	
+	@NotNull
+	@Size(min = 17, max = 17)
+	@Column(name = "SenderAccNumber", nullable = false, length = 17, unique = false)
+	private String senderAccNumber;
+	
+	@NotNull
+	@Size(min = 17, max = 17)
+	@Column(name = "ReceiverAccNumber", nullable = false, length = 17, unique = false)
+	private String receiverAccNumber;
 	
 	@NotNull
 	@Size(min = 3, max = 70)
@@ -154,6 +166,22 @@ public class PaymentRequest {
 
 	public void setCustomerAccNumber(String customerAccNumber) {
 		this.customerAccNumber = customerAccNumber;
+	}
+
+	public String getSenderAccNumber() {
+		return senderAccNumber;
+	}
+
+	public void setSenderAccNumber(String senderAccNumber) {
+		this.senderAccNumber = senderAccNumber;
+	}
+
+	public String getReceiverAccNumber() {
+		return receiverAccNumber;
+	}
+
+	public void setReceiverAccNumber(String receiverAccNumber) {
+		this.receiverAccNumber = receiverAccNumber;
 	}
 
 	public String getTransactionID() {
@@ -256,14 +284,15 @@ public class PaymentRequest {
 	public String toString() {
 		return "PaymentRequest [id=" + id + ", merchantAccNumber="
 				+ merchantAccNumber + ", customerAccNumber="
-				+ customerAccNumber + ", customerName=" + customerName
-				+ ", merchantName=" + merchantName + ", transactionID="
-				+ transactionID + ", userAccepted=" + userAccepted
-				+ ", merchantAccepted=" + merchantAccepted + ", amount="
-				+ amount + ", type=" + type + ", otp=" + otp + ", OTPExpiry="
-				+ OTPExpiry + ", createdAt=" + createdAt + ", updatedAt="
-				+ updatedAt + ", initiatedBy=" + initiatedBy + "]";
+				+ customerAccNumber + ", senderAccNumber=" + senderAccNumber
+				+ ", receiverAccNumber=" + receiverAccNumber
+				+ ", customerName=" + customerName + ", merchantName="
+				+ merchantName + ", transactionID=" + transactionID
+				+ ", userAccepted=" + userAccepted + ", merchantAccepted="
+				+ merchantAccepted + ", amount=" + amount + ", type=" + type
+				+ ", otp=" + otp + ", OTPExpiry=" + OTPExpiry + ", createdAt="
+				+ createdAt + ", updatedAt=" + updatedAt + ", initiatedBy="
+				+ initiatedBy + "]";
 	}
-	
 	
 }

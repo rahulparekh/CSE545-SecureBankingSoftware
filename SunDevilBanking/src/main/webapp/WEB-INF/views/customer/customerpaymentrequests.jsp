@@ -13,6 +13,12 @@
 	</div>
 
 	<div id="payment-requests">
+		<c:if test="${!empty successMsg}">
+			<div class="alert alert-success">${fn:escapeXml(successMsg)}</div>
+		</c:if>
+		<c:if test="${!empty failureMsg}">
+			<div class="alert alert-danger">${fn:escapeXml(failureMsg)}</div>
+		</c:if>
 	
 		<table class="table table-bordered">
     	<thead>
@@ -39,8 +45,11 @@
         		<td>${fn:escapeXml(payment.customerAccNumber)}</td>
         		<td>
         			<c:choose>
+        				<c:when test="${payment.userAccepted == 1 and payment.merchantAccepted == 1 }">
+        					Payment accepted.
+        				</c:when>
         				<c:when test="${payment.OTPExpiry le currentTime}">
-        					Payment has expired
+        					OTP has expired
         				</c:when>
         				<c:otherwise>
         				<form:form action="payment-requests" method="POST" modelAttribute="transaction">

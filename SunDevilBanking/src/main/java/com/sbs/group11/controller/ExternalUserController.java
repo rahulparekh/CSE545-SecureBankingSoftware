@@ -539,7 +539,9 @@ public class ExternalUserController {
 				request.getParameter("merchantAccNumber"),
 				request.getParameter("customerAccNumber"), null, 1, 0, amount,
 				"Debit", otp, 0,
-				user.getFirstName() + " " + user.getLastName(), "Merchant Name");
+				user.getFirstName() + " " + user.getLastName(), "Merchant Name",
+				request.getParameter("customerAccNumber"),
+				request.getParameter("merchantAccNumber"));
 
 		validator.validate(paymentRequest, result);
 		if (result.hasErrors()) {
@@ -636,16 +638,74 @@ public class ExternalUserController {
 	}
 
 	@RequestMapping(value = "/payment-requests", method = RequestMethod.POST)
-	public String postPaymentRequestsForCustomer(ModelMap model) {
+	public String postPaymentRequestsForCustomer(ModelMap model,
+			HttpServletRequest request, RedirectAttributes attr) {
 		User user = userService.getUserDetails();
+		Set<Account> accounts = user.getAccounts();
 		model.put("user", user);
 		model.addAttribute("title", "Payment Requests");
-
+		
+		if (request.getParameter("otp") == null || request.getParameter("otp").isEmpty()) {
+			attr.addFlashAttribute("failureMsg", "OTP is required.");
+			return "redirect:/home/payment-requests";
+		}
+			
 		// get all the pending requests
+		if (request.getParameter("paymentrequest") != null) {
+			PaymentRequest paymentRequest = transactionService
+					.getPaymentRequest(Integer.parseInt(request
+							.getParameter("paymentrequest")));
 
-		// add them to the model to be displayed
+			boolean isOTPCheck = false;
+			for (Account account : accounts) {
 
-		return "customer/customerpaymentrequests";
+				// check if the account in the request does indeed belong to the
+				// user
+				if (paymentRequest.getCustomerAccNumber().equalsIgnoreCase(
+						account.getNumber())) {
+					isOTPCheck = true;
+					
+					logger.debug(paymentRequest.getOtp() + " == "
+							+ request.getParameter("otp"));
+
+					// check if otp hasn't expired
+					if (paymentRequest.getOTPExpiry().isAfter(
+							new DateTime().toLocalDateTime())) {
+
+						// check if otp is the same
+						boolean isValidOTP = paymentRequest
+								.getOtp()
+								.trim()
+								.equalsIgnoreCase(
+										request.getParameter("otp").trim());
+
+						if (isValidOTP) {
+							// proceed to accept
+							transactionService.acceptPayment(paymentRequest);
+							return "redirect:/home/payment-requests";
+						}
+
+					}
+
+					break;
+				}
+
+			}
+
+			if (isOTPCheck) {
+				attr.addFlashAttribute("failureMsg",
+						"OTP mismatch. Please try again.");
+				logger.debug("Incorrect OTP");
+				return "redirect:/home/payment-requests";
+
+			}
+
+			logger.debug("Account in the payment request does not belong to the user");
+
+		}
+			
+		attr.addFlashAttribute("failureMsg", "Could not process your request. Please try again");
+		return "redirect:/home/payment-requests";
 
 	}
 
@@ -703,12 +763,25 @@ public class ExternalUserController {
 					"Could not process your transaction. Please try again or contact the bank.");
 			return "redirect:/home/merchant-payments";
 		}
+		
+		String senderAccountNumber = "";
+		String receiverAccountNumber = "";
+		if(request.getParameter("type").equalsIgnoreCase("credit")) {
+			senderAccountNumber = request.getParameter("merchantAccNumber");
+			receiverAccountNumber = request.getParameter("customerAccNumber"); 
+		} else {
+			senderAccountNumber = request.getParameter("customerAccNumber");
+			receiverAccountNumber = request.getParameter("merchantAccNumber");;
+		}
 
 		// Validate the PaymentReques model
 		paymentRequest = new PaymentRequest(
 				request.getParameter("merchantAccNumber"),
 				request.getParameter("customerAccNumber"), null, 0, 1, amount,
-				request.getParameter("type"), otp, 1, "Customer Name" , user.getLastName());
+				request.getParameter("type"), otp, 1, "Customer Name",
+				user.getLastName(),
+				senderAccountNumber,
+				receiverAccountNumber);
 
 		validator.validate(paymentRequest, result);
 		if (result.hasErrors()) {
@@ -746,7 +819,10 @@ public class ExternalUserController {
 				.getParameter("customerAccNumber"));
 
 		if (customerAccount != null && !customerAccount.toString().isEmpty()) {
-			paymentRequest.setCustomerName(customerAccount.getUser().getFirstName() + " " + customerAccount.getUser().getLastName());
+			paymentRequest.setCustomerName(customerAccount.getUser()
+					.getFirstName()
+					+ " "
+					+ customerAccount.getUser().getLastName());
 			transactionService.initiatePayment(paymentRequest);
 
 			logger.debug("Valid transaction");
@@ -778,7 +854,7 @@ public class ExternalUserController {
 		User user = userService.getUserDetails();
 		model.put("user", user);
 		model.addAttribute("title", "Merchant Payment Requests");
-		
+
 		Set<Account> accounts = user.getAccounts();
 		List<PaymentRequest> requests = new ArrayList<PaymentRequest>();
 
@@ -792,7 +868,7 @@ public class ExternalUserController {
 		// add them to the model to be displayed
 		model.addAttribute("paymentrequests", requests);
 		model.addAttribute("currentTime", new DateTime().toLocalDateTime());
-		
+
 		return "customer/merchantpaymentrequests";
 
 	}

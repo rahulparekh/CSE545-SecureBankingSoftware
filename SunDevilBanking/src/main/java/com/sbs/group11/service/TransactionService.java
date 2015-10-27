@@ -153,15 +153,22 @@ public interface TransactionService {
 	 */
 	void acceptPayment(PaymentRequest paymentRequest);
 
-	/**
-	 * Complete payment i.e. after the payment has been accepted by both
-	 * parties, it is completed and added to transactions as pending for
-	 * internal user to accept
-	 *
-	 * @param paymentRequest the payment request
-	 */
-	void completePayment(PaymentRequest paymentRequest);
 	
+	/**
+	 * Gets the payments by acc number.
+	 *
+	 * @param accNumber the acc number
+	 * @param initiatedBy the initiated by
+	 * @return the payments by acc number
+	 */
 	List<PaymentRequest> getPaymentsByAccNumber(String accNumber, int initiatedBy);
+	
+	/**
+	 * Gets the payment request.
+	 *
+	 * @param id the id
+	 * @return the payment request
+	 */
+	PaymentRequest getPaymentRequest(int id);
 
 }

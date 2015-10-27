@@ -19,9 +19,9 @@ public class PaymentRequestDaoImpl  extends AbstractDao<Integer, PaymentRequest>
 		
 		String query = "";
 		if (initiatedBy == 0) {
-			query = "from PaymentRequest where MerchantAccNumber = :accNumber and InitiatedBy = 0";
+			query = "from PaymentRequest where MerchantAccNumber = :accNumber and InitiatedBy = 0 Order By CreatedAt DESC";
 		} else {
-			query = "from PaymentRequest where CustomerAccNumber = :accNumber and InitiatedBy = 1";
+			query = "from PaymentRequest where CustomerAccNumber = :accNumber and InitiatedBy = 1 Order By CreatedAt DESC";
 		}	
 		
 		List<PaymentRequest> requests = getSession()
@@ -30,6 +30,12 @@ public class PaymentRequestDaoImpl  extends AbstractDao<Integer, PaymentRequest>
 			.list();				
 		
 		return requests;
+	}
+
+	public PaymentRequest getPaymentRequest(int id) {
+		
+		return (PaymentRequest) getSession().get(PaymentRequest.class, id);									
+		
 	}
 
 }
