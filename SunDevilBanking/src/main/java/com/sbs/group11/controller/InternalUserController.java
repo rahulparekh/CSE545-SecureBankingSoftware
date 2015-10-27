@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -126,6 +127,8 @@ public class InternalUserController {
 		System.out.println("inside controller");
 		model.addAttribute("user",new User());
 		internalUserService.addInternalUser(user);
+		SystemLog systemLog = new SystemLog(new DateTime().toLocalDateTime(),user.getFirstName(),user.getUserType(),"The user "+user.getFirstName()+" is created");
+		systemLogService.addLog(systemLog);
 		redirectAttrs.addFlashAttribute(
 				"successMsg",
 				"User Added Successfully");
@@ -138,6 +141,8 @@ public class InternalUserController {
 		model.addAttribute("user", user);
 		model.addAttribute("user",new User());
 		internalUserService.updateInternalUser(user);
+		SystemLog systemLog = new SystemLog(new DateTime().toLocalDateTime(),user.getFirstName(),user.getUserType(),"The user "+user.getFirstName()+" info is updated");
+		systemLogService.addLog(systemLog);
 		redirectAttrs.addFlashAttribute(
 				"successMsg",
 				"UserInformation updated Successfully");
@@ -151,6 +156,8 @@ public class InternalUserController {
 		model.addAttribute("user", user);
 		model.addAttribute("user",new User());
 		internalUserService.deleteInternalUserById(user.getCustomerID());
+		SystemLog systemLog = new SystemLog(new DateTime().toLocalDateTime(),user.getFirstName(),user.getUserType(),"The user "+user.getFirstName()+" is deleted");
+		systemLogService.addLog(systemLog);
 		redirectAttrs.addFlashAttribute(
 				"successMsg",
 				"Deleted the user Successfully");

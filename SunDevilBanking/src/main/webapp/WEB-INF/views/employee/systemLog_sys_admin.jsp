@@ -39,12 +39,12 @@
         <div class="col-sm-3 col-md-2 sidebar">
 
           <ul class="nav nav-sidebar">
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Manage Employees</a></li>
-            <li><a href="#">System Log</a></li>
-            <li><a href="#">Pending Requests</a></li>
-            <li><a href="#">Settings</a></li>
-            <li><a href="#">Logout</a></li>
+             <li><a href="${pageContext.servletContext.contextPath}/sysadmin-home">Home</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/manage-employee">Add Employees</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/systemLog-sys-admin">System Log</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/requests-pending">Pending Requests</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/sysadmin-setting">Settings</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
           </ul>
           
         </div> <!-- sidebar -->
@@ -60,15 +60,18 @@
             <thead>
               <tr>
                 <th>TimeStamp</th>
-				<th>Employee</th>
-                <th>Action</th>           			
+				<th>Name</th>
+				<th>Type</th>
+                <th>Action</th>
+                           			
               </tr>
             </thead>
             <tbody>
         	  <c:forEach var="log" items="${systemlogs}" >
               <tr>
                 <td>${log.timeStamp}</td>
-                <td>${log.employeeID}</td>
+                <td>${log.firstName}</td>
+                <td>${log.userType}</td>
 				<td>${log.action}</td>
               </tr>
              </c:forEach>
