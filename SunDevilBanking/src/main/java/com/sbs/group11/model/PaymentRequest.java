@@ -118,8 +118,8 @@ public class PaymentRequest {
 	private String type;
 	
 	@NotEmpty
-	@Size(min = 7, max = 7)
-	@Column(name = "OTP", nullable = false, length = 7)
+	@Size(min = 8, max = 8)
+	@Column(name = "OTP", nullable = false, length = 8)
 	private String otp;
 	
 	@NotNull

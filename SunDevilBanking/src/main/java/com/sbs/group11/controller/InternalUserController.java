@@ -227,7 +227,7 @@ public class InternalUserController {
 	public String SearchInternalUserManager(ModelMap model,
 			@ModelAttribute("empSearch") EmployeeSearch empSearch, BindingResult result,RedirectAttributes redirectAttrs) {
 		
-		User user = internalUserService.searchInternalUser(empSearch.getEmployeeID());
+		User user = internalUserService.searchExternalUser(empSearch.getEmployeeID());
 		if (user == null){
 			redirectAttrs.addFlashAttribute(
 					"failureMsg",
@@ -600,7 +600,7 @@ public class InternalUserController {
 		public String SearchInternalUserIntEmployee(ModelMap model,
 				@ModelAttribute("empSearch") EmployeeSearch empSearch, BindingResult result,RedirectAttributes redirectAttrs) {
 			
-			User user = internalUserService.searchInternalUser(empSearch.getEmployeeID());
+			User user = internalUserService.searchExternalUser(empSearch.getEmployeeID());
 			if (user == null){
 				redirectAttrs.addFlashAttribute(
 						"failureMsg",
@@ -659,7 +659,7 @@ public class InternalUserController {
 	@RequestMapping(value = "/addTransaction", method = RequestMethod.POST)
 	public String SearchExternalUser(ModelMap model,
 			@ModelAttribute("empSearch") EmployeeSearch empSearch, BindingResult result,RedirectAttributes redirectAttrs) {
-		User user = internalUserService.searchInternalUser(empSearch.getEmployeeID());
+		User user = internalUserService.searchExternalUser(empSearch.getEmployeeID());
 		if (user == null){
 			redirectAttrs.addFlashAttribute(
 					"failureMsg",
@@ -886,6 +886,22 @@ public class InternalUserController {
 
 		// redirect to the view page
 		return "redirect:/addTransaction";
+	}
+	
+	
+	//***************************PII************************
+	
+	@RequestMapping(value = "/sys-admin-PII", method = RequestMethod.GET)
+	public String getPII(ModelMap model){
+		
+		List<SystemLog> syslogs =  systemLogService.getAllLog();
+		
+		model.addAttribute("systemlogs", syslogs);
+		
+		
+		return "employee/PII_sys_admin";
+	
+		
 	}
 
 	

@@ -35,8 +35,11 @@ public class AccountDaoImpl extends AbstractDao<Integer, Account> implements
 		Account account = new Account();
 
 		account = (Account) getSession().get(Account.class, accNumber);
-
-		return account;
+		
+		if (account != null)
+			return account;
+		else
+			return null;
 		
 	}
 	

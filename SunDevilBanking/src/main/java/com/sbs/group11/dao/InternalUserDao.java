@@ -11,11 +11,15 @@ public interface InternalUserDao {
 	List<User> getAllInternalUsers();
 	
 	User findUserByID(String ID);
+	User findInternalUserByID(String ID);
+	User findExternalUserByID(String ID);
 	User findUserByType(String userType);
 	User findUserByEmail(String email);
 	
 	void updateInternalUser(User user);
 	void deleteInternalUserById(String id);
 	void updatePassword(String email, String password);
+	
+	
 
 }

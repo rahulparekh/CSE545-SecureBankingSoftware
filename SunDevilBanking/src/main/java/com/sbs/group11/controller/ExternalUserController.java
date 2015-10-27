@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,11 +26,13 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.sbs.group11.model.Account;
+import com.sbs.group11.model.OTP;
 import com.sbs.group11.model.PaymentRequest;
 import com.sbs.group11.model.StatementMonthYear;
 import com.sbs.group11.model.Transaction;
 import com.sbs.group11.model.User;
 import com.sbs.group11.service.AccountService;
+import com.sbs.group11.service.BCryptHashService;
 import com.sbs.group11.service.OTPService;
 import com.sbs.group11.service.SendEmailService;
 import com.sbs.group11.service.TransactionService;
@@ -63,9 +67,79 @@ public class ExternalUserController {
 
 	@Autowired
 	private SendEmailService emailService;
+	
+	@Autowired
+	private BCryptHashService hashService;
 
 	@Autowired
 	SmartValidator validator;
+	
+	@RequestMapping(value = "/process-otp", method = RequestMethod.POST)
+	public String processOTP(ModelMap model, HttpServletRequest request, RedirectAttributes attr ) {
+		
+		String otp = request.getParameter("otp");
+		String transactionId = request.getParameter("transactionId");
+		String type = request.getParameter("type");
+		String otpId = request.getParameter("otpId");
+		
+		OTP dbOTP = otpService.getOTP(otpId);
+		
+		if (request.getParameter("submit").equalsIgnoreCase("cancel")) {
+			
+			logger.debug("Cancelling the transaction");
+			logger.info(new DateTime().toLocalDateTime().minusMinutes(5));
+			
+			// set transaction to cancel and expiry the opt
+			dbOTP.setOTPExpiry(new DateTime().toLocalDateTime().minusMinutes(5));
+			Transaction transaction = dbOTP.getTransaction();
+			transaction.setStatus("cancelled");
+			transaction.setUpdatedAt(new DateTime().toLocalDateTime());
+			Set<OTP> otpSet = new HashSet<OTP>();
+			otpSet.add(dbOTP);
+			transaction.setOtp(otpSet);
+			dbOTP.setTransaction(transaction);
+			transactionService.addTransaction(transaction);
+			
+			attr.addFlashAttribute(
+					"successMsg",
+					"Transaction cancelled successfully.");
+			
+			return "redirect:/home/credit-debit";
+		}
+		
+		if (request.getParameter("submit").equalsIgnoreCase("confirm")) {
+			
+			logger.debug("Trying to confirm the transaction");
+			
+			if ( otpService.isOTPVerified(dbOTP, otp, transactionId, type) ) {
+				attr.addFlashAttribute(
+						"failureMsg",
+						"OPT could not be verified. Please try again");
+				return "redirect:/home/credit-debit";
+			}
+			
+			dbOTP.setOTPExpiry(new DateTime().toLocalDateTime().minusMinutes(5));
+			Transaction transaction = dbOTP.getTransaction();
+			transaction.setStatus("pending");
+			transaction.setUpdatedAt(new DateTime().toLocalDateTime());
+			Set<OTP> otpSet = new HashSet<OTP>();
+			otpSet.add(dbOTP);
+			transaction.setOtp(otpSet);
+			dbOTP.setTransaction(transaction);
+			transactionService.addTransaction(transaction);
+			
+			attr.addFlashAttribute(
+					"successMsg",
+					"Transaction completed successfully. Transaction should show up on your account shortly after bank approval.");
+			
+			return "redirect:/home/credit-debit";
+		}
+		
+		attr.addFlashAttribute(
+				"failureMsg",
+				"OPT could not be verified. Please try again");
+		return "redirect:/home/credit-debit";
+	}
 
 	/**
 	 * Gets the home.
@@ -97,6 +171,25 @@ public class ExternalUserController {
 	public String getCreditDebit(ModelMap model) {
 		User user = userService.getUserDetails();
 		model.put("user", user);
+		
+		// Check if OTP exists
+		OTP otp = otpService.getOTPByCustomerIDAndType(user.getCustomerID(), "creditdebit");
+		
+		if ( otp != null ) {
+			logger.debug("Otp exists");
+			logger.debug(otp);
+			
+			String transactionId = otp.getTransaction().getTransactionID();
+			int otpId = otp.getId();
+			
+			model.addAttribute("title", "Verify Transaction");
+			model.addAttribute("transactionId", transactionId);
+			model.addAttribute("otpId", otpId);
+			model.addAttribute("type", "creditdebit");
+			
+			return "customer/otp";
+		}
+		
 		List<Account> accounts = accountService.getAccountsByCustomerID(user
 				.getCustomerID());
 		model.addAttribute("title", "Welcome " + user.getFirstName());
@@ -149,7 +242,7 @@ public class ExternalUserController {
 				transactionService.getUniqueTransactionID(), "Self "
 						+ request.getParameter("type"),
 				request.getParameter("number"), request.getParameter("number"),
-				"pending", request.getParameter("type"), amount, isCritical,
+				"otp", request.getParameter("type"), amount, isCritical,
 				request.getParameter("number"));
 
 		// Validate the model
@@ -193,12 +286,46 @@ public class ExternalUserController {
 					"Could not process your transaction. Debit amount cannot be higher than account balance");
 			return "redirect:/home/credit-debit";
 		}
-
+		
+		
+		// Generate OTP
+		String otp = null;
+		try {
+			String sessionId = RequestContextHolder.currentRequestAttributes()
+					.getSessionId();
+			logger.debug("Got session id: " + sessionId);
+			Random range = new Random();
+			int rand = range.nextInt(Integer.MAX_VALUE);
+			otp = otpService.generateOTP(sessionId.getBytes(), new Long(rand),
+					8, false, rand);
+		} catch (InvalidKeyException e) {
+			logger.warn(e);
+			attr.addFlashAttribute("failureMsg",
+					"Could not process your transaction. Please try again or contact the bank.");
+			return "redirect:/home/credit-debit";
+		} catch (NoSuchAlgorithmException e) {
+			logger.warn(e);
+			attr.addFlashAttribute("failureMsg",
+					"Could not process your transaction. Please try again or contact the bank.");
+			return "redirect:/home/credit-debit";
+		}		
+		
+		OTP otpObj = new OTP(hashService.getBCryptHash(otp), user.getCustomerID(), "creditdebit");
+		Set<OTP> otpSet = new HashSet<OTP>();
+		otpSet.add(otpObj);
+		transaction.setOtp(otpSet);
+		otpObj.setTransaction(transaction);
 		transactionService.addTransaction(transaction);
-
-		attr.addFlashAttribute(
-				"successMsg",
-				"Transaction completed successfully. Transaction should show up on your account shortly.");
+		
+		String content = "You have made a new request to for Credit / Debit "
+				+ "To process the payment, please go to "
+				+ "https://group11.mobicloud.asu.edu/home/credit-debit.\n\n"
+				+ "The payment request will expire in the next 10 minutes from now.\n\n"
+				+ "Please use the following OTP to accept the payment: " + otp + "\n\n" 
+				+ "You can accept the payment or cancel it.";
+		
+		// send email
+		emailService.sendEmail(user.getEmail(), "Sun Devil Banking OTP", content);
 
 		// redirect to the credit debit view page
 		return "redirect:/home/credit-debit";
@@ -520,8 +647,10 @@ public class ExternalUserController {
 			String sessionId = RequestContextHolder.currentRequestAttributes()
 					.getSessionId();
 			logger.debug("Got session id: " + sessionId);
+			Random range = new Random();
+			int rand = range.nextInt(Integer.MAX_VALUE);
 			otp = otpService
-					.generateOTP(sessionId.getBytes(), 20, 7, false, 20);
+					.generateOTP(sessionId.getBytes(), new Long(rand), 8, false, rand);
 		} catch (InvalidKeyException e) {
 			logger.warn(e);
 			attr.addFlashAttribute("failureMsg",
@@ -751,8 +880,10 @@ public class ExternalUserController {
 			String sessionId = RequestContextHolder.currentRequestAttributes()
 					.getSessionId();
 			logger.debug("Got session id: " + sessionId);
+			Random range = new Random();
+			int rand = range.nextInt(Integer.MAX_VALUE);
 			otp = otpService
-					.generateOTP(sessionId.getBytes(), 20, 7, false, 20);
+					.generateOTP(sessionId.getBytes(), new Long(rand), 8, false, rand);
 		} catch (InvalidKeyException e) {
 			logger.warn(e);
 			attr.addFlashAttribute("failureMsg",

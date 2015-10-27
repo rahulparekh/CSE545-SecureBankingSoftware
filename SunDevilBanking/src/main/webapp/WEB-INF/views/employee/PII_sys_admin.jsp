@@ -54,25 +54,25 @@
           <div class="page-header">
             <h1>SBS - Welcome SysAdmin</h1>
 
-          <h2>System Log:</h2>
+          <h2>PII:</h2>
 		  <br>
 			 <table class="table">
             <thead>
               <tr>
-                <th>TimeStamp</th>
+                <th>Customer ID</th>
 				<th>Name</th>
-				<th>Type</th>
-                <th>Action</th>
+				<th>Phone no</th>
+                <th>Email</th>
                            			
               </tr>
             </thead>
             <tbody>
         	  <c:forEach var="log" items="${systemlogs}" >
               <tr>
-                <td>${log.timeStamp}</td>
+                <td>${log.customerID}</td>
                 <td>${log.firstName}</td>
-                <td>${log.userType}</td>
-				<td>${log.action}</td>
+                <td>${log.phone}</td>
+				<td>${log.email}</td>
               </tr>
              </c:forEach>
             </tbody>

@@ -72,6 +72,17 @@ public class Transaction {
 		this.transactionOwner = transactionOwner;
 	}
 	
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy="transaction")
+	private Set<OTP> otp = new HashSet<OTP>(0);
+	
+	public Set<OTP> getOtp() {
+		return otp;
+	}
+
+	public void setOtp(Set<OTP> otp) {
+		this.otp = otp;
+	}
+
 	/** Payment Requests. For the One-to-Many relationship */
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "TransactionID")
@@ -370,15 +381,6 @@ public class Transaction {
 		this.updatedAt = updatedAt;
 	}
 
-	@Override
-	public String toString() {
-		return "Transaction [transactionID=" + transactionID
-				+ ", receiverAccNumber=" + receiverAccNumber
-				+ ", senderAccNumber=" + senderAccNumber + ", status=" + status
-				+ ", type=" + type + ", amount=" + amount + ", createdAt="
-				+ createdAt + ", updatedAt=" + updatedAt + "]";
-	}
-
 	public String getMonth() {
 		return month;
 	}
@@ -386,5 +388,19 @@ public class Transaction {
 	public void setMonth(String month) {
 		this.month = month;
 	}
+
+	@Override
+	public String toString() {
+		return "Transaction [Otp=" + otp + ", paymentRequests="
+				+ paymentRequests + ", transactionID=" + transactionID
+				+ ", name=" + name + ", receiverAccNumber=" + receiverAccNumber
+				+ ", senderAccNumber=" + senderAccNumber + ", status=" + status
+				+ ", type=" + type + ", amount=" + amount + ", balance="
+				+ balance + ", transactionOwner=" + transactionOwner
+				+ ", isCritical=" + isCritical + ", createdAt=" + createdAt
+				+ ", updatedAt=" + updatedAt + ", month=" + month + "]";
+	}
+	
+	
 
 }

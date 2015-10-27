@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -30,7 +31,7 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 			transaction.setIsCritical("No");
 		}
 		
-		getSession().save(transaction);
+		getSession().saveOrUpdate(transaction);
 	}
 
 	@SuppressWarnings("unchecked")
