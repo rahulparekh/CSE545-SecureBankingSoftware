@@ -11,6 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.DecimalMin;
@@ -49,6 +50,7 @@ public class Transaction {
 		this.amount = amount;
 		this.createdAt = new DateTime().toLocalDateTime();
 		this.updatedAt = new DateTime().toLocalDateTime();
+
 		this.isCritical = isCritical;
 		this.transactionOwner = transactionOwner;
 	}
@@ -71,6 +73,17 @@ public class Transaction {
 		this.transactionOwner = transactionOwner;
 	}
 	
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy="transaction")
+	private Set<OTP> otp = new HashSet<OTP>(0);
+	
+	public Set<OTP> getOtp() {
+		return otp;
+	}
+
+	public void setOtp(Set<OTP> otp) {
+		this.otp = otp;
+	}
+
 	/** Payment Requests. For the One-to-Many relationship */
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "TransactionID")
@@ -136,14 +149,14 @@ public class Transaction {
 	@Size(min = 0, max = 6)
 	@Column(name = "isCritical", nullable = false, length = 6)
 	private String isCritical;
-	
-	@Size(min = 60, max = 60)
-	@Column(name = "OTP", nullable = true, length = 60)
-	private String otp;
-	
-	@Column(name = "OTPExpiry", nullable = true)
-	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
-	private LocalDateTime OTPExpiry;
+
+	public String getIsCritical() {
+		return isCritical;
+	}
+
+	public void setIsCritical(String isCritical) {
+		this.isCritical = isCritical;
+	}
 
 	/** The created at. */
 	@NotNull
@@ -330,30 +343,6 @@ public class Transaction {
 	public void setTransactionOwner(String transactionOwner) {
 		this.transactionOwner = transactionOwner;
 	}
-	
-	public String getIsCritical() {
-		return isCritical;
-	}
-
-	public void setIsCritical(String isCritical) {
-		this.isCritical = isCritical;
-	}
-
-	public String getOtp() {
-		return otp;
-	}
-
-	public void setOtp(String otp) {
-		this.otp = otp;
-	}
-
-	public LocalDateTime getOTPExpiry() {
-		return OTPExpiry;
-	}
-
-	public void setOTPExpiry(LocalDateTime oTPExpiry) {
-		OTPExpiry = oTPExpiry;
-	}
 
 	/**
 	 * Gets the created at.
@@ -403,14 +392,13 @@ public class Transaction {
 
 	@Override
 	public String toString() {
-		return "Transaction [paymentRequests=" + paymentRequests
-				+ ", transactionID=" + transactionID + ", name=" + name
-				+ ", receiverAccNumber=" + receiverAccNumber
+		return "Transaction [Otp=" + otp + ", paymentRequests="
+				+ paymentRequests + ", transactionID=" + transactionID
+				+ ", name=" + name + ", receiverAccNumber=" + receiverAccNumber
 				+ ", senderAccNumber=" + senderAccNumber + ", status=" + status
 				+ ", type=" + type + ", amount=" + amount + ", balance="
 				+ balance + ", transactionOwner=" + transactionOwner
-				+ ", isCritical=" + isCritical + ", otp=" + otp
-				+ ", OTPExpiry=" + OTPExpiry + ", createdAt=" + createdAt
+				+ ", isCritical=" + isCritical + ", createdAt=" + createdAt
 				+ ", updatedAt=" + updatedAt + ", month=" + month + "]";
 	}
 	
