@@ -14,7 +14,7 @@ import com.sbs.group11.service.InternalUserService;
 import com.sbs.group11.service.UserService;
 
 @Repository("modifiedDao")
-public class ModifiedDaoImpl extends AbstractDao<Integer, User> implements ModifiedDao {
+public class ModifiedDaoImpl extends AbstractDao<Integer, ModifiedUser> implements ModifiedDao {
 	
 @Autowired
 InternalUserService internaluserservice;
@@ -102,6 +102,12 @@ InternalUserService internaluserservice;
 				.list();
 
 		return users;
+	}
+	
+	public void addRequest(ModifiedUser modifieduser)
+	{
+		
+		persist(modifieduser);
 	}
 
 }

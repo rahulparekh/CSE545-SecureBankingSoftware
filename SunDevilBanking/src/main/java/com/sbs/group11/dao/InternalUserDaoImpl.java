@@ -122,7 +122,7 @@ public class InternalUserDaoImpl extends AbstractDao<Integer, User> implements I
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
+	
 	public User findExternalUserByID(String ID) {
 		// TODO Auto-generated method stub
 		List<User> users = new ArrayList<User>();
@@ -143,7 +143,7 @@ public class InternalUserDaoImpl extends AbstractDao<Integer, User> implements I
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
+
 	public User findUserByID(String ID) {
 		List<User> users = new ArrayList<User>();
 		

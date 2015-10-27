@@ -73,6 +73,73 @@ public class ExternalUserController {
 
 	@Autowired
 	SmartValidator validator;
+	
+	@RequestMapping(value = "/process-otp", method = RequestMethod.POST)
+	public String processOTP(ModelMap model, HttpServletRequest request, RedirectAttributes attr ) {
+		
+		String otp = request.getParameter("otp");
+		String transactionId = request.getParameter("transactionId");
+		String type = request.getParameter("type");
+		String otpId = request.getParameter("otpId");
+		
+		OTP dbOTP = otpService.getOTP(otpId);
+		
+		if (request.getParameter("submit").equalsIgnoreCase("cancel")) {
+			
+			logger.debug("Cancelling the transaction");
+			logger.info(new DateTime().toLocalDateTime().minusMinutes(5));
+			
+			// set transaction to cancel and expiry the opt
+			dbOTP.setOTPExpiry(new DateTime().toLocalDateTime().minusMinutes(5));
+			Transaction transaction = dbOTP.getTransaction();
+			transaction.setStatus("cancelled");
+			transaction.setUpdatedAt(new DateTime().toLocalDateTime());
+			Set<OTP> otpSet = new HashSet<OTP>();
+			otpSet.add(dbOTP);
+			transaction.setOtp(otpSet);
+			dbOTP.setTransaction(transaction);
+			transactionService.addTransaction(transaction);
+			
+			attr.addFlashAttribute(
+					"successMsg",
+					"Transaction cancelled successfully.");
+			
+			return "redirect:/home/credit-debit";
+		}
+		
+		if (request.getParameter("submit").equalsIgnoreCase("confirm")) {
+			
+			logger.debug("Trying to confirm the transaction");
+			
+			if ( otpService.isOTPVerified(dbOTP, otp, transactionId, type) ) {
+				attr.addFlashAttribute(
+						"failureMsg",
+						"OPT could not be verified. Please try again");
+				return "redirect:/home/credit-debit";
+			}
+			
+			dbOTP.setOTPExpiry(new DateTime().toLocalDateTime().minusMinutes(5));
+			Transaction transaction = dbOTP.getTransaction();
+			transaction.setStatus("pending");
+			transaction.setUpdatedAt(new DateTime().toLocalDateTime());
+			Set<OTP> otpSet = new HashSet<OTP>();
+			otpSet.add(dbOTP);
+			transaction.setOtp(otpSet);
+			dbOTP.setTransaction(transaction);
+			transactionService.addTransaction(transaction);
+			
+			attr.addFlashAttribute(
+					"successMsg",
+					"Transaction completed successfully. Transaction should show up on your account shortly after bank approval.");
+			
+			return "redirect:/home/credit-debit";
+		}
+		
+		attr.addFlashAttribute(
+				"failureMsg",
+				"OPT could not be verified. Please try again");
+		return "redirect:/home/credit-debit";
+	}
 
 	/**
 	 * Gets the home.
@@ -104,6 +171,25 @@ public class ExternalUserController {
 	public String getCreditDebit(ModelMap model) {
 		User user = userService.getUserDetails();
 		model.put("user", user);
+		
+		// Check if OTP exists
+		OTP otp = otpService.getOTPByCustomerIDAndType(user.getCustomerID(), "creditdebit");
+		
+		if ( otp != null ) {
+			logger.debug("Otp exists");
+			logger.debug(otp);
+			
+			String transactionId = otp.getTransaction().getTransactionID();
+			int otpId = otp.getId();
+			
+			model.addAttribute("title", "Verify Transaction");
+			model.addAttribute("transactionId", transactionId);
+			model.addAttribute("otpId", otpId);
+			model.addAttribute("type", "creditdebit");
+			
+			return "customer/otp";
+		}
+		
 		List<Account> accounts = accountService.getAccountsByCustomerID(user
 				.getCustomerID());
 		model.addAttribute("title", "Welcome " + user.getFirstName());
@@ -240,10 +326,6 @@ public class ExternalUserController {
 		
 		// send email
 		emailService.sendEmail(user.getEmail(), "Sun Devil Banking OTP", content);
-
-		attr.addFlashAttribute(
-				"successMsg",
-				"Transaction completed successfully. Transaction should show up on your account shortly.");
 
 		// redirect to the credit debit view page
 		return "redirect:/home/credit-debit";

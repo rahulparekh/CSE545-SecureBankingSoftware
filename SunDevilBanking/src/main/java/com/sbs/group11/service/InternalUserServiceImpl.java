@@ -14,9 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import com.mysql.jdbc.log.Log;
 import com.sbs.group11.dao.InternalUserDaoImpl;
-import com.sbs.group11.dao.UserDaoImpl;
 import com.sbs.group11.model.Account;
 import com.sbs.group11.model.Role;
 import com.sbs.group11.model.User;
@@ -182,7 +180,6 @@ public class InternalUserServiceImpl implements InternalUserService {
 		return Long.parseLong(new String(digits));
 	}
 
-	@Override
 	public User searchExternalUser(String EmployeeID) {
 		return dao.findExternalUserByID(EmployeeID);
 		

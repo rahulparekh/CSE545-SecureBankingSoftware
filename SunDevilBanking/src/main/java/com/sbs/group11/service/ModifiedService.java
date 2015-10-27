@@ -11,4 +11,5 @@ public interface ModifiedService {
 	ModifiedUser findModifiedUserByID(String ID);
 	List<ModifiedUser> getAllInternalModifiedUsers();
 	List<ModifiedUser> getAllExternalModifiedUsers();
+	void addRequest(ModifiedUser modifieduser);
 }

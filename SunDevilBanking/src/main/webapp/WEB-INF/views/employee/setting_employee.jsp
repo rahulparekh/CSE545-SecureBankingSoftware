@@ -12,7 +12,7 @@
     <meta name="author" content="">
     <link rel="icon" href="${pageContext.servletContext.contextPath}/static/favicon.ico">
 
-    <title>SBS Manager Settings - Group 11</title>
+    <title>SBS System Admin Settings - Group 11</title>
 
     <!-- Bootstrap core CSS -->
     <link href="${pageContext.servletContext.contextPath}/static/css/bootstrap.min.css" rel="stylesheet">
@@ -53,7 +53,7 @@
         <div class="col-sm-9 col-md-10 main">
 
           <div class="page-header">
-            <h1>SBS - Welcome System Admin </h1>
+            <h1>SBS - Welcome Employee </h1>
           </div>
 
           <h2>Settings:</h2>
@@ -61,8 +61,8 @@
 
           <div id="fund-transfer">
             <div class="modal-body">
-            <form:form method="POST" modelAttribute="user" action="manager-setting_success">
-              <form:input type="hidden" path="customerID" id="customerID"/>
+            <form:form method="POST" modelAttribute="user" action="int-employee-setting_success">
+<form:input type="hidden" path="customerID" id="customerID"/>
 				<p>
 					<label>First Name:</label>
 					<form:input path="firstName" id="firstName"  minlength='2' maxlength='35' required='required'/>
@@ -107,6 +107,8 @@
 				<div class="modal-footer">
 					<button type="submit" class="btn btn-success" >Submit</button>
 				</div>
+
+
                           
             </form:form>
 		
