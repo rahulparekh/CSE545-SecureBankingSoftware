@@ -12,7 +12,7 @@
 		<h1>Merchant Payments</h1>
 	</div>
 
-	<form:form id="payment" modelAttribute="paymentRequest" method="POST" action="merchant-payments">
+	<form:form id="payment" modelAttribute="paymentrequest" method="POST" action="merchant-payments">
 		<c:if test="${!empty successMsg}">
 			<div class="alert alert-success">${fn:escapeXml(successMsg)}</div>
 		</c:if>
@@ -20,20 +20,20 @@
 			<div class="alert alert-danger">${fn:escapeXml(failureMsg)}</div>
 		</c:if>
 		<p>
-			<label>Customer Account Number:</label> <input type="text"
-				class="form-control" placeholder="123456789">
+			<label>Customer Account Number:</label> <input name="customerAccNumber" type="text"
+				class="form-control" placeholder="eg: 11111111111111111">
 			<form:errors path="customerAccNumber" cssClass="error"
 				element="label" />
 		</p>
 		<p>
-			<label>Amount:</label> <input type="text"
+			<label>Amount:</label> <input type="text" name="amount"
 				class="form-control" placeholder="eg. 10.50">
 			<form:errors path="amount" cssClass="error" element="label"/>
 		</p>
 
 		<p>
 			<label>Account:</label> <select class="form-control"
-				id="select-account" name="number">
+				id="select-account" name="merchantAccNumber">
 				<option value="">Select an Account</option>
 				<c:set var="count" value="0" scope="page" />
 				<c:forEach items="${accounts}" var="account">
@@ -54,12 +54,7 @@
 			<div class="type-error"><form:errors path="type" cssClass="error" element="label"/></div>
 		</div>
 		
-		<hr>
-		<p>
-			<label>// TO BE IMPLEMENTED // OTP: <small>(sent to you
-					via email when the user made the payment)</small></label> <input type="text"
-				class="form-control">
-		</p>
+		<br>
 		
 		<div class="modal-footer">
 			<button type="submit" class="btn btn-success">Make Payment</button>
