@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -25,11 +26,13 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.sbs.group11.model.Account;
+import com.sbs.group11.model.OTP;
 import com.sbs.group11.model.PaymentRequest;
 import com.sbs.group11.model.StatementMonthYear;
 import com.sbs.group11.model.Transaction;
 import com.sbs.group11.model.User;
 import com.sbs.group11.service.AccountService;
+import com.sbs.group11.service.BCryptHashService;
 import com.sbs.group11.service.OTPService;
 import com.sbs.group11.service.SendEmailService;
 import com.sbs.group11.service.TransactionService;
@@ -64,6 +67,9 @@ public class ExternalUserController {
 
 	@Autowired
 	private SendEmailService emailService;
+	
+	@Autowired
+	private BCryptHashService hashService;
 
 	@Autowired
 	SmartValidator validator;
@@ -150,7 +156,7 @@ public class ExternalUserController {
 				transactionService.getUniqueTransactionID(), "Self "
 						+ request.getParameter("type"),
 				request.getParameter("number"), request.getParameter("number"),
-				"pending", request.getParameter("type"), amount, isCritical,
+				"otp", request.getParameter("type"), amount, isCritical,
 				request.getParameter("number"));
 
 		// Validate the model
@@ -194,8 +200,46 @@ public class ExternalUserController {
 					"Could not process your transaction. Debit amount cannot be higher than account balance");
 			return "redirect:/home/credit-debit";
 		}
-
+		
+		
+		// Generate OTP
+		String otp = null;
+		try {
+			String sessionId = RequestContextHolder.currentRequestAttributes()
+					.getSessionId();
+			logger.debug("Got session id: " + sessionId);
+			Random range = new Random();
+			int rand = range.nextInt(Integer.MAX_VALUE);
+			otp = otpService.generateOTP(sessionId.getBytes(), new Long(rand),
+					8, false, rand);
+		} catch (InvalidKeyException e) {
+			logger.warn(e);
+			attr.addFlashAttribute("failureMsg",
+					"Could not process your transaction. Please try again or contact the bank.");
+			return "redirect:/home/credit-debit";
+		} catch (NoSuchAlgorithmException e) {
+			logger.warn(e);
+			attr.addFlashAttribute("failureMsg",
+					"Could not process your transaction. Please try again or contact the bank.");
+			return "redirect:/home/credit-debit";
+		}		
+		
+		OTP otpObj = new OTP(hashService.getBCryptHash(otp), user.getCustomerID(), "creditdebit");
+		Set<OTP> otpSet = new HashSet<OTP>();
+		otpSet.add(otpObj);
+		transaction.setOtp(otpSet);
+		otpObj.setTransaction(transaction);
 		transactionService.addTransaction(transaction);
+		
+		String content = "You have made a new request to for Credit / Debit "
+				+ "To process the payment, please go to "
+				+ "https://group11.mobicloud.asu.edu/home/credit-debit.\n\n"
+				+ "The payment request will expire in the next 10 minutes from now.\n\n"
+				+ "Please use the following OTP to accept the payment: " + otp + "\n\n" 
+				+ "You can accept the payment or cancel it.";
+		
+		// send email
+		emailService.sendEmail(user.getEmail(), "Sun Devil Banking OTP", content);
 
 		attr.addFlashAttribute(
 				"successMsg",
