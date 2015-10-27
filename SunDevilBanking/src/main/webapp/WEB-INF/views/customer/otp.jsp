@@ -44,5 +44,7 @@
 		</form:form>
 		<!-- /form -->
 	</div>
+	
+	<div id="virtualKeyboard"></div>
 	<!-- /#add-withdraw -->
 </t:page>

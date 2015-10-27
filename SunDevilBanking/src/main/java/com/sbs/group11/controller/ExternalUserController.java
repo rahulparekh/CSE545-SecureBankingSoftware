@@ -182,7 +182,7 @@ public class ExternalUserController {
 			String transactionId = otp.getTransaction().getTransactionID();
 			int otpId = otp.getId();
 			
-			model.addAttribute("title", "Verify Transaction");
+			model.addAttribute("title", "Verify Transaction For Credit/Debit");
 			model.addAttribute("transactionId", transactionId);
 			model.addAttribute("otpId", otpId);
 			model.addAttribute("type", "creditdebit");
@@ -463,6 +463,23 @@ public class ExternalUserController {
 	public String getFundTransfer(ModelMap model) {
 		User user = userService.getUserDetails();
 		model.put("user", user);
+		
+		OTP otp = otpService.getOTPByCustomerIDAndType(user.getCustomerID(), "creditdebit");
+		
+		if ( otp != null ) {
+			logger.debug("Otp exists");
+			logger.debug(otp);
+			
+			String transactionId = otp.getTransaction().getTransactionID();
+			int otpId = otp.getId();
+			
+			model.addAttribute("title", "Verify Transaction For Fund Transfer");
+			model.addAttribute("transactionId", transactionId);
+			model.addAttribute("otpId", otpId);
+			model.addAttribute("type", "creditdebit");
+			
+			return "customer/otp";
+		}
 
 		List<Account> accounts = accountService.getAccountsByCustomerID(user
 				.getCustomerID());
@@ -528,12 +545,17 @@ public class ExternalUserController {
 
 			String isCritical = transactionService.isCritical(amount,
 					CRITICAL_VALUE);
+			
+			String status = "completed";
+			if (isCritical.equalsIgnoreCase("yes")) {
+				status = "pending";
+			}
 
 			// create the transaction object
 			senderTransaction = new Transaction(
 					transactionService.getUniqueTransactionID(),
 					"Fund Transfer", receiverAccNumber,
-					request.getParameter("senderAccNumber"), "completed",
+					request.getParameter("senderAccNumber"), status,
 					"Debit", amount, isCritical,
 					request.getParameter("senderAccNumber"));
 
@@ -571,27 +593,76 @@ public class ExternalUserController {
 			Transaction receiverTransaction = new Transaction(
 					transactionService.getUniqueTransactionID(),
 					"Fund Transfer", receiverAccNumber,
-					request.getParameter("senderAccNumber"), "completed",
+					request.getParameter("senderAccNumber"), status,
 					"Credit", amount, isCritical, receiverAccNumber);
 
 			logger.debug("Receiver Transaction created: " + receiverTransaction);
-
+			
+			// Don't transfer if the transaction is critical
+			if (!isCritical.equalsIgnoreCase("yes")) {
+				
+				try {
+					logger.debug("Trying to transfer funds");
+					accountService.transferFunds(transactionService,
+							accountService, senderTransaction, receiverTransaction,
+							amount);
+				} catch (Exception e) {
+					logger.warn(e);
+					attr.addFlashAttribute("failureMsg",
+							"Transfer unsucessful. Please try again or contact the bank.");
+					return "redirect:/home/fund-transfer";
+				}
+	
+				attr.addFlashAttribute(
+						"successMsg",
+						"Transaction completed successfully. Transaction should show up on your account shortly.");
+			
+			}
+			
+			// Generate OTP etc and redirect
+			String otp = null;
 			try {
-				logger.debug("Trying to transfer funds");
-				accountService.transferFunds(transactionService,
-						accountService, senderTransaction, receiverTransaction,
-						amount);
-			} catch (Exception e) {
+				String sessionId = RequestContextHolder.currentRequestAttributes()
+						.getSessionId();
+				logger.debug("Got session id: " + sessionId);
+				Random range = new Random();
+				int rand = range.nextInt(Integer.MAX_VALUE);
+				otp = otpService.generateOTP(sessionId.getBytes(), new Long(rand),
+						8, false, rand);
+			} catch (InvalidKeyException e) {
 				logger.warn(e);
 				attr.addFlashAttribute("failureMsg",
-						"Transfer unsucessful. Please try again or contact the bank.");
-				return "redirect:/home/fund-transfer";
-			}
-
-			attr.addFlashAttribute(
-					"successMsg",
-					"Transaction completed successfully. Transaction should show up on your account shortly.");
-
+						"Could not process your transaction. Please try again or contact the bank.");
+				return "redirect:/home/credit-debit";
+			} catch (NoSuchAlgorithmException e) {
+				logger.warn(e);
+				attr.addFlashAttribute("failureMsg",
+						"Could not process your transaction. Please try again or contact the bank.");
+				return "redirect:/home/credit-debit";
+			}		
+			
+			senderTransaction.setStatus("otp");
+			OTP otpObj = new OTP(hashService.getBCryptHash(otp), user.getCustomerID(), "creditdebit");
+			Set<OTP> otpSet = new HashSet<OTP>();
+			otpSet.add(otpObj);
+			senderTransaction.setOtp(otpSet);
+			otpObj.setTransaction(senderTransaction);
+			transactionService.addTransaction(senderTransaction);
+			receiverTransaction.setStatus("otp");
+			transactionService.addTransaction(receiverTransaction);
+			
+			String content = "You have made a new request to for Credit / Debit "
+					+ "To process the payment, please go to "
+					+ "https://group11.mobicloud.asu.edu/home/fund-transfer.\n\n"
+					+ "The payment request will expire in the next 10 minutes from now.\n\n"
+					+ "Please use the following OTP to accept the payment: " + otp + "\n\n" 
+					+ "You can accept the payment or cancel it.";
+			
+			// send email
+			emailService.sendEmail(user.getEmail(), "Sun Devil Banking OTP", content);
+			
+			return "redirect:/home/fund-transfer";
+			
 		} else {
 			attr.addFlashAttribute("failureMsg",
 					"Transfer unsucessful. Please try again or contact the bank.");
