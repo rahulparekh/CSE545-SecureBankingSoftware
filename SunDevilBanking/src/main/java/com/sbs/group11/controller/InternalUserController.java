@@ -126,6 +126,12 @@ public class InternalUserController {
 			@ModelAttribute("user") User user, BindingResult result,RedirectAttributes redirectAttrs) {
 		System.out.println("inside controller");
 		model.addAttribute("user",new User());
+		if(internalUserService.findUserByEmail(user.getEmail())!= null){
+			redirectAttrs.addFlashAttribute(
+					"failureMsg",
+					"User Already Exists with the same Email Address");
+			return "redirect:/sysadmin-home"; 
+		}
 		internalUserService.addInternalUser(user);
 		SystemLog systemLog = new SystemLog(new DateTime().toLocalDateTime(),user.getFirstName(),user.getUserType(),"The user "+user.getFirstName()+" is created");
 		systemLogService.addLog(systemLog);
@@ -273,6 +279,12 @@ public class InternalUserController {
 			@ModelAttribute("user") User user, BindingResult result,RedirectAttributes redirectAttrs) {
 		System.out.println("inside controller");
 		model.addAttribute("user",new User());
+		if(internalUserService.findUserByEmail(user.getEmail())!= null){
+			redirectAttrs.addFlashAttribute(
+					"failureMsg",
+					"User Already Exists with the same Email Address");
+			return "redirect:/manager-customer-search"; 
+		}
 		internalUserService.addInternalUser(user);
 		redirectAttrs.addFlashAttribute(
 				"successMsg",
