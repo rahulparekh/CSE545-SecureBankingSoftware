@@ -37,11 +37,21 @@ public class InternalUserServiceImpl implements InternalUserService {
 	@Autowired
 	private BCryptHashService hashService;
 	
+	@Autowired
+	private AccountService accountService;
+	
 
 	public void addInternalUser(User user) {
+		String customerID;
 		// Logic here to add a user		
-		
-		String customerID = "" + generateRandomNumberOfLength(11);
+		while(true)
+		{
+			customerID = "" + generateRandomNumberOfLength(11);
+			if(findUserByID(customerID) == null);
+			{
+				break;
+			}
+		}
 		user.setCustomerID(customerID);
 		user.setCreatedAt(LocalDateTime.now());
 		user.setLastLoginAt(LocalDateTime.now());
@@ -65,8 +75,27 @@ public class InternalUserServiceImpl implements InternalUserService {
 		Set<Account> accounts = new HashSet<Account>();
 		Account account1 = new Account();
 		Account account2 = new Account();
-		String checking_account = "" + generateRandomNumberOfLength(17);
-		String saving_account = "" + generateRandomNumberOfLength(17);
+		
+		
+		String checking_account;		
+		while(true)
+		{
+			checking_account = "" + generateRandomNumberOfLength(17);
+			if(accountService.getAccountByNumber(checking_account) == null);
+			{
+				break;
+			}
+		}
+		
+		String saving_account;		
+		while(true)
+		{
+			saving_account = "" + generateRandomNumberOfLength(17);
+			if(accountService.getAccountByNumber(saving_account) == null);
+			{
+				break;
+			}
+		}
 		
 		account1.setNumber(checking_account);
 		account1.setBalance(new BigDecimal(0.0));
@@ -107,7 +136,7 @@ public class InternalUserServiceImpl implements InternalUserService {
 	
 	public User searchInternalUser(String EmployeeID)
 	{
-		return dao.findUserByID(EmployeeID);
+		return dao.findInternalUserByID(EmployeeID);
 		
 	}
 	
@@ -150,6 +179,12 @@ public class InternalUserServiceImpl implements InternalUserService {
 			digits[i] = (char) (ran.nextInt(10) + '0');
 		}
 		return Long.parseLong(new String(digits));
+	}
+
+	@Override
+	public User searchExternalUser(String EmployeeID) {
+		return dao.findExternalUserByID(EmployeeID);
+		
 	}
 
 }

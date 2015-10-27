@@ -12,4 +12,5 @@ public interface InternalUserService {
 	User findUserByEmail(String email);
 	void updatePassword(String email,String password);
 	Long generateRandomNumberOfLength(int length);
+	User searchExternalUser(String EmployeeID);
 } 
