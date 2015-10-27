@@ -27,14 +27,8 @@ import org.joda.time.LocalDateTime;
 public class Account {
 	
 	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "UserCustomerID", nullable = false)
+	@JoinColumn(name = "CustomerID", nullable = false)
 	private User user;
-	
-	/** The Customer ID. Foreign Key */
-	@NotNull
-	@Size(min = 11, max = 11)
-	@Column(name = "CustomerID", nullable = false, length = 11, unique = false)
-	private String customerID;
 	
 	/** The Account Number. */
 	@Id
@@ -76,25 +70,6 @@ public class Account {
 	public void setUpdatedAt(LocalDateTime updatedAt) {
 		this.updatedAt = updatedAt;
 	}
-
-	/**
-	 * Gets the customer id.
-	 *
-	 * @return the customer id
-	 */
-	public String getCustomerID() {
-		return customerID;
-	}
-
-	/**
-	 * Sets the customer id.
-	 *
-	 * @param customerID the new customer id
-	 */
-	public void setCustomerID(String customerID) {
-		this.customerID = customerID;
-	}
-
 	/**
 	 * Gets the number.
 	 *
@@ -200,7 +175,7 @@ public class Account {
 
 	@Override
 	public String toString() {
-		return "Account [customerID=" + customerID + ", number=" + number
+		return "Account [number=" + number
 				+ ", name=" + name + ", type=" + type + ", balance=" + balance
 				+ ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + "]";
 	}
