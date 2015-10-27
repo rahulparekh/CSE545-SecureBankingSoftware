@@ -30,6 +30,9 @@ public class TransactionServiceImpl implements TransactionService {
 	
 	@Autowired
 	private AccountService accountService;
+	
+	@Autowired
+	private SendEmailService emailService;
 
 	@Autowired
 	private TransactionDao dao;
@@ -61,7 +64,8 @@ public class TransactionServiceImpl implements TransactionService {
 	public BigDecimal getBigDecimal(String number) {
 		try {
 			return new BigDecimal(number);
-		} catch (NumberFormatException nfe) {
+		} catch (Exception e) {
+			logger.error(e);
 			return null;
 		}
 	}
@@ -174,10 +178,11 @@ public class TransactionServiceImpl implements TransactionService {
 		return false;
 	}
 
-	public void initiatePayment(PaymentRequest paymentRequest, SendEmailService emailService) {
+	public void initiatePayment(PaymentRequest paymentRequest) {
 		
 		paymentRequestDao.savePaymentRequest(paymentRequest);
 		String content = null;
+		String email = null;
 		
 		// check if the user has initiated the payment
 		// or merchant has
@@ -189,26 +194,36 @@ public class TransactionServiceImpl implements TransactionService {
 					+ "The payment request will expire in 2 hours from now.\n\n"
 					+ "Please use the following OTP to accept the payment: " + paymentRequest.getOtp();
 			
-			String email = accountService
+			email = accountService
 							.getAccountByNumber(paymentRequest.getMerchantAccNumber())
 							.getUser()
 							.getEmail();
-			
-			// send email to merchant
-			emailService.sendEmail(email, "Sun Devil Banking. New Request", content);
 		}
 		
 		// send email to user
+		content = "A new payment request has been made. "
+				+ "To process the payment, please go to "
+				+ "https://group11.mobicloud.asu.edu/home/merchant-payment-requests.\n\n"
+				+ "The payment request will expire in 2 hours from now.\n\n"
+				+ "Please use the following OTP to accept the payment: " + paymentRequest.getOtp();
+		
+		email = accountService
+						.getAccountByNumber(paymentRequest.getCustomerAccNumber())
+						.getUser()
+						.getEmail();
+		
+		// send email
+		emailService.sendEmail(email, "Sun Devil Banking. New Payment Request", content);
 		
 		
 	}
 
-	public void acceptPayment(PaymentRequest paymentRequest, SendEmailService emailService) {
+	public void acceptPayment(PaymentRequest paymentRequest) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public void completePayment(PaymentRequest paymentRequest, SendEmailService emailService) {
+	public void completePayment(PaymentRequest paymentRequest) {
 		// TODO Auto-generated method stub
 		
 	}

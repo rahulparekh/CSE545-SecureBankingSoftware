@@ -143,7 +143,7 @@ public interface TransactionService {
 	 *
 	 * @param paymentRequest the payment request
 	 */
-	void initiatePayment(PaymentRequest paymentRequest, SendEmailService emailService);
+	void initiatePayment(PaymentRequest paymentRequest);
 
 	/**
 	 * Accept payment i.e. the user/merchant accepts the payment request made by
@@ -151,7 +151,7 @@ public interface TransactionService {
 	 *
 	 * @param paymentRequest the payment request
 	 */
-	void acceptPayment(PaymentRequest paymentRequest, SendEmailService emailService);
+	void acceptPayment(PaymentRequest paymentRequest);
 
 	/**
 	 * Complete payment i.e. after the payment has been accepted by both
@@ -160,7 +160,7 @@ public interface TransactionService {
 	 *
 	 * @param paymentRequest the payment request
 	 */
-	void completePayment(PaymentRequest paymentRequest, SendEmailService emailService);
+	void completePayment(PaymentRequest paymentRequest);
 	
 	List<PaymentRequest> getPaymentsByAccNumber(String accNumber);
 
