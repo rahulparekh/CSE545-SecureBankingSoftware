@@ -181,7 +181,6 @@ public class InternalUserServiceImpl implements InternalUserService {
 		return Long.parseLong(new String(digits));
 	}
 
-	@Override
 	public User searchExternalUser(String EmployeeID) {
 		return dao.findExternalUserByID(EmployeeID);
 		
