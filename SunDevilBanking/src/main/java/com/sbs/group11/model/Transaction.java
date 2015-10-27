@@ -49,7 +49,6 @@ public class Transaction {
 		this.amount = amount;
 		this.createdAt = new DateTime().toLocalDateTime();
 		this.updatedAt = new DateTime().toLocalDateTime();
-
 		this.isCritical = isCritical;
 		this.transactionOwner = transactionOwner;
 	}
@@ -137,14 +136,14 @@ public class Transaction {
 	@Size(min = 0, max = 6)
 	@Column(name = "isCritical", nullable = false, length = 6)
 	private String isCritical;
-
-	public String getIsCritical() {
-		return isCritical;
-	}
-
-	public void setIsCritical(String isCritical) {
-		this.isCritical = isCritical;
-	}
+	
+	@Size(min = 60, max = 60)
+	@Column(name = "OTP", nullable = true, length = 60)
+	private String otp;
+	
+	@Column(name = "OTPExpiry", nullable = true)
+	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
+	private LocalDateTime OTPExpiry;
 
 	/** The created at. */
 	@NotNull
@@ -331,6 +330,30 @@ public class Transaction {
 	public void setTransactionOwner(String transactionOwner) {
 		this.transactionOwner = transactionOwner;
 	}
+	
+	public String getIsCritical() {
+		return isCritical;
+	}
+
+	public void setIsCritical(String isCritical) {
+		this.isCritical = isCritical;
+	}
+
+	public String getOtp() {
+		return otp;
+	}
+
+	public void setOtp(String otp) {
+		this.otp = otp;
+	}
+
+	public LocalDateTime getOTPExpiry() {
+		return OTPExpiry;
+	}
+
+	public void setOTPExpiry(LocalDateTime oTPExpiry) {
+		OTPExpiry = oTPExpiry;
+	}
 
 	/**
 	 * Gets the created at.
@@ -370,15 +393,6 @@ public class Transaction {
 		this.updatedAt = updatedAt;
 	}
 
-	@Override
-	public String toString() {
-		return "Transaction [transactionID=" + transactionID
-				+ ", receiverAccNumber=" + receiverAccNumber
-				+ ", senderAccNumber=" + senderAccNumber + ", status=" + status
-				+ ", type=" + type + ", amount=" + amount + ", createdAt="
-				+ createdAt + ", updatedAt=" + updatedAt + "]";
-	}
-
 	public String getMonth() {
 		return month;
 	}
@@ -386,5 +400,20 @@ public class Transaction {
 	public void setMonth(String month) {
 		this.month = month;
 	}
+
+	@Override
+	public String toString() {
+		return "Transaction [paymentRequests=" + paymentRequests
+				+ ", transactionID=" + transactionID + ", name=" + name
+				+ ", receiverAccNumber=" + receiverAccNumber
+				+ ", senderAccNumber=" + senderAccNumber + ", status=" + status
+				+ ", type=" + type + ", amount=" + amount + ", balance="
+				+ balance + ", transactionOwner=" + transactionOwner
+				+ ", isCritical=" + isCritical + ", otp=" + otp
+				+ ", OTPExpiry=" + OTPExpiry + ", createdAt=" + createdAt
+				+ ", updatedAt=" + updatedAt + ", month=" + month + "]";
+	}
+	
+	
 
 }

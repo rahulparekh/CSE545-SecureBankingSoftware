@@ -5,6 +5,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -520,8 +521,10 @@ public class ExternalUserController {
 			String sessionId = RequestContextHolder.currentRequestAttributes()
 					.getSessionId();
 			logger.debug("Got session id: " + sessionId);
+			Random range = new Random();
+			int rand = range.nextInt(Integer.MAX_VALUE);
 			otp = otpService
-					.generateOTP(sessionId.getBytes(), 20, 7, false, 20);
+					.generateOTP(sessionId.getBytes(), new Long(rand), 8, false, rand);
 		} catch (InvalidKeyException e) {
 			logger.warn(e);
 			attr.addFlashAttribute("failureMsg",
@@ -751,8 +754,10 @@ public class ExternalUserController {
 			String sessionId = RequestContextHolder.currentRequestAttributes()
 					.getSessionId();
 			logger.debug("Got session id: " + sessionId);
+			Random range = new Random();
+			int rand = range.nextInt(Integer.MAX_VALUE);
 			otp = otpService
-					.generateOTP(sessionId.getBytes(), 20, 7, false, 20);
+					.generateOTP(sessionId.getBytes(), new Long(rand), 8, false, rand);
 		} catch (InvalidKeyException e) {
 			logger.warn(e);
 			attr.addFlashAttribute("failureMsg",
