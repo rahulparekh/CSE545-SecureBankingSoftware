@@ -27,6 +27,7 @@ import com.sbs.group11.service.InternalUserService;
 import com.sbs.group11.service.SystemLogService;
 import com.sbs.group11.service.ModifiedService;
 import com.sbs.group11.service.TransactionService;
+import com.sbs.group11.service.UserService;
 
 @Controller
 public class InternalUserController {
@@ -43,6 +44,9 @@ public class InternalUserController {
 	AccountService accountService;
 	@Autowired
 	SmartValidator validator;
+	
+	@Autowired
+	UserService userService;
 	
 	final private BigDecimal CRITICAL_VALUE = new BigDecimal(500);
 	
@@ -187,7 +191,7 @@ public class InternalUserController {
 	@RequestMapping(value = "/sysadmin-setting", method = RequestMethod.GET)
 	public String getAdminSetting(ModelMap model,@ModelAttribute("user") User user) {
 		
-		User sysadmin = internalUserService.searchInternalUserByType("admin");
+		User sysadmin = userService.getUserDetails();
 		model.addAttribute("user", sysadmin);
 		return "employee/setting_sys_admin";
 	}
@@ -333,14 +337,14 @@ public class InternalUserController {
 		}
 		
 		return "redirect:/internalemployee-pendingtransaction";
-		
-			
+					
 	}
 	
 	@RequestMapping(value = "/manager-setting", method = RequestMethod.GET)
 	public String getManagerSetting(ModelMap model,@ModelAttribute("user") User user) {
 		
-		User manager = internalUserService.searchInternalUserByType("manager");
+		System.out.println("inside get");
+		User manager = userService.getUserDetails();
 		model.addAttribute("user", manager);
 		return "employee/setting_manager";
 	}
@@ -348,9 +352,33 @@ public class InternalUserController {
 	public String changeManagerSetting(ModelMap model,
 			@ModelAttribute("user") User user,BindingResult result) {
 		
-		System.out.println("id is "+user.getCustomerID());
-		user.setUserType("manager");
-		internalUserService.updateInternalUser(user);
+		System.out.println("inside post");
+		User current_user= userService.getUserDetails();
+		System.out.println("id is "+current_user.getCustomerID());
+		ModifiedUser modifiedUser = new ModifiedUser();
+		modifiedUser.setCustomerID(current_user.getCustomerID());
+		modifiedUser.setAddressLine1(user.getAddressLine1());
+		modifiedUser.setAddressLine2(user.getAddressLine2());
+		modifiedUser.setPassword(user.getPassword());
+		modifiedUser.setEmail(current_user.getEmail());
+		modifiedUser.setEmployeeOverride(current_user.getEmployeeOverride());
+		modifiedUser.setEnabled(current_user.getEnabled());
+		modifiedUser.setFirstName(user.getFirstName());
+		modifiedUser.setLastName(user.getLastName());
+		modifiedUser.setMiddleName(user.getMiddleName());
+		modifiedUser.setState(user.getState());
+		modifiedUser.setZipCode(user.getZipCode());
+		modifiedUser.setuserType(current_user.getUserType());
+		modifiedUser.setPhone(user.getPhone());
+		modifiedUser.setCreatedAt(current_user.getCreatedAt());
+		modifiedUser.setUpdatedAt(current_user.getUpdatedAt());
+		modifiedUser.setLastLoginAt(current_user.getLastLoginAt());
+		modifiedUser.setStatus("pending");
+		
+		
+		modifiedService.addRequest(modifiedUser);
+		//internalUserService.updateInternalUser(user);
+		
 		return "redirect:/manager-home";
 	}
 	
@@ -510,6 +538,49 @@ public class InternalUserController {
 
 
 	//**********************INTERNAL EMPLOYEE/REGULAR
+		
+		
+		@RequestMapping(value = "/int-employee-setting", method = RequestMethod.GET)
+		public String getEmployeeSetting(ModelMap model,@ModelAttribute("user") User user) {
+			
+			System.out.println("inside get");
+			User manager = userService.getUserDetails();
+			model.addAttribute("user", manager);
+			return "employee/setting_employee";
+		}
+			@RequestMapping(value = "/int-employee-setting_success", method = RequestMethod.POST)
+		public String changeEmployeeSetting(ModelMap model,
+				@ModelAttribute("user") User user,BindingResult result) {
+			
+			System.out.println("inside post");
+			User current_user= userService.getUserDetails();
+			System.out.println("id is "+current_user.getCustomerID());
+			ModifiedUser modifiedUser = new ModifiedUser();
+			modifiedUser.setCustomerID(current_user.getCustomerID());
+			modifiedUser.setAddressLine1(user.getAddressLine1());
+			modifiedUser.setAddressLine2(user.getAddressLine2());
+			modifiedUser.setPassword(user.getPassword());
+			modifiedUser.setEmail(current_user.getEmail());
+			modifiedUser.setEmployeeOverride(current_user.getEmployeeOverride());
+			modifiedUser.setEnabled(current_user.getEnabled());
+			modifiedUser.setFirstName(user.getFirstName());
+			modifiedUser.setLastName(user.getLastName());
+			modifiedUser.setMiddleName(user.getMiddleName());
+			modifiedUser.setState(user.getState());
+			modifiedUser.setZipCode(user.getZipCode());
+			modifiedUser.setuserType(current_user.getUserType());
+			modifiedUser.setPhone(user.getPhone());
+			modifiedUser.setCreatedAt(current_user.getCreatedAt());
+			modifiedUser.setUpdatedAt(current_user.getUpdatedAt());
+			modifiedUser.setLastLoginAt(current_user.getLastLoginAt());
+			modifiedUser.setStatus("pending");
+			modifiedService.addRequest(modifiedUser);
+			//internalUserService.updateInternalUser(user);
+			
+			return "redirect:/int-employee-home";
+		}
+		
+		
 		
 		@RequestMapping(value = "/int-employee-home", method = RequestMethod.GET)
 		public String getInternalEmployeeHome(ModelMap model) {

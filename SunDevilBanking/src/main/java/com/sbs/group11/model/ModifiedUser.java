@@ -3,10 +3,13 @@ package com.sbs.group11.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
@@ -15,6 +18,7 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDateTime;
 
@@ -36,10 +40,23 @@ public class ModifiedUser {
 	 * The customer id. No auto increment as revealing how many users we have in
 	 * the bank might be insecure. We should have it randomized.
 	 */
+	
+	
+	
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "RequestId")
+	private int requestid;
+	
+	public int getId()
+	{
+		return requestid;
+	}
+	
+	
 	@NotNull
 	@Size(min = 1, max = 100)
-	@Column(name = "CustomerID", nullable = false, length = 11, unique = true)
+	@Column(name = "CustomerID", nullable = false, length = 11)
 	private String customerID;
 
 	public ModifiedUser() {
@@ -105,7 +122,7 @@ public class ModifiedUser {
 	/** The email. */
 	@NotNull
 	@Size(max = 255)
-	@Column(name = "Email", nullable = false, length = 255, unique = true)
+	@Column(name = "Email", nullable = false, length = 255)
 	private String email;
 
 	/** The password. 60 characters as we will use BCrypt hash */
