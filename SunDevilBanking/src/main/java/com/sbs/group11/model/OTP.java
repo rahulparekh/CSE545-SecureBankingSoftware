@@ -8,8 +8,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -22,6 +20,10 @@ import org.joda.time.LocalDateTime;
 @Entity
 @Table(name = "Otp")
 public class OTP {
+	
+	public OTP() {
+		
+	}
 	
 	public OTP(String otp, String customerID,
 			String type) {
@@ -113,8 +115,7 @@ public class OTP {
 	@Override
 	public String toString() {
 		return "OTP [id=" + id + ", otp=" + otp + ", OTPExpiry=" + OTPExpiry
-				+ ", customerID=" + customerID + ", transaction=" + transaction
-				+ ", type=" + type + "]";
+				+ ", customerID=" + customerID + ", type=" + type + "]";
 	}
 	
 	
