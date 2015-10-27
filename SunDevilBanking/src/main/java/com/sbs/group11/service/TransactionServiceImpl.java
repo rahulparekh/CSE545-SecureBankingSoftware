@@ -189,12 +189,6 @@ public class TransactionServiceImpl implements TransactionService {
 		// or merchant has
 		if ( paymentRequest.getUserAccepted() == 1 ) {
 			
-			content = "A new payment request has been made. "
-					+ "To process the payment, please go to "
-					+ "https://group11.mobicloud.asu.edu/home/merchant-payment-requests.\n\n"
-					+ "The payment request will expire in 2 hours from now.\n\n"
-					+ "Please use the following OTP to accept the payment: " + paymentRequest.getOtp();
-			
 			email = accountService
 							.getAccountByNumber(paymentRequest.getMerchantAccNumber())
 							.getUser()
@@ -207,7 +201,7 @@ public class TransactionServiceImpl implements TransactionService {
 				+ "https://group11.mobicloud.asu.edu/home/merchant-payment-requests.\n\n"
 				+ "The payment request will expire in 2 hours from now.\n\n"
 				+ "Please use the following OTP to accept the payment: " + paymentRequest.getOtp() + "\n\n" 
-				+ "You can accept the payment or let it expire";
+				+ "You can accept the payment or let it expire.";
 		
 		email = accountService
 						.getAccountByNumber(paymentRequest.getCustomerAccNumber())
@@ -237,8 +231,8 @@ public class TransactionServiceImpl implements TransactionService {
 		Transaction transaction1 = new Transaction(
 				getUniqueTransactionID(), 
 				"Payment From " + senderAccNumber + " To: " + receiverAccountNumber, 
-				senderAccNumber, 
-				receiverAccountNumber,
+				receiverAccountNumber, 
+				senderAccNumber,
 				"pending", 
 				"Debit", 
 				paymentRequest.getAmount(), 
@@ -248,8 +242,8 @@ public class TransactionServiceImpl implements TransactionService {
 		Transaction transaction2 = new Transaction(
 				getUniqueTransactionID(), 
 				"Payment From " + senderAccNumber + " To: " + receiverAccountNumber, 
-				senderAccNumber, 
-				receiverAccountNumber,
+				receiverAccountNumber, 
+				senderAccNumber,
 				"pending", 
 				"Credit", 
 				paymentRequest.getAmount(), 
