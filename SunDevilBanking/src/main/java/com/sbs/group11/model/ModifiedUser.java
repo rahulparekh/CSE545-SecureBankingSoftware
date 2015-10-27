@@ -32,20 +32,6 @@ import org.joda.time.LocalDateTime;
 @Table(name = "ModifiedUser")
 public class ModifiedUser {
 
-	/** The security questions. For the One-to-Many relationship */
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "CustomerID")
-	private Set<SecurityQuestion> securityQuestions = new HashSet<SecurityQuestion>(
-			0);
-
-	/** The accounts. For the One-to-Many relationship */
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "CustomerID")
-	private Set<Account> accounts = new HashSet<Account>(0);
-
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
-	private Set<Role> role = new HashSet<Role>(0);
-
 	/**
 	 * The customer id. No auto increment as revealing how many users we have in
 	 * the bank might be insecure. We should have it randomized.
@@ -65,8 +51,6 @@ public class ModifiedUser {
 	public ModifiedUser(String customerID, Set<SecurityQuestion> securityQuestions,
 			Set<Account> accounts) {
 		this.customerID = customerID;
-		this.securityQuestions = securityQuestions;
-		this.accounts = accounts;
 	}
 
 	/** The first name. */
@@ -178,44 +162,7 @@ public class ModifiedUser {
 		Status = status;
 	}
 
-	/**
-	 * Gets the security questions. Defines a 1 to Many relationship
-	 *
-	 * @return the security questions
-	 */
-	public Set<SecurityQuestion> getSecurityQuestions() {
-		return this.securityQuestions;
-	}
-
-	/**
-	 * Sets the security questions.
-	 *
-	 * @param securityQuestions
-	 *            the new security questions
-	 */
-	public void setSecurityQuestions(Set<SecurityQuestion> securityQuestions) {
-		this.securityQuestions = securityQuestions;
-	}
-
-	/**
-	 * Gets the accounts.
-	 *
-	 * @return the accounts
-	 */
-	public Set<Account> getAccounts() {
-		return this.accounts;
-	}
-
-	/**
-	 * Sets the accounts.
-	 *
-	 * @param accounts
-	 *            the new accounts
-	 */
-	public void setAccounts(Set<Account> accounts) {
-		this.accounts = accounts;
-	}
-
+	
 	/**
 	 * Gets the first name.
 	 *
@@ -482,24 +429,6 @@ public class ModifiedUser {
 		this.userType = userType;
 	}
 
-	/**
-	 * Gets the role.
-	 *
-	 * @return the role
-	 */
-	public Set<Role> getRole() {
-		return role;
-	}
-
-	/**
-	 * Sets the role.
-	 *
-	 * @param role
-	 *            the new role
-	 */
-	public void setRole(Set<Role> role) {
-		this.role = role;
-	}
 
 	/**
 	 * Gets the created at.
