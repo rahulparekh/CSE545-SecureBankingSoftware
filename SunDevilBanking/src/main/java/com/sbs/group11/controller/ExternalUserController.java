@@ -62,6 +62,8 @@ public class ExternalUserController {
 
 	@Autowired
 	SmartValidator validator;
+	
+	final private BigDecimal CRITICAL_VALUE = new BigDecimal(500);
 
 	/**
 	 * Gets the home.
@@ -133,24 +135,11 @@ public class ExternalUserController {
 				user.getFirstName() + " " + user.getLastName());
 		model.addAttribute("accounts", accounts);
 		model.addAttribute("title", "Welcome " + user.getFirstName());
-
-		// If account is empty or null, skip the account service check
-		Account account = accountService.getValidAccountByNumber(
-				request.getParameter("number"), accounts);
-
-		// Exit the transaction if Account doesn't exist
-		if (account == null) {
-			logger.warn("Someone tried credit/debit functionality for some other account. Details:");
-			logger.warn("Credit/Debit Acc No: "
-					+ request.getParameter("number"));
-			logger.warn("Customer ID: " + user.getCustomerID());
-			attr.addFlashAttribute("failureMsg",
-					"Could not process your transaction. Please try again or contact the bank.");
-			return "redirect:/home/credit-debit";
-		}
-
+		
 		BigDecimal amount = transactionService.getBigDecimal(request
 				.getParameter("amount"));
+		
+		String isCritical = transactionService.isCritical(amount, CRITICAL_VALUE);
 
 		// create the transaction object
 		transaction = new Transaction(
@@ -161,6 +150,7 @@ public class ExternalUserController {
 				"pending", 
 				request.getParameter("type"),
 				amount,
+				isCritical,
 				request.getParameter("number")
 				);
 
@@ -174,8 +164,26 @@ public class ExternalUserController {
 					"org.springframework.validation.BindingResult.transaction",
 					result);
 			attr.addFlashAttribute("transaction", transaction);
+			
+			attr.addFlashAttribute("failureMsg",
+					"You have errors in your request.");
 
 			// redirect to the credit debit view page
+			return "redirect:/home/credit-debit";
+		}
+
+		// If account is empty or null, skip the account service check
+		Account account = accountService.getValidAccountByNumber(
+				request.getParameter("number"), accounts);
+
+		// Exit the transaction if Account doesn't exist
+		if (account == null) {
+			logger.warn("Someone tried credit/debit functionality for some other account. Details:");
+			logger.warn("Credit/Debit Acc No: "
+					+ request.getParameter("number"));
+			logger.warn("Customer ID: " + user.getCustomerID());
+			attr.addFlashAttribute("failureMsg",
+					"Could not process your transaction. Please try again or contact the bank.");
 			return "redirect:/home/credit-debit";
 		}
 
@@ -372,9 +380,7 @@ public class ExternalUserController {
 			return "redirect:/home/fund-transfer";
 		}
 
-		boolean isTransferAccountValid = transactionService.isTransferAccountValid(
-				accountService, transactionService, accounts,
-				request, model, user, attr);
+		boolean isTransferAccountValid = transactionService.isTransferAccountValid(accounts, request, model, user, attr);
 		
 		logger.debug("isTransferAccountValid: " + isTransferAccountValid);
 		if (isTransferAccountValid) {
@@ -392,7 +398,9 @@ public class ExternalUserController {
 			}
 			
 			logger.debug("receiverAccNumber: " + receiverAccNumber);
-	
+			
+			String isCritical = transactionService.isCritical(amount, CRITICAL_VALUE);
+			
 			// create the transaction object
 			senderTransaction = new Transaction(
 					transactionService.getUniqueTransactionID(), 
@@ -402,6 +410,7 @@ public class ExternalUserController {
 					"completed", 
 					"Debit",
 					amount, 
+					isCritical,
 					request.getParameter("senderAccNumber")
 				);
 			
@@ -444,6 +453,7 @@ public class ExternalUserController {
 					"completed", 
 					"Credit",
 					amount,
+					isCritical,
 					receiverAccNumber
 				);
 			

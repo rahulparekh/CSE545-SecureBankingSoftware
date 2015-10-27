@@ -116,8 +116,7 @@ public class TransactionServiceImpl implements TransactionService {
 		return dao.getCompletedTransactionsByAccountNummber(accNumber, month, year);
 	}
 
-	public boolean isTransferAccountValid(AccountService accountService,
-			TransactionService transactionService, List<Account> accounts,
+	public boolean isTransferAccountValid(List<Account> accounts,
 			HttpServletRequest request, ModelMap model, User user, RedirectAttributes attr) {
 		
 		// null pointer checks
@@ -217,6 +216,16 @@ public class TransactionServiceImpl implements TransactionService {
 	public List<PaymentRequest> getPaymentsByAccNumber(String accNumber) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public String isCritical(BigDecimal amount, BigDecimal critical_value) {
+		
+		if (amount != null && amount.compareTo(critical_value) >= 0) {
+			logger.debug("Critical transaction!");
+			return "Yes";
+		}
+		
+		return "No";
 	}
 
 }

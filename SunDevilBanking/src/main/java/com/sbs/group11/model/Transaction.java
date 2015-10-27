@@ -38,7 +38,7 @@ public class Transaction {
 
 	public Transaction(String transactionID, String name, String receiverAccNumber,
 			String senderAccNumber, String status, String type,
-			BigDecimal amount, String  transactionOwner) {
+			BigDecimal amount, String isCritical, String  transactionOwner) {
 		super();
 		this.transactionID = transactionID;
 		this.name = name;
@@ -49,12 +49,14 @@ public class Transaction {
 		this.amount = amount;
 		this.createdAt = new DateTime().toLocalDateTime();
 		this.updatedAt = new DateTime().toLocalDateTime();
+
+		this.isCritical = isCritical;
 		this.transactionOwner = transactionOwner;
 	}
 	
 	public Transaction(String transactionID, String name, String receiverAccNumber,
 			String senderAccNumber, String status, String type,
-			BigDecimal amount, BigDecimal balance, String  transactionOwner) {
+			BigDecimal amount, BigDecimal balance, String isCritical, String  transactionOwner) {
 		super();
 		this.transactionID = transactionID;
 		this.name = name;
@@ -66,6 +68,7 @@ public class Transaction {
 		this.createdAt = new DateTime().toLocalDateTime();
 		this.updatedAt = new DateTime().toLocalDateTime();
 		this.balance = balance;
+		this.isCritical = isCritical;
 		this.transactionOwner = transactionOwner;
 	}
 	
@@ -131,7 +134,7 @@ public class Transaction {
 	private String transactionOwner;
 	
 	@NotEmpty
-	@Size(min = 0, max = 10)
+	@Size(min = 0, max = 6)
 	@Column(name = "isCritical", nullable = false, length = 6)
 	private String isCritical;
 
