@@ -190,7 +190,7 @@ public class InternalUserController {
 
 
 	
-//********************************MANAGER**************************		
+	//********************************MANAGER**************************		
 	
 	@RequestMapping(value = "/manager-home", method = RequestMethod.GET)
 	public String getManagerHome(ModelMap model) {
@@ -324,7 +324,7 @@ public class InternalUserController {
 			
 	}
 
-///***************EXTERNAL REQUESTS
+	///***************EXTERNAL REQUESTS
 	
 	@RequestMapping(value = "/requests-pending-ext", method = RequestMethod.GET)
 	public String getAdminSettingManager(ModelMap model) {

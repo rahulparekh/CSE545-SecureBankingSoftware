@@ -2,9 +2,11 @@ package com.sbs.group11.model;
 
 import java.math.BigDecimal;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
@@ -22,6 +24,9 @@ import org.joda.time.LocalDateTime;
 @Entity
 @Table(name = "Account")
 public class Account {
+	
+	@ManyToOne(cascade = CascadeType.ALL)
+	private User user;
 	
 	/** The Customer ID. Foreign Key */
 	@NotNull
@@ -181,6 +186,14 @@ public class Account {
 	 */
 	public LocalDateTime getUpdatedAt() {
 		return updatedAt;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	@Override

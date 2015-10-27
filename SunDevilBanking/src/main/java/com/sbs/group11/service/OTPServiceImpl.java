@@ -6,6 +6,8 @@ package com.sbs.group11.service;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.springframework.stereotype.Service;
+
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
@@ -22,6 +24,8 @@ import java.security.NoSuchAlgorithmException;
  * Example invocation : OTPServiceImpl.generateOTP("+&*#(?b^&VHJBHJK064842348rdsgdsg&*(%&**&^&((", 20, 8, false, 20);
  * 
  */
+
+@Service("OTPService")
 public class OTPServiceImpl implements OTPService {
 	
 	private static final int[] allDigits = {0, 2, 4, 6, 8, 1, 3, 5, 7, 9};
