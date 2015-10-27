@@ -182,6 +182,7 @@ public class ExternalUserController {
 			String transactionId = otp.getTransaction().getTransactionID();
 			int otpId = otp.getId();
 			
+			model.addAttribute("heading", "SBS Credit / Debit Funds");
 			model.addAttribute("title", "Verify Transaction For Credit/Debit");
 			model.addAttribute("transactionId", transactionId);
 			model.addAttribute("otpId", otpId);
@@ -242,7 +243,7 @@ public class ExternalUserController {
 				transactionService.getUniqueTransactionID(), "Self "
 						+ request.getParameter("type"),
 				request.getParameter("number"), request.getParameter("number"),
-				"otp", request.getParameter("type"), amount, isCritical,
+				"pending", request.getParameter("type"), amount, isCritical,
 				request.getParameter("number"));
 
 		// Validate the model
@@ -287,45 +288,59 @@ public class ExternalUserController {
 			return "redirect:/home/credit-debit";
 		}
 		
+
+		// OTP only for critical transactions
+		if( isCritical.equalsIgnoreCase("yes") )	{	
 		
-		// Generate OTP
-		String otp = null;
-		try {
-			String sessionId = RequestContextHolder.currentRequestAttributes()
-					.getSessionId();
-			logger.debug("Got session id: " + sessionId);
-			Random range = new Random();
-			int rand = range.nextInt(Integer.MAX_VALUE);
-			otp = otpService.generateOTP(sessionId.getBytes(), new Long(rand),
-					8, false, rand);
-		} catch (InvalidKeyException e) {
-			logger.warn(e);
-			attr.addFlashAttribute("failureMsg",
-					"Could not process your transaction. Please try again or contact the bank.");
+			// Generate OTP
+			String otp = null;
+			try {
+				String sessionId = RequestContextHolder.currentRequestAttributes()
+						.getSessionId();
+				logger.debug("Got session id: " + sessionId);
+				Random range = new Random();
+				int rand = range.nextInt(Integer.MAX_VALUE);
+				otp = otpService.generateOTP(sessionId.getBytes(), new Long(rand),
+						8, false, rand);
+			} catch (InvalidKeyException e) {
+				logger.warn(e);
+				attr.addFlashAttribute("failureMsg",
+						"Could not process your transaction. Please try again or contact the bank.");
+				return "redirect:/home/credit-debit";
+			} catch (NoSuchAlgorithmException e) {
+				logger.warn(e);
+				attr.addFlashAttribute("failureMsg",
+						"Could not process your transaction. Please try again or contact the bank.");
+				return "redirect:/home/credit-debit";
+			}		
+			
+			OTP otpObj = new OTP(hashService.getBCryptHash(otp), user.getCustomerID(), "creditdebit");
+			Set<OTP> otpSet = new HashSet<OTP>();
+			otpSet.add(otpObj);
+			transaction.setOtp(otpSet);
+			transaction.setStatus("otp");
+			otpObj.setTransaction(transaction);
+			transactionService.addTransaction(transaction);
+			
+			String content = "You have made a new request to for Credit / Debit "
+					+ "To process the payment, please go to "
+					+ "https://group11.mobicloud.asu.edu/home/credit-debit.\n\n"
+					+ "The payment request will expire in the next 10 minutes from now.\n\n"
+					+ "Please use the following OTP to accept the payment: " + otp + "\n\n" 
+					+ "You can accept the payment or cancel it.";
+			
+			// send email
+			emailService.sendEmail(user.getEmail(), "Sun Devil Banking OTP", content);
+			
 			return "redirect:/home/credit-debit";
-		} catch (NoSuchAlgorithmException e) {
-			logger.warn(e);
-			attr.addFlashAttribute("failureMsg",
-					"Could not process your transaction. Please try again or contact the bank.");
-			return "redirect:/home/credit-debit";
-		}		
+			
+		}
 		
-		OTP otpObj = new OTP(hashService.getBCryptHash(otp), user.getCustomerID(), "creditdebit");
-		Set<OTP> otpSet = new HashSet<OTP>();
-		otpSet.add(otpObj);
-		transaction.setOtp(otpSet);
-		otpObj.setTransaction(transaction);
 		transactionService.addTransaction(transaction);
-		
-		String content = "You have made a new request to for Credit / Debit "
-				+ "To process the payment, please go to "
-				+ "https://group11.mobicloud.asu.edu/home/credit-debit.\n\n"
-				+ "The payment request will expire in the next 10 minutes from now.\n\n"
-				+ "Please use the following OTP to accept the payment: " + otp + "\n\n" 
-				+ "You can accept the payment or cancel it.";
-		
-		// send email
-		emailService.sendEmail(user.getEmail(), "Sun Devil Banking OTP", content);
+
+		attr.addFlashAttribute(
+				"successMsg",
+				"Transaction completed successfully. Transaction should show up on your account shortly after bank approval.");
 
 		// redirect to the credit debit view page
 		return "redirect:/home/credit-debit";
@@ -464,7 +479,7 @@ public class ExternalUserController {
 		User user = userService.getUserDetails();
 		model.put("user", user);
 		
-		OTP otp = otpService.getOTPByCustomerIDAndType(user.getCustomerID(), "creditdebit");
+		OTP otp = otpService.getOTPByCustomerIDAndType(user.getCustomerID(), "fundtransfer");
 		
 		if ( otp != null ) {
 			logger.debug("Otp exists");
@@ -473,10 +488,11 @@ public class ExternalUserController {
 			String transactionId = otp.getTransaction().getTransactionID();
 			int otpId = otp.getId();
 			
+			model.addAttribute("heading", "SBS Credit / Debit Funds");
 			model.addAttribute("title", "Verify Transaction For Fund Transfer");
 			model.addAttribute("transactionId", transactionId);
 			model.addAttribute("otpId", otpId);
-			model.addAttribute("type", "creditdebit");
+			model.addAttribute("type", "fundtransfer");
 			
 			return "customer/otp";
 		}
@@ -633,16 +649,16 @@ public class ExternalUserController {
 				logger.warn(e);
 				attr.addFlashAttribute("failureMsg",
 						"Could not process your transaction. Please try again or contact the bank.");
-				return "redirect:/home/credit-debit";
+				return "redirect:/home/fund-transfer";
 			} catch (NoSuchAlgorithmException e) {
 				logger.warn(e);
 				attr.addFlashAttribute("failureMsg",
 						"Could not process your transaction. Please try again or contact the bank.");
-				return "redirect:/home/credit-debit";
+				return "redirect:/home/fund-transfer";
 			}		
 			
 			senderTransaction.setStatus("otp");
-			OTP otpObj = new OTP(hashService.getBCryptHash(otp), user.getCustomerID(), "creditdebit");
+			OTP otpObj = new OTP(hashService.getBCryptHash(otp), user.getCustomerID(), "fundtransfer");
 			Set<OTP> otpSet = new HashSet<OTP>();
 			otpSet.add(otpObj);
 			senderTransaction.setOtp(otpSet);

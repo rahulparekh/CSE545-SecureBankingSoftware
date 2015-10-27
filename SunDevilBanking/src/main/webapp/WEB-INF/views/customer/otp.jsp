@@ -7,7 +7,7 @@
 <t:page>
 
 	<div class="page-header">
-		<h1>SBS Credit / Debit Funds</h1>
+		<h1>${fn:escapeXml(heading)}</h1>
 	</div>
 
 	<div id="add-withdraw">
