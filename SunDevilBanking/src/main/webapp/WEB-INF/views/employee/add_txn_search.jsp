@@ -1,9 +1,9 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
+<%@page language="java" contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -15,7 +15,7 @@
     <meta name="author" content="">
     <link rel="icon" href="${pageContext.servletContext.contextPath}/static/favicon.ico">
 
-    <title>SBS Internal Employee Pending Transactions- Group 11</title>
+    <title>SBS Group 11 Regular Employee Home</title>
 
     <!-- Bootstrap core CSS -->
     <link href="${pageContext.servletContext.contextPath}/static/css/bootstrap.min.css" rel="stylesheet">
@@ -41,13 +41,12 @@
         <div class="col-sm-3 col-md-2 sidebar">
 
           <ul class="nav nav-sidebar">
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Pending Transactions</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/addTransaction">Add Transactions</a></li>
-            <li><a href="#">Request Manager</a></li>
-            <li><a href="#">Request Admin</a></li>
-            <li><a href="#">Settings</a></li>
-            <li><a href="#">Logout</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/int-employee-home">Home</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/">Add Transaction</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/">Pending Transactions</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/int-employee-customer-search">View-Edit-Delete Users</a></li>
+			<li><a href="${pageContext.servletContext.contextPath}/">Settings</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
           </ul>
           
         </div> <!-- sidebar -->
@@ -55,44 +54,33 @@
         <div class="col-sm-9 col-md-10 main">
 
           <div class="page-header">
-            <h1>SBS - Welcome Andrew </h1>
+            <h1>SBS - Welcome Bank Employee</h1>
           </div>
 
-          <h2>Pending Transactions:</h2>
+          <h2>Search By:</h2>
 		  <br>
 
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Sender Account No.</th>
-				<th>Receiver Account No.</th>
-                <th>Transaction ID</th>              
-			    <th>Amount</th>
-              	<th>Date</th>				
-              </tr>
-            </thead>
-            <tbody>
-        	  <c:forEach var="transaction" items="${pendingCriticalTransaction}" varStatus="loopCounter">
-        	   
-              <tr>
-                <td>${transaction.senderAccNumber}</td>
-				<td>${transaction.receiverAccNumber}</td>
-				<td>${transaction.transactionID}</td>
-				<td>${transaction.amount}</td>
-				<td>${transaction.createdAt}</td>
-				<form:form method="POST" action="critical-approve" >
-				<input type="hidden" name="transactionID" value="${transaction.transactionID}"></input>
-				<td><button type="submit" class="btn btn-success" name>Approve</button></td>
-				</form:form>
-				<form:form method="POST" action="critical-decline">
-				<input type="hidden" name="transactionID" value="${transaction.transactionID}"></input>
-				<td><button type="submit" class="btn btn-danger">Decline</button></td>
-				</form:form>
-              </tr>
-              
-             </c:forEach>
-            </tbody>
-          </table>
+          <div id="internalUser">
+          <form:form method="POST" modelAttribute="empSearch" action ="addTransaction" >
+          <c:if test="${!empty successMsg}">
+					<div class="alert alert-success">						
+						${fn:escapeXml(successMsg)}
+					</div>
+				</c:if>
+          	<c:if test="${!empty failureMsg}">
+					<div class="alert alert-danger">						
+						${fn:escapeXml(failureMsg)}
+					</div>
+				</c:if>
+            <p>
+              <label>Customer ID:</label>
+              <form:input  path = "employeeID" type="text" class="form-control" placeholder="ex: 123456789" maxlength="11" minlength="11" required= "required"></form:input>
+            </p>
+			<div class="modal-footer" >                
+              <button type="submit" class="btn btn-success">Search</button>
+            </div>
+		   </form:form>
+          </div><!-- /payment -->
           
         </div> <!-- /main -->
 

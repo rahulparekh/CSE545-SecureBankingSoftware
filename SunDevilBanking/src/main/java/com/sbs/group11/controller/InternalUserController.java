@@ -1,22 +1,27 @@
 package com.sbs.group11.controller;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.sbs.group11.model.*;
+import com.sbs.group11.service.AccountService;
 import com.sbs.group11.service.InternalUserService;
 import com.sbs.group11.service.SystemLogService;
 import com.sbs.group11.service.ModifiedService;
@@ -33,7 +38,13 @@ public class InternalUserController {
 	SystemLogService systemLogService;
 	@Autowired
 	ModifiedService modifiedService;
+	@Autowired
+	AccountService accountService;
+	@Autowired
+	SmartValidator validator;
 	
+	
+	final static Logger logger = Logger.getLogger(InternalUserController.class);
 
 	@ModelAttribute("user")
 	public User getUserObject() {
@@ -525,6 +536,52 @@ public class InternalUserController {
 
 
 	//**transactions
+		
+	
+	@RequestMapping(value = "/addTransaction", method = RequestMethod.GET)
+	public String addTransactionView(ModelMap model){
+				
+		return "employee/add_txn_search";
+	}
+	
+	@RequestMapping(value = "/addTransaction", method = RequestMethod.POST)
+	public String SearchExternalUser(ModelMap model,
+			@ModelAttribute("empSearch") EmployeeSearch empSearch, BindingResult result,RedirectAttributes redirectAttrs) {
+		User user = internalUserService.searchInternalUser(empSearch.getEmployeeID());
+		if (user == null){
+			redirectAttrs.addFlashAttribute(
+					"failureMsg",
+					"Not a valid User");
+			return "redirect:/addTransaction";
+		}
+		else if(user.getEmployeeOverride() == 0)
+		{
+			redirectAttrs.addFlashAttribute(
+					"failureMsg",
+					"Employee not allowed by user to modify accounts for this customer");
+			return "redirect:/addTransaction";
+			
+		}
+		
+		redirectAttrs.addFlashAttribute("user", user);
+		return "redirect:/addCustomerTransaction";
+	}
+	
+	@RequestMapping(value = "/addCustomerTransaction", method = RequestMethod.GET)
+	public String addCustomerTransaction(ModelMap model,@ModelAttribute("user") User user, BindingResult result,RedirectAttributes redirectAttrs){
+		
+
+		List<Account> accounts = accountService.getAccountsByCustomerID(user
+				.getCustomerID());
+		
+		model.addAttribute("accounts", accounts);
+		model.addAttribute("user", user);
+		
+		return "employee/int_employee_add_transaction";
+	}
+	
+	
+		
 	@RequestMapping(value = "/critical-decline", method = RequestMethod.POST)
 	public String CriticalTransactionDecline( ModelMap model,
 			  HttpServletRequest request) {
@@ -567,4 +624,154 @@ public class InternalUserController {
 	
 		
 	}
+	
+	
+	@RequestMapping(value = "/addTransactionSuccess", method = RequestMethod.POST)
+	public String postFundTransfer(ModelMap model, HttpServletRequest request,
+			@ModelAttribute("transaction") Transaction senderTransaction,
+			BindingResult result, RedirectAttributes attr) {
+
+		
+		boolean isTransferAccountValid;
+		Account account = accountService.getAccountByNumber(senderTransaction.getSenderAccNumber());
+		
+		// Exit the transaction if Account doesn't exist
+		if (account == null) {
+			logger.warn("Someone tried credit/debit functionality for some other account. Details:");
+			logger.warn("Credit/Debit Acc No: "
+					+ request.getParameter("number"));
+			
+			attr.addFlashAttribute("failureMsg",
+					"Could not process the transaction.Account seems to be Null or tampered.Please try again ");
+			return "redirect:/addTransaction";
+		}
+		
+		
+		String receiverAccNumber = "";
+		if (request.getParameter("type").equalsIgnoreCase("internal")) {
+			receiverAccNumber = request.getParameter("receiverAccNumber");
+			logger.info("internal transfer");
+		} else {
+			receiverAccNumber = request.getParameter("receiverAccNumberExternal");
+			logger.info("external transfer");
+		}
+
+
+		Account toAccount = accountService.getAccountByNumber(receiverAccNumber); 
+
+		
+		if(toAccount != null)
+		{
+			isTransferAccountValid = true;
+		}
+		else
+		{
+			isTransferAccountValid = false;
+			
+		}
+		
+		logger.debug("isTransferAccountValid: " + isTransferAccountValid);
+		if (isTransferAccountValid) {
+			
+			BigDecimal amount = transactionService.getBigDecimal(request
+					.getParameter("amount"));
+			
+					
+			logger.debug("receiverAccNumber: " + receiverAccNumber);
+	
+			
+			// create the transaction object
+			senderTransaction = new Transaction(
+					transactionService.getUniqueTransactionID(), 
+					"Fund Transfer",
+					receiverAccNumber,
+					request.getParameter("senderAccNumber"), 
+					"completed", 
+					"Debit",
+					amount, 
+					request.getParameter("senderAccNumber")
+				);
+			
+			logger.debug("Sender Transaction created: " + senderTransaction);
+			
+			if(amount.longValue() > 500)
+			{
+				senderTransaction.setIsCritical("yes");
+			}
+			else
+			{
+				senderTransaction.setIsCritical("no");
+			}
+			
+			// Validate the model
+			validator.validate(senderTransaction, result);
+			logger.debug("Validated model");
+			
+			if (result.hasErrors()) {
+				logger.debug("Validation errors: ");
+				logger.debug(result);
+	
+				// attributes for validation failures
+				attr.addFlashAttribute(
+						"failureMsg",
+						"Could not process your transaction");
+				attr.addFlashAttribute("transaction", senderTransaction);
+	
+				// redirect to the credit debit view page
+				return "redirect:/addTransaction";
+			}
+			
+			logger.debug("No validation errors");
+	
+			// Check if Debit amount is < balance in the account
+			if ( amount.compareTo(account.getBalance()) >= 0) {
+				logger.debug("Debit < Balance");
+				attr.addFlashAttribute(
+						"failureMsg",
+						"Could not process your transaction. Debit amount cannot be higher than account balance");
+				return "redirect:/addTransaction";
+			}
+			
+			Transaction receiverTransaction = new Transaction(
+					transactionService.getUniqueTransactionID(), 
+					"Fund Transfer",
+					receiverAccNumber,
+					request.getParameter("senderAccNumber"), 
+					"completed", 
+					"Credit",
+					amount,
+					receiverAccNumber
+				);
+			
+			receiverTransaction.setIsCritical("no");
+			
+			logger.debug("Receiver Transaction created: " + receiverTransaction);
+			
+			try {
+				logger.debug("Trying to transfer funds");
+				accountService.transferFunds(transactionService, accountService, senderTransaction, receiverTransaction, amount);
+			} catch (Exception e) {
+				logger.warn(e);
+				attr.addFlashAttribute(
+						"failureMsg",
+						"Transfer unsucessful. Please try again or contact the admin.");
+				return "redirect:/addTransaction";
+			}
+	
+			attr.addFlashAttribute(
+					"successMsg",
+					"Transaction completed successfully. Transaction should show up on the user account now");
+			
+		} else {
+			attr.addFlashAttribute(
+					"failureMsg",
+					"Transfer unsucessful. Please try again or contact the admin");
+		}
+
+		// redirect to the view page
+		return "redirect:/addTransaction";
+	}
+
+	
+	
 }

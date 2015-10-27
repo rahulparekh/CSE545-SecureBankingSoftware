@@ -40,7 +40,7 @@
           <ul class="nav nav-sidebar">
             <li><a href="#">Home</a></li>
             <li><a href="#">Pending Transactions</a></li>
-            <li><a href="#">Add Transactions</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/addTransaction">Add Transactions</a></li>
             <li><a href="#">Request Manager</a></li>
             <li><a href="#">Request Admin</a></li>
             <li><a href="#">Settings</a></li>

@@ -23,6 +23,10 @@ public class InternalUserServiceImpl implements InternalUserService {
 
 	@Autowired
 	private InternalUserDaoImpl dao;
+	
+	@Autowired
+	private BCryptHashService hashService;
+	
 
 	public void addInternalUser(User user) {
 		// Logic here to add a user
@@ -40,14 +44,14 @@ public class InternalUserServiceImpl implements InternalUserService {
 			user.setLastLoginAt(LocalDateTime.now());
 			user.setUpdatedAt(LocalDateTime.now());
 			user.setUpdatedAt(LocalDateTime.now());
+			user.setPassword(hashService.getBCryptHash((user.getPassword())));
 			dao.saveInternalUser(user);
 	}
 	
 	public void updateInternalUser(User user) {
 		// Logic here to add a user
 		
-		
-			dao.updateInternalUser(user);
+		dao.updateInternalUser(user);
 	}
 	
 	public User searchInternalUser(String EmployeeID)

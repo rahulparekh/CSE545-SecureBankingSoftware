@@ -1,5 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
+<%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+    
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -39,7 +44,7 @@
           <ul class="nav nav-sidebar">
             <li><a href="#">Home</a></li>
             <li><a href="#">Pending Transactions</a></li>
-            <li><a href="#">Add Transactions</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/addTransaction">Add Transactions</a></li>
             <li><a href="#">Request Manager</a></li>
             <li><a href="#">Request Admin</a></li>
             <li><a href="#">Settings</a></li>
@@ -51,74 +56,111 @@
         <div class="col-sm-9 col-md-10 main">
 
           <div class="page-header">
-            <h1>SBS - Welcome Jack Doe </h1>
+            <h1>SBS - Welcome Bank Employee </h1>
           </div>
 
-          <h2>Add Transactions:</h2>
-		  <br>
+          <h2>Add Transaction</h2>
 
-          <div id="fund-transfer">
-            <div class="modal-body">
-              <p>
-                <label>Account Details:</label>
-                <select class="form-control">
-                  <option>Select an Account</option>
-                  <option>Checking Account (*1234)</option>
-                  <option>Savings Account (*5678)</option>
-                </select>
-              </p>                  
-              <hr>
-              <p>
-                <label>Current Balance:</label>
-                <p><i> $200.56 </i></p>
-              </p>
-              <hr>
-              <div>
-                <label>Transfer Type:</label><br>
-                <div class="btn-group" role="group">
-                  <button title="Transfer to User's another account within the bank" type="button" class="internal-transfer transfer-option-btn btn btn-default">Internal Transfer</button>
-                  <button title="Transfer to another User's account within the bank" type="button" class="external-transfer transfer-option-btn btn btn-default">External Transfer</button>
-                </div>
-              </div>
-              <div class="transfer-account-details">
-                <div id="internal-transfer" class="hidden">
-                  <select class="form-control">
-                    <option>Select credit account</option>
-                    <option>${User}'s Checking Account (*1234)</option>
-                    <option>${User}'s Savings Account (*5678)</option>
-                  </select>
-                </div>
+	<form:form id="fund-transfer" action="addTransactionSuccess" method="POST" modelAttribute="transaction">
+		<div class="modal-body">
+			<c:if test="${!empty successMsg}">
+				<div class="alert alert-success">						
+					${fn:escapeXml(successMsg)}
+				</div>
+			</c:if>
+			<c:if test="${!empty failureMsg}">
+				<div class="alert alert-danger">						
+					${fn:escapeXml(failureMsg)}
+				</div>
+			</c:if>
+			<p>
+				<label>Debit Account:</label> <select class="form-control"
+					name="senderAccNumber" id="select-account">
+					<option value="">Select an Account</option>
+					<c:set var="count" value="0" scope="page" />
+					<c:forEach items="${accounts}" var="account">
+						<option id="acc${count}" value="${fn:escapeXml(account.number)}">${fn:escapeXml(account.name)}
+							(*${fn:escapeXml(fn:substring(account.number, fn:length(account.number) - 4, fn:length(account.number)))})</option>
 
-                <div id="external-transfer" class="hidden">
-                  <p>
-                    <label>User's Name:</label>
-                    <input type="text" class="form-control" placeholder="ex: Rishi">
-                  </p>
-                  <p>
-                    <label>Account No.:</label>
-                    <input type="text" class="form-control" placeholder="ex: 123456789">
-                  </p>
-                </div>
-              </div>
-              <hr>
-              <p>
-                <label>Amount to Transfer:</label>
-                <input type="text" class="form-control" placeholder="ex: 0.00">
-              </p>
-            </div>
-            <div class="modal-footer">                
-              <button type="button" class="btn btn-success">Add Transaction</button>
-            </div>
-          </div><!-- /. -->
-          
-        </div> <!-- /main -->
+						<c:set var="count" value="${count + 1}" scope="page" />
+					</c:forEach>
+				</select>
+				<form:errors path="senderAccNumber" cssClass="error"
+					element="label" />
+			</p>
+			<hr>
+			<div>
+				<label>Current Balance:</label>
+				<div id="current-balance">
+					<p id="please-select-account">
+						<i> Please select an account above </i>
+					</p>
+					<c:set var="count" value="0" scope="page" />
+					<c:forEach items="${accounts}" var="account">
+						<p class="hide" id="acc${count}bal">$${fn:escapeXml(account.balance)}</p>
+						<c:set var="count" value="${count + 1}" scope="page" />
+					</c:forEach>
+				</div>
+			</div>
+			<hr>
+			<div>
+				<label>Transfer Type:</label><br> <span
+					style="margin-right: 30px;"> <input type="radio" name="type"
+					value="Internal" class="internal-transfer transfer-option-btn">
+					Internal
+				</span> <span><input type="radio" name="type" value="External"
+					class="external-transfer transfer-option-btn"> External</span>
+				<div class="type-error">
+					<form:errors path="type" cssClass="error" element="label" />
+				</div>
+			</div>
+			<div class="transfer-account-details">
+				<div id="internal-transfer" class="hidden">
+					<select class="form-control" name="receiverAccNumber"
+						id="select-receiver-account">
+						<option value="">Select a credit account</option>
+						<c:set var="count" value="0" scope="page" />
+						<c:forEach items="${accounts}" var="account">
+							<option id="acc${count}credit"
+								value="${fn:escapeXml(account.number)}">${fn:escapeXml(account.name)}
+								(*${fn:escapeXml(fn:substring(account.number, fn:length(account.number) - 4, fn:length(account.number)))})</option>
+
+							<c:set var="count" value="${count + 1}" scope="page" />
+						</c:forEach>
+					</select>
+					<form:errors path="receiverAccNumber" cssClass="error"
+						element="label" />
+				</div>
+
+				<div id="external-transfer" class="hidden">
+					<p>
+						<label>Beneficiery Account Number:</label> <input type="text"
+							class="form-control" name="receiverAccNumberExternal"
+							placeholder="eg: 11111111111111111">
+					</p>
+				</div>
+				<hr>
+			<p>
+				<label>Amount to be Transferred:</label>
+				<input name="amount" type="text" class="form-control" placeholder="e.g. 10.50">
+				<form:errors path="amount" cssClass="error" element="label"/>
+			</p>
+			</div>
+			<hr>
+		
+		</div>
+		<div class="modal-footer">
+			<button type="submit" class="btn btn-success">Transfer Funds</button>
+		</div>
+	</form:form>
+                  </div> <!-- /main -->
 
       </div> <!-- /row -->
+	
 
-      <div id="virtualKeyboard">        
-      </div>
 
     </div> <!-- /container -->
+
 
 
     <!-- Bootstrap core JavaScript
@@ -126,7 +168,9 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="${pageContext.servletContext.contextPath}/static/js/bootstrap.min.js"></script>
-    <script src="${pageContext.servletContext.contextPath}/static/js/jsKeyboard.js"></script>
+	<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.js"></script>
+	<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/additional-methods.js"></script>
+	<script src="${pageContext.servletContext.contextPath}/static/js/validation.js"></script>
     <script src="${pageContext.servletContext.contextPath}/static/js/common.js"></script>
   </body>
 </html>
