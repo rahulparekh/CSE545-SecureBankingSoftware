@@ -206,7 +206,8 @@ public class TransactionServiceImpl implements TransactionService {
 				+ "To process the payment, please go to "
 				+ "https://group11.mobicloud.asu.edu/home/merchant-payment-requests.\n\n"
 				+ "The payment request will expire in 2 hours from now.\n\n"
-				+ "Please use the following OTP to accept the payment: " + paymentRequest.getOtp();
+				+ "Please use the following OTP to accept the payment: " + paymentRequest.getOtp() + "\n\n" 
+				+ "You can accept the payment or let it expire";
 		
 		email = accountService
 						.getAccountByNumber(paymentRequest.getCustomerAccNumber())
@@ -220,10 +221,11 @@ public class TransactionServiceImpl implements TransactionService {
 	}
 
 	public void acceptPayment(PaymentRequest paymentRequest) {
-		String senderAccount = null;
-		String receiverAccount = null;
-		String type1 = null;
-		String type2 = null;
+		String senderAccNumber = paymentRequest.getSenderAccNumber();
+		String receiverAccountNumber = paymentRequest.getReceiverAccNumber();
+		
+		paymentRequest.setUserAccepted(1);
+		paymentRequest.setMerchantAccepted(1);
 		
 		// update the payment request
 		paymentRequestDao.savePaymentRequest(paymentRequest);
@@ -231,54 +233,31 @@ public class TransactionServiceImpl implements TransactionService {
 		String isCritical = isCritical(paymentRequest.getAmount(),
 				CRITICAL_VALUE);
 		
-		// 0 customer, 1 merchant
-		if (paymentRequest.getInitiatedBy() == 0 || paymentRequest.getType().equalsIgnoreCase("debit")) {
-			senderAccount = paymentRequest.getCustomerAccNumber();
-			receiverAccount = paymentRequest.getMerchantAccNumber();
-		} else {
-			senderAccount = paymentRequest.getMerchantAccNumber();
-			receiverAccount = paymentRequest.getCustomerAccNumber();
-		}
-		
-		if (paymentRequest.getType().equalsIgnoreCase("credit")) {
-			type1 = "Credit";
-			type2 = "Debit";
-		} else {
-			type2 = "Credit";
-			type1 = "Debit";
-		}
-			
-		
 		// Create two transactions
 		Transaction transaction1 = new Transaction(
 				getUniqueTransactionID(), 
-				"Payment From " + senderAccount + " To: " + receiverAccount, 
-				senderAccount, 
-				receiverAccount,
+				"Payment From " + senderAccNumber + " To: " + receiverAccountNumber, 
+				senderAccNumber, 
+				receiverAccountNumber,
 				"pending", 
-				type1, 
+				"Debit", 
 				paymentRequest.getAmount(), 
 				isCritical,
-				senderAccount);
+				senderAccNumber);
 		
 		Transaction transaction2 = new Transaction(
 				getUniqueTransactionID(), 
-				"Payment From " + senderAccount + " To: " + receiverAccount, 
-				senderAccount, 
-				receiverAccount,
+				"Payment From " + senderAccNumber + " To: " + receiverAccountNumber, 
+				senderAccNumber, 
+				receiverAccountNumber,
 				"pending", 
-				type2, 
+				"Credit", 
 				paymentRequest.getAmount(), 
 				isCritical,
-				receiverAccount);
+				receiverAccountNumber);
 		
 		addTransaction(transaction1);
 		addTransaction(transaction2);
-		
-	}
-
-	public void completePayment(PaymentRequest paymentRequest) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -294,6 +273,10 @@ public class TransactionServiceImpl implements TransactionService {
 		}
 		
 		return "No";
+	}
+
+	public PaymentRequest getPaymentRequest(int id) {
+		return paymentRequestDao.getPaymentRequest(id);
 	}
 
 }

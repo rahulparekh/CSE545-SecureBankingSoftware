@@ -38,8 +38,11 @@
         		<td>${fn:escapeXml(payment.merchantAccNumber)}</td>
         		<td>
         			<c:choose>
+        				<c:when test="${payment.userAccepted == 1 and payment.merchantAccepted == 1 }">
+        					Payment accepted.
+        				</c:when>
         				<c:when test="${payment.OTPExpiry le currentTime}">
-        					Payment has expired
+        					OTP has expired
         				</c:when>
         				<c:otherwise>
         				<form:form action="merchant-payment-requests" method="POST" modelAttribute="transaction">
