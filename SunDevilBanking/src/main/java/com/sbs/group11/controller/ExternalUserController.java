@@ -1,6 +1,8 @@
 package com.sbs.group11.controller;
 
 import java.math.BigDecimal;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,14 +16,17 @@ import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.sbs.group11.model.Account;
+import com.sbs.group11.model.PaymentRequest;
 import com.sbs.group11.model.StatementMonthYear;
 import com.sbs.group11.model.Transaction;
 import com.sbs.group11.model.User;
 import com.sbs.group11.service.AccountService;
+import com.sbs.group11.service.OTPService;
 import com.sbs.group11.service.TransactionService;
 import com.sbs.group11.service.UserService;
 
@@ -47,6 +52,9 @@ public class ExternalUserController {
 
 	@Autowired
 	private TransactionService transactionService;
+	
+	@Autowired
+	private OTPService otpService;
 
 	@Autowired
 	SmartValidator validator;
@@ -475,7 +483,89 @@ public class ExternalUserController {
 		model.put("user", user);
 		model.addAttribute("title", "Payments");
 		
+		List<User> merchants = userService.getUsersOfType("Merchant");
+		logger.info(merchants.get(0).toString());
+		model.put("merchants", merchants);
+		
+		List<Account> userAccounts = accountService.getAccountsByCustomerID(user
+				.getCustomerID());
+		model.addAttribute("userAccounts", userAccounts);
+		
 		return "customer/customerpayments";
+		 
+	}
+	
+	@RequestMapping(value = "/payments", method = RequestMethod.POST)
+	public String postPaymentsForCustomer(ModelMap model,
+			HttpServletRequest request,
+			@ModelAttribute("paymentRequest") PaymentRequest paymentRequest,
+			BindingResult result, RedirectAttributes attr) {
+		User user = userService.getUserDetails();
+		model.put("user", user);
+		model.addAttribute("title", "Payments");
+		
+		List<Account> customerAccounts = accountService.getAccountsByCustomerID(user
+				.getCustomerID());
+		
+		// If account is empty or null, skip the account service check
+		Account customerAccount = accountService.getValidAccountByNumber(
+				request.getParameter("senderAccNumber"), customerAccounts);
+
+		// Exit the transaction if Account doesn't exist
+		if (customerAccount == null) {
+			logger.warn("Someone tried credit/debit functionality for some other account. Details:");
+			logger.warn("Credit/Debit Acc No: "
+					+ request.getParameter("number"));
+			logger.warn("Customer ID: " + user.getCustomerID());
+			attr.addFlashAttribute("failureMsg",
+					"Could not process your transaction. Please try again or contact the bank.");
+			return "redirect:/home/payments";
+		}
+		
+		BigDecimal amount = transactionService.getBigDecimal(request
+				.getParameter("amount"));
+		
+		// Generate OTP
+		String otp = null;
+		try {
+			String sessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
+			logger.debug("Got session id: " + sessionId);
+			otp = otpService.generateOTP(sessionId.getBytes(), 20, 8, false, 20);
+		} catch (InvalidKeyException e) {
+			logger.warn(e);
+			attr.addFlashAttribute("failureMsg",
+					"Could not process your transaction. Please try again or contact the bank.");
+			return "redirect:/home/payments";
+		} catch (NoSuchAlgorithmException e) {
+			logger.warn(e);			
+			attr.addFlashAttribute("failureMsg",
+					"Could not process your transaction. Please try again or contact the bank.");
+			return "redirect:/home/payments";
+		}
+		
+		// Validate the PaymentReques model
+		paymentRequest = new PaymentRequest(request.getParameter("merchantAccNumber"), request.getParameter("customerAccNumber"),
+				null, 1, 0,
+				amount, "Debit", otp);
+		
+		// verify that the merchant account exists and is of type merchant
+		Account merchantAccount = accountService.getAccountByNumber(
+				request.getParameter("merchantAccNumber"));
+		
+		if( merchantAccount != null 
+				&& !merchantAccount.toString().isEmpty() ) {
+			
+			
+			
+			return "redirect:/home/payments"; 
+			
+		}
+		
+		attr.addFlashAttribute("failureMsg",
+				"Transfer unsucessful. Please try again or contact the bank.");
+		
+		return "redirect:/home/payments";	
+		
 		 
 	}
 	
@@ -487,6 +577,21 @@ public class ExternalUserController {
 	 */
 	@RequestMapping(value = "/payment-requests", method = RequestMethod.GET)
 	public String getPaymentRequestsForCustomer(ModelMap model) {
+		User user = userService.getUserDetails();
+		model.put("user", user);
+		model.addAttribute("title", "Payment Requests");
+		
+		// get all the pending requests
+		
+		
+		// add them to the model to be displayed
+		
+		return "customer/customerpaymentrequests";
+		 
+	}
+	
+	@RequestMapping(value = "/payment-requests", method = RequestMethod.POST)
+	public String postPaymentRequestsForCustomer(ModelMap model) {
 		User user = userService.getUserDetails();
 		model.put("user", user);
 		model.addAttribute("title", "Payment Requests");
@@ -520,6 +625,20 @@ public class ExternalUserController {
 		
 		return "customer/merchantpayments";		 
 	}
+	
+	@RequestMapping(value = "/merchant-payments", method = RequestMethod.POST)
+	public String postPaymentsForMerchants(ModelMap model) {
+		User user = userService.getUserDetails();
+		model.put("user", user);		
+		
+		List<Account> accounts = accountService.getAccountsByCustomerID(user
+				.getCustomerID());
+		model.addAttribute("accounts", accounts);
+		
+		model.addAttribute("title", "Merchant Payments");
+		
+		return "customer/merchantpayments";		 
+	}
 
 	
 	/**
@@ -530,6 +649,16 @@ public class ExternalUserController {
 	 */
 	@RequestMapping(value = "/merchant-payment-requests", method = RequestMethod.GET)
 	public String getPaymentRequestsForMerchants(ModelMap model) {
+		User user = userService.getUserDetails();
+		model.put("user", user);
+		model.addAttribute("title", "Payment Requests");
+		
+		return "customer/merchantpaymentrequests";
+		 
+	}
+	
+	@RequestMapping(value = "/merchant-payment-requests", method = RequestMethod.POST)
+	public String postPaymentRequestsForMerchants(ModelMap model) {
 		User user = userService.getUserDetails();
 		model.put("user", user);
 		model.addAttribute("title", "Payment Requests");
