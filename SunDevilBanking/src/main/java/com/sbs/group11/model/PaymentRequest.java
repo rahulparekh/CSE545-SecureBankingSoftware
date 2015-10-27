@@ -34,7 +34,8 @@ public class PaymentRequest {
 	
 	public PaymentRequest(String merchantAccNumber, String customerAccNumber,
 			String transactionID, int userAccepted, int merchantAccepted,
-			BigDecimal amount, String type, String otp) {
+			BigDecimal amount, String type, String otp, int initiatedBy, 
+			String customerName, String merchantName) {
 		super();
 		this.merchantAccNumber = merchantAccNumber;
 		this.customerAccNumber = customerAccNumber;
@@ -47,14 +48,16 @@ public class PaymentRequest {
 		this.OTPExpiry = new DateTime().toLocalDateTime().plusHours(2); // 2 hours expiry
 		this.createdAt = new DateTime().toLocalDateTime();
 		this.updatedAt = new DateTime().toLocalDateTime();
+		this.initiatedBy = initiatedBy;
+		this.customerName = customerName;
+		this.merchantName = merchantName;
 	}
 	
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID", unique = true, nullable = false)
-	private int id;
-	
+	private int id;	
 
 	@NotNull
 	@Size(min = 17, max = 17)
@@ -65,6 +68,16 @@ public class PaymentRequest {
 	@Size(min = 17, max = 17)
 	@Column(name = "CustomerAccNumber", nullable = false, length = 17, unique = false)
 	private String customerAccNumber;
+	
+	@NotNull
+	@Size(min = 3, max = 70)
+	@Column(name = "CustomerName", nullable = false, length = 70, unique = false)
+	private String customerName;
+	
+	@NotNull
+	@Size(min = 3, max = 70)
+	@Column(name = "MerchantName", nullable = false, length = 70, unique = false)
+	private String merchantName;
 	
 	@Size(min = 1, max = 17)
 	@Column(name = "TransactionID", nullable = true, length = 17)
@@ -111,6 +124,13 @@ public class PaymentRequest {
 	@Column(name = "UpdatedAt", nullable = false)
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
 	private LocalDateTime updatedAt;
+	
+	
+	/** The initiated by: 0 for customer 1 for merchant */
+	@NotNull
+	@Digits(integer = 1, fraction = 0)
+	@Column(name = "InitiatedBy", nullable = false, columnDefinition = "int(1) DEFAULT '0'")
+	private int initiatedBy;
 
 	public int getId() {
 		return id;
@@ -208,15 +228,42 @@ public class PaymentRequest {
 		this.updatedAt = updatedAt;
 	}
 
-	@Override
-	public String toString() {
-		return "PaymentRequest [merchantAccNumber=" + merchantAccNumber
-				+ ", customerAccNumber=" + customerAccNumber
-				+ ", transactionID=" + transactionID + ", userAccepted="
-				+ userAccepted + ", merchantAccepted=" + merchantAccepted
-				+ ", amount=" + amount + ", type=" + type + ", otp=" + otp
-				+ ", OTPExpiry=" + OTPExpiry + ", createdAt=" + createdAt
-				+ ", updatedAt=" + updatedAt + "]";
+	public int getInitiatedBy() {
+		return initiatedBy;
 	}
 
+	public void setInitiatedBy(int initiatedBy) {
+		this.initiatedBy = initiatedBy;
+	}
+
+	public String getCustomerName() {
+		return customerName;
+	}
+
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
+
+	public String getMerchantName() {
+		return merchantName;
+	}
+
+	public void setMerchantName(String merchantName) {
+		this.merchantName = merchantName;
+	}
+
+	@Override
+	public String toString() {
+		return "PaymentRequest [id=" + id + ", merchantAccNumber="
+				+ merchantAccNumber + ", customerAccNumber="
+				+ customerAccNumber + ", customerName=" + customerName
+				+ ", merchantName=" + merchantName + ", transactionID="
+				+ transactionID + ", userAccepted=" + userAccepted
+				+ ", merchantAccepted=" + merchantAccepted + ", amount="
+				+ amount + ", type=" + type + ", otp=" + otp + ", OTPExpiry="
+				+ OTPExpiry + ", createdAt=" + createdAt + ", updatedAt="
+				+ updatedAt + ", initiatedBy=" + initiatedBy + "]";
+	}
+	
+	
 }

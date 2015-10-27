@@ -162,6 +162,6 @@ public interface TransactionService {
 	 */
 	void completePayment(PaymentRequest paymentRequest);
 	
-	List<PaymentRequest> getPaymentsByAccNumber(String accNumber);
+	List<PaymentRequest> getPaymentsByAccNumber(String accNumber, int initiatedBy);
 
 }
