@@ -336,6 +336,26 @@ public class InternalUserController {
 		
 			
 	}
+	
+	@RequestMapping(value = "/manager-setting", method = RequestMethod.GET)
+	public String getManagerSetting(ModelMap model,@ModelAttribute("user") User user) {
+		
+		User manager = internalUserService.searchInternalUserByType("manager");
+		model.addAttribute("user", manager);
+		return "employee/setting_manager";
+	}
+		@RequestMapping(value = "/manager-setting_success", method = RequestMethod.POST)
+	public String changeManagerSetting(ModelMap model,
+			@ModelAttribute("user") User user,BindingResult result) {
+		
+		System.out.println("id is "+user.getCustomerID());
+		user.setUserType("manager");
+		internalUserService.updateInternalUser(user);
+		return "redirect:/manager-home";
+	}
+	
+	
+	
 
 	///***************EXTERNAL REQUESTS
 	

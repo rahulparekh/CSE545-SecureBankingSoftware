@@ -50,6 +50,11 @@ public class InternalUserServiceImpl implements InternalUserService {
 	
 	public void updateInternalUser(User user) {
 		// Logic here to add a user
+		User current_user = findUserByEmail(user.getEmail());
+		if(!current_user.getPassword().equals(user.getPassword()))
+		{	
+			user.setPassword(hashService.getBCryptHash((user.getPassword())));
+		}
 		
 		dao.updateInternalUser(user);
 	}
