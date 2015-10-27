@@ -586,7 +586,7 @@ public class ExternalUserController {
 		if( merchantAccount != null 
 				&& !merchantAccount.toString().isEmpty() ) {
 			
-			transactionService.initiatePayment(paymentRequest, emailService);
+			transactionService.initiatePayment(paymentRequest);
 			
 			logger.debug("Valid transaction");
 			attr.addFlashAttribute("successMsg",
@@ -674,8 +674,7 @@ public class ExternalUserController {
 			@ModelAttribute("paymentrequest") PaymentRequest paymentRequest,
 			BindingResult result, RedirectAttributes attr) {
 		User user = userService.getUserDetails();
-		model.put("user", user);
-		model.addAttribute("title", "Payments");
+		model.put("user", user); 
 		
 		List<Account> customerAccounts = accountService.getAccountsByCustomerID(user
 				.getCustomerID());
@@ -703,9 +702,8 @@ public class ExternalUserController {
 		
 		// Validate the PaymentReques model
 		paymentRequest = new PaymentRequest(request.getParameter("merchantAccNumber"), request.getParameter("customerAccNumber"),
-				null, 1, 0,
-				amount, "Debit", otp);
-		
+				null, 0, 1,
+				amount, request.getParameter("type"), otp);		
 		
 		validator.validate(paymentRequest, result);
 		if (result.hasErrors()) {
@@ -724,28 +722,28 @@ public class ExternalUserController {
 		}
 		
 		// If account is empty or null, skip the account service check
-		Account customerAccount = accountService.getValidAccountByNumber(
-				request.getParameter("customerAccNumber"), customerAccounts);
+		Account merchantAccount = accountService.getValidAccountByNumber(
+				request.getParameter("merchantAccNumber"), customerAccounts);
 
 		// Exit the transaction if Account doesn't exist
-		if (customerAccount == null) {
+		if (merchantAccount == null) {
 			logger.warn("Someone tried payments functionality for some other account. Details:");
-			logger.warn("Customer Acc No: "
+			logger.warn("Merchant Acc No: "
 					+ request.getParameter("customerAccNumber"));
-			logger.warn("Customer ID: " + user.getCustomerID());
+			logger.warn("Merchant ID: " + user.getCustomerID());
 			attr.addFlashAttribute("failureMsg",
 					"Could not process your request. Please try again or contact the bank.");
 			return "redirect:/home/merchant-payments";
 		}
 		
-		// verify that the merchant account exists and is of type merchant
-		Account merchantAccount = accountService.getAccountByNumber(
-				request.getParameter("merchantAccNumber"));
+		// verify that the customer account exists and is of type merchant
+		Account customerAccount = accountService.getAccountByNumber(
+				request.getParameter("customerAccNumber"));
 		
-		if( merchantAccount != null 
-				&& !merchantAccount.toString().isEmpty() ) {
+		if( customerAccount != null 
+				&& !customerAccount.toString().isEmpty() ) {			
 			
-			
+			transactionService.initiatePayment(paymentRequest);
 			
 			logger.debug("Valid transaction");
 			attr.addFlashAttribute("successMsg",
@@ -756,14 +754,10 @@ public class ExternalUserController {
 		}
 		
 		
-		// log the errors and throw and unsuccessful		
-		logger.warn("Someone tried payments functionality for some other account. Details:");
-		logger.warn("Merchant Acc No: "
-				+ request.getParameter("customerAccNumber"));
-		logger.warn("Customer ID: " + user.getCustomerID());
-		
+		// Account doesn't exist. Mention it since the 
+		// merchant enters the customer account himself
 		attr.addFlashAttribute("failureMsg",
-				"Could not process your request. Please try again or contact the bank.");
+				"Could not process your request. The customer account is invalid.");
 		
 		return "redirect:/home/merchant-payments"; 
 	}
