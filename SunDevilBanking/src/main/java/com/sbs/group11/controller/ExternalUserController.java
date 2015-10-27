@@ -682,6 +682,7 @@ public class ExternalUserController {
 						if (isValidOTP) {
 							// proceed to accept
 							transactionService.acceptPayment(paymentRequest);
+							attr.addFlashAttribute("sucessMsg","Payment has been accepted and is being processed.");
 							return "redirect:/home/payment-requests";
 						}
 
@@ -874,12 +875,75 @@ public class ExternalUserController {
 	}
 
 	@RequestMapping(value = "/merchant-payment-requests", method = RequestMethod.POST)
-	public String postPaymentRequestsForMerchants(ModelMap model) {
+	public String postPaymentRequestsForMerchants(ModelMap model,
+			HttpServletRequest request, RedirectAttributes attr) {
 		User user = userService.getUserDetails();
-		model.put("user", user);
-		model.addAttribute("title", "Payment Requests");
+        Set<Account> accounts = user.getAccounts();
+        model.put("user", user);
+        model.addAttribute("title", "Payment Requests");
+        
+        if (request.getParameter("otp") == null || request.getParameter("otp").isEmpty()) {
+            attr.addFlashAttribute("failureMsg", "OTP is required.");
+            return "redirect:/home/merchant-payment-requests";
+        }
+            
+        // get all the pending requests
+        if (request.getParameter("paymentrequest") != null) {
+            PaymentRequest paymentRequest = transactionService
+                    .getPaymentRequest(Integer.parseInt(request
+                            .getParameter("paymentrequest")));
 
-		return "customer/merchantpaymentrequests";
+            boolean isOTPCheck = false;
+            for (Account account : accounts) {
+
+                // check if the account in the request does indeed belong to the
+                // user
+                if (paymentRequest.getMerchantAccNumber().equalsIgnoreCase(
+                        account.getNumber())) {
+                    isOTPCheck = true;
+                    
+                    logger.debug(paymentRequest.getOtp() + " == "
+                            + request.getParameter("otp"));
+
+                    // check if otp hasn't expired
+                    if (paymentRequest.getOTPExpiry().isAfter(
+                            new DateTime().toLocalDateTime())) {
+
+                        // check if otp is the same
+                        boolean isValidOTP = paymentRequest
+                                .getOtp()
+                                .trim()
+                                .equalsIgnoreCase(
+                                        request.getParameter("otp").trim());
+
+                        if (isValidOTP) {
+                            // proceed to accept
+                            transactionService.acceptPayment(paymentRequest);
+                            attr.addFlashAttribute("sucessMsg","Payment has been accepted and is being processed.");
+                            return "redirect:/home/merchant-payment-requests";
+                        }
+
+                    }
+
+                    break;
+                }
+
+            }
+
+            if (isOTPCheck) {
+                attr.addFlashAttribute("failureMsg",
+                        "OTP mismatch. Please try again.");
+                logger.debug("Incorrect OTP");
+                return "redirect:/home/merchant-payment-requests";
+
+            }
+
+            logger.debug("Account in the payment request does not belong to the user");
+
+        }
+            
+        attr.addFlashAttribute("failureMsg", "Could not process your request. Please try again");
+        return "redirect:/home/merchant-payment-requests";
 
 	}
 }
