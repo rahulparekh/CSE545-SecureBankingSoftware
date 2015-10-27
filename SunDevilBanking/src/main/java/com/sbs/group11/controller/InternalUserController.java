@@ -5,8 +5,11 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.log4j.Logger;
+
 import javax.servlet.http.HttpServletRequest;
+
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -40,6 +43,8 @@ public class InternalUserController {
 	AccountService accountService;
 	@Autowired
 	SmartValidator validator;
+	
+	final private BigDecimal CRITICAL_VALUE = new BigDecimal(500);
 	
 	
 	final static Logger logger = Logger.getLogger(InternalUserController.class);
@@ -694,7 +699,8 @@ public class InternalUserController {
 			
 					
 			logger.debug("receiverAccNumber: " + receiverAccNumber);
-	
+			
+			String isCritical = transactionService.isCritical(amount, CRITICAL_VALUE);
 			
 			// create the transaction object
 			senderTransaction = new Transaction(
@@ -705,6 +711,7 @@ public class InternalUserController {
 					"completed", 
 					"Debit",
 					amount, 
+					isCritical,
 					request.getParameter("senderAccNumber")
 				);
 			
@@ -748,6 +755,7 @@ public class InternalUserController {
 				return "redirect:/addTransaction";
 			}
 			
+			
 			Transaction receiverTransaction = new Transaction(
 					transactionService.getUniqueTransactionID(), 
 					"Fund Transfer",
@@ -756,6 +764,7 @@ public class InternalUserController {
 					"completed", 
 					"Credit",
 					amount,
+					isCritical,
 					receiverAccNumber
 				);
 			
