@@ -27,6 +27,9 @@ import com.sbs.group11.model.User;
 @Transactional
 public class TransactionServiceImpl implements TransactionService {
 	final static Logger logger = Logger.getLogger(TransactionServiceImpl.class);
+	
+	@Autowired
+	private AccountService accountService;
 
 	@Autowired
 	private TransactionDao dao;
@@ -187,8 +190,13 @@ public class TransactionServiceImpl implements TransactionService {
 					+ "The payment request will expire in 2 hours from now.\n\n"
 					+ "Please use the following OTP to accept the payment: " + paymentRequest.getOtp();
 			
+			String email = accountService
+							.getAccountByNumber(paymentRequest.getMerchantAccNumber())
+							.getUser()
+							.getEmail();
+			
 			// send email to merchant
-			emailService.sendEmail("test@rahulparekh.in", "Sun Devil Banking. New Request", content);
+			emailService.sendEmail(email, "Sun Devil Banking. New Request", content);
 		}
 		
 		// send email to user
