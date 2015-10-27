@@ -65,6 +65,8 @@ public interface TransactionService {
 	 */
 	List<Transaction> getCompletedTransactionsByAccountNummber(
 			String accNumber, String month, int year);
+	
+	String isCritical(BigDecimal amount, BigDecimal critical_value);
 
 	/**
 	 * Gets the transaction.
@@ -133,9 +135,7 @@ public interface TransactionService {
 	 *            the attr
 	 * @return true, if is transfer account valid
 	 */
-	boolean isTransferAccountValid(AccountService accountService,
-			TransactionService transactionService,
-			List<Account> senderAccounts, HttpServletRequest request,
+	boolean isTransferAccountValid(List<Account> senderAccounts, HttpServletRequest request,
 			ModelMap model, User user, RedirectAttributes attr);
 
 	/**
