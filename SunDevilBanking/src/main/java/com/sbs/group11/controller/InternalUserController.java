@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.log4j.Logger;
 
@@ -721,6 +722,7 @@ public class InternalUserController {
 			logger.debug("receiverAccNumber: " + receiverAccNumber);
 			
 			String isCritical = transactionService.isCritical(amount, CRITICAL_VALUE);
+			String pairId = UUID.randomUUID().toString();
 			
 			// create the transaction object
 			senderTransaction = new Transaction(
@@ -732,7 +734,8 @@ public class InternalUserController {
 					"Debit",
 					amount, 
 					isCritical,
-					request.getParameter("senderAccNumber")
+					request.getParameter("senderAccNumber"),
+					pairId
 				);
 			
 			logger.debug("Sender Transaction created: " + senderTransaction);
@@ -785,7 +788,8 @@ public class InternalUserController {
 					"Credit",
 					amount,
 					isCritical,
-					receiverAccNumber
+					receiverAccNumber,
+					pairId
 				);
 			
 			receiverTransaction.setIsCritical("no");

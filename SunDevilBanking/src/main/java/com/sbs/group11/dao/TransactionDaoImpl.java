@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.sbs.group11.model.OTP;
 import com.sbs.group11.model.StatementMonthYear;
 import com.sbs.group11.model.Transaction;
 import com.sbs.group11.service.AccountService;
@@ -22,14 +23,6 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 	final static Logger logger = Logger.getLogger(UserDaoImpl.class);
 
 	public void addTransaction(Transaction transaction) {
-		
-		if(isCriticalTransaction(transaction)){
-			
-			transaction.setIsCritical("Yes");
-		}
-		else{
-			transaction.setIsCritical("No");
-		}
 		
 		getSession().saveOrUpdate(transaction);
 	}
@@ -209,22 +202,24 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 		
 	}
 	
-	public boolean isCriticalTransaction(Transaction transaction){
-		
-		BigDecimal amount = transaction.getAmount();
-		BigDecimal critical_amount = new BigDecimal(500.00);
-		
-		if(amount.compareTo(critical_amount)==1)
-			return true;
-		else
-			return false;
-	}
-	
 
 	public void  declineTransaction(Transaction transaction){
 		
 		transaction.setStatus("declined");
 		getSession().update(transaction);
+	}
+
+	public Transaction getTransactionByPairId(String pairId,
+			String transactionID) {
+		
+		Transaction transaction = (Transaction) getSession()
+				.createQuery("from Transaction where pairId = :pairId and TransactionID <> :transactionID")
+				.setParameter("pairId", pairId)
+				.setParameter("transactionID", transactionID)
+				.setMaxResults(1)
+				.uniqueResult();
+		
+		return transaction;
 	}
 
 }

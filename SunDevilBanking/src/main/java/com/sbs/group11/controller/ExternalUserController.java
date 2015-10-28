@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -81,6 +82,26 @@ public class ExternalUserController {
 		String transactionId = request.getParameter("transactionId");
 		String type = request.getParameter("type");
 		String otpId = request.getParameter("otpId");
+		String redirectUrl = "redirect:/home/credit-debit";
+		
+		if (type == null) {
+			
+			attr.addFlashAttribute(
+					"failureMsg",
+					"OTP could not be verified. Please try again");
+			return redirectUrl;
+		}
+		
+		if (type.equals("creditdebit")) {
+			
+		} else if (type.equals("fundtransfer")) {
+			redirectUrl = "redirect:/home/fund-transfer";
+		} else {
+			attr.addFlashAttribute(
+					"failureMsg",
+					"OPT could not be verified. Please try again");
+			return redirectUrl;
+		}
 		
 		OTP dbOTP = otpService.getOTP(otpId);
 		
@@ -104,22 +125,57 @@ public class ExternalUserController {
 					"successMsg",
 					"Transaction cancelled successfully.");
 			
-			return "redirect:/home/credit-debit";
+			return redirectUrl;
 		}
 		
 		if (request.getParameter("submit").equalsIgnoreCase("confirm")) {
 			
-			logger.debug("Trying to confirm the transaction");
-			
-			if ( otpService.isOTPVerified(dbOTP, otp, transactionId, type) ) {
+			if ( !otpService.isOTPVerified(dbOTP, otp, transactionId, type) ) {
 				attr.addFlashAttribute(
 						"failureMsg",
 						"OPT could not be verified. Please try again");
-				return "redirect:/home/credit-debit";
-			}
+				return redirectUrl;
+			}			
+			
 			
 			dbOTP.setOTPExpiry(new DateTime().toLocalDateTime().minusMinutes(5));
 			Transaction transaction = dbOTP.getTransaction();
+			
+			// if fund transfer
+			// get the reverse transaction too and set it to pending
+			if (type.equals("fundtransfer")) {
+
+				String pairId = transaction.getPairId();
+
+				if (pairId != null) {
+					
+					Transaction transactionPair = transactionService.getTransactionByPairId(pairId, transaction.getTransactionID());
+					
+					if (transactionPair == null) {
+						attr.addFlashAttribute(
+								"failureMsg",
+								"Bad request. Please cancel the transaction and create a new transaction.");
+						return redirectUrl;
+					}
+					
+					logger.debug("Found the pair: " + transactionPair);
+					
+					transactionPair.setStatus("pending");
+					transactionPair.setUpdatedAt(new DateTime().toLocalDateTime());
+					transactionService.addTransaction(transactionPair);
+					
+					logger.debug("Updated the pair to pending");
+					
+					
+				} else {
+					attr.addFlashAttribute(
+							"failureMsg",
+							"Bad request. Please cancel the transaction and create a new transaction.");
+					return redirectUrl;
+				}
+
+			}
+			
 			transaction.setStatus("pending");
 			transaction.setUpdatedAt(new DateTime().toLocalDateTime());
 			Set<OTP> otpSet = new HashSet<OTP>();
@@ -132,13 +188,13 @@ public class ExternalUserController {
 					"successMsg",
 					"Transaction completed successfully. Transaction should show up on your account shortly after bank approval.");
 			
-			return "redirect:/home/credit-debit";
+			return redirectUrl;
 		}
 		
 		attr.addFlashAttribute(
 				"failureMsg",
 				"OPT could not be verified. Please try again");
-		return "redirect:/home/credit-debit";
+		return redirectUrl;
 	}
 
 	/**
@@ -244,7 +300,7 @@ public class ExternalUserController {
 						+ request.getParameter("type"),
 				request.getParameter("number"), request.getParameter("number"),
 				"pending", request.getParameter("type"), amount, isCritical,
-				request.getParameter("number"));
+				request.getParameter("number"), UUID.randomUUID().toString());
 
 		// Validate the model
 		validator.validate(transaction, result);
@@ -488,7 +544,7 @@ public class ExternalUserController {
 			String transactionId = otp.getTransaction().getTransactionID();
 			int otpId = otp.getId();
 			
-			model.addAttribute("heading", "SBS Credit / Debit Funds");
+			model.addAttribute("heading", "SBS Fund Transfer");
 			model.addAttribute("title", "Verify Transaction For Fund Transfer");
 			model.addAttribute("transactionId", transactionId);
 			model.addAttribute("otpId", otpId);
@@ -566,6 +622,8 @@ public class ExternalUserController {
 			if (isCritical.equalsIgnoreCase("yes")) {
 				status = "pending";
 			}
+			
+			String pairId = UUID.randomUUID().toString();
 
 			// create the transaction object
 			senderTransaction = new Transaction(
@@ -573,7 +631,8 @@ public class ExternalUserController {
 					"Fund Transfer", receiverAccNumber,
 					request.getParameter("senderAccNumber"), status,
 					"Debit", amount, isCritical,
-					request.getParameter("senderAccNumber"));
+					request.getParameter("senderAccNumber"),
+					pairId);
 
 			logger.debug("Sender Transaction created: " + senderTransaction);
 
@@ -610,30 +669,39 @@ public class ExternalUserController {
 					transactionService.getUniqueTransactionID(),
 					"Fund Transfer", receiverAccNumber,
 					request.getParameter("senderAccNumber"), status,
-					"Credit", amount, isCritical, receiverAccNumber);
+					"Credit", amount, isCritical, receiverAccNumber,
+					pairId);
 
 			logger.debug("Receiver Transaction created: " + receiverTransaction);
 			
+			logger.debug("isCritical? " + isCritical);
+			
 			// Don't transfer if the transaction is critical
 			if (!isCritical.equalsIgnoreCase("yes")) {
+				
+				logger.debug("it's not critical. Transferring " + isCritical);
 				
 				try {
 					logger.debug("Trying to transfer funds");
 					accountService.transferFunds(transactionService,
 							accountService, senderTransaction, receiverTransaction,
 							amount);
+					
+					attr.addFlashAttribute(
+							"successMsg",
+							"Transaction completed successfully. Transaction should show up on your account shortly.");
+					
+					return "redirect:/home/fund-transfer";
 				} catch (Exception e) {
 					logger.warn(e);
 					attr.addFlashAttribute("failureMsg",
 							"Transfer unsucessful. Please try again or contact the bank.");
 					return "redirect:/home/fund-transfer";
 				}
-	
-				attr.addFlashAttribute(
-						"successMsg",
-						"Transaction completed successfully. Transaction should show up on your account shortly.");
 			
 			}
+			
+			logger.debug("it is indeed critical " + isCritical);
 			
 			// Generate OTP etc and redirect
 			String otp = null;

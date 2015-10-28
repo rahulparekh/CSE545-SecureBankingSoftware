@@ -170,5 +170,15 @@ public interface TransactionService {
 	 * @return the payment request
 	 */
 	PaymentRequest getPaymentRequest(int id);
+	
+	
+	/**
+	 * Gets the transaction by pair id and excludes provided transactionID
+	 *
+	 * @param pairId the pair id
+	 * @param transactionID the transaction id
+	 * @return the transaction by pair id
+	 */
+	Transaction getTransactionByPairId(String pairId, String transactionID);
 
 }
