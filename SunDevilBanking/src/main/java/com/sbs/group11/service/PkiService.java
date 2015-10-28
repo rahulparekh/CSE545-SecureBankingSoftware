@@ -137,9 +137,8 @@ private UserDao userDAO;
 	        messageemail.setSubject("Your private Key");
 	        messageemail.setText("Private Key "+"\n"+privatekey+"\n");
 	        
-	        mailSender.send(messageemail); 
+	        //mailSender.send(messageemail); 
 			
-			//Return the public key to the new User registration object
 			return publickey;
 			
 		}
