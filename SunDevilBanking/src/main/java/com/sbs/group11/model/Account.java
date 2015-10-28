@@ -2,9 +2,12 @@ package com.sbs.group11.model;
 
 import java.math.BigDecimal;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
@@ -23,11 +26,10 @@ import org.joda.time.LocalDateTime;
 @Table(name = "Account")
 public class Account {
 	
-	/** The Customer ID. Foreign Key */
-	@NotNull
-	@Size(min = 1, max = 11)
-	@Column(name = "CustomerID", nullable = false, length = 11, unique = false)
-	private String customerID;
+
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "CustomerID", nullable = false)
+	private User user;
 	
 	/** The Account Number. */
 	@Id
@@ -69,25 +71,6 @@ public class Account {
 	public void setUpdatedAt(LocalDateTime updatedAt) {
 		this.updatedAt = updatedAt;
 	}
-
-	/**
-	 * Gets the customer id.
-	 *
-	 * @return the customer id
-	 */
-	public String getCustomerID() {
-		return customerID;
-	}
-
-	/**
-	 * Sets the customer id.
-	 *
-	 * @param customerID the new customer id
-	 */
-	public void setCustomerID(String customerID) {
-		this.customerID = customerID;
-	}
-
 	/**
 	 * Gets the number.
 	 *
@@ -183,9 +166,17 @@ public class Account {
 		return updatedAt;
 	}
 
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
 	@Override
 	public String toString() {
-		return "Account [customerID=" + customerID + ", number=" + number
+		return "Account [number=" + number
 				+ ", name=" + name + ", type=" + type + ", balance=" + balance
 				+ ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + "]";
 	}

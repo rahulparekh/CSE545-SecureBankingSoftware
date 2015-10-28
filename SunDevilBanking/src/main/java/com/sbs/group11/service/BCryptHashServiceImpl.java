@@ -9,7 +9,7 @@ public class BCryptHashServiceImpl implements BCryptHashService {
 	public String getBCryptHash(String plaintext) {
 		
 		if (plaintext != null && !plaintext.isEmpty()) {
-			BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+			BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(11);
 	        return encoder.encode(plaintext);
 		}		
         
@@ -18,7 +18,7 @@ public class BCryptHashServiceImpl implements BCryptHashService {
 	
 	public boolean checkBCryptHash(String plaintext, String hash) {
 		
-		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(11);
 		return encoder.matches(plaintext, hash);
 		
 	}

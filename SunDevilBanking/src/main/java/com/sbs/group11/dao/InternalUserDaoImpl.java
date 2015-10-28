@@ -50,14 +50,17 @@ public class InternalUserDaoImpl extends AbstractDao<Integer, User> implements I
 	}
 	
 	@SuppressWarnings("unchecked")
-	public User findUserByID(String ID) {
+	public User findInternalUserByID(String ID) {
 
 		List<User> users = new ArrayList<User>();
 		
 		
+
 		users = getSession()
-				.createQuery("from User where CustomerID=?")
+				.createQuery("from User where CustomerID=? and UserType in (?,?)")
 				.setParameter(0, ID)
+				.setParameter(1,"regular")
+				.setParameter(2,"manager")
 				.list();
 
 		if (users.size() > 0) {
@@ -118,8 +121,62 @@ public class InternalUserDaoImpl extends AbstractDao<Integer, User> implements I
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	
-	
-	
+	public User findExternalUserByID(String ID) {
+		// TODO Auto-generated method stub
+		List<User> users = new ArrayList<User>();
+		
+		
+		users = getSession()
+				.createQuery("from User where CustomerID=? and UserType in (?,?)")
+				.setParameter(0, ID)
+				.setParameter(1,"customer")
+				.setParameter(2,"merchant")
+				.list();
+
+		if (users.size() > 0) {
+			return users.get(0);
+		} else {
+			return null;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+
+	public User findUserByID(String ID) {
+		List<User> users = new ArrayList<User>();
+		
+		
+		users = getSession()
+				.createQuery("from User where CustomerID=?")
+				.setParameter(0, ID)
+				.list();
+
+		if (users.size() > 0) {
+			return users.get(0);
+		} else {
+			return null;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<User> getPIIUsers() {
+		List<User> users = new ArrayList<User>();
+			
+		users = getSession()
+				.createQuery("from User where UserType in (?,?)")
+				.setParameter(0,"customer")
+				.setParameter(1,"merchant")
+				.list();
+
+		if (users.size() > 0) {
+			return users;
+		} else {
+			return null;
+		}
+	}
+
 
 }

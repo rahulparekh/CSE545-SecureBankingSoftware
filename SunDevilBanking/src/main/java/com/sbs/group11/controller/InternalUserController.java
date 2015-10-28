@@ -5,9 +5,13 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+
+import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -40,11 +44,17 @@ public class InternalUserController {
 	@Autowired
 	AccountService accountService;
 	@Autowired
+
 	UserService userService;
 	@Autowired
 	SmartValidator validator;
 	
 	
+	final private BigDecimal CRITICAL_VALUE = new BigDecimal(500);
+
+	
+	
+	final static Logger logger = Logger.getLogger(InternalUserController.class);
 
 	@ModelAttribute("user")
 	public User getUserObject() {
@@ -136,7 +146,15 @@ public class InternalUserController {
 			@ModelAttribute("user") User user, BindingResult result,RedirectAttributes redirectAttrs) {
 		System.out.println("inside controller");
 		model.addAttribute("user",new User());
+		if(internalUserService.findUserByEmail(user.getEmail())!= null){
+			redirectAttrs.addFlashAttribute(
+					"failureMsg",
+					"User Already Exists with the same Email Address");
+			return "redirect:/sysadmin-home"; 
+		}
 		internalUserService.addInternalUser(user);
+		SystemLog systemLog = new SystemLog(new DateTime().toLocalDateTime(),user.getFirstName(),user.getUserType(),"The user "+user.getFirstName()+" is created");
+		systemLogService.addLog(systemLog);
 		redirectAttrs.addFlashAttribute(
 				"successMsg",
 				"User Added Successfully");
@@ -149,6 +167,8 @@ public class InternalUserController {
 		model.addAttribute("user", user);
 		model.addAttribute("user",new User());
 		internalUserService.updateInternalUser(user);
+		SystemLog systemLog = new SystemLog(new DateTime().toLocalDateTime(),user.getFirstName(),user.getUserType(),"The user "+user.getFirstName()+" info is updated");
+		systemLogService.addLog(systemLog);
 		redirectAttrs.addFlashAttribute(
 				"successMsg",
 				"UserInformation updated Successfully");
@@ -162,6 +182,8 @@ public class InternalUserController {
 		model.addAttribute("user", user);
 		model.addAttribute("user",new User());
 		internalUserService.deleteInternalUserById(user.getCustomerID());
+		SystemLog systemLog = new SystemLog(new DateTime().toLocalDateTime(),user.getFirstName(),user.getUserType(),"The user "+user.getFirstName()+" is deleted");
+		systemLogService.addLog(systemLog);
 		redirectAttrs.addFlashAttribute(
 				"successMsg",
 				"Deleted the user Successfully");
@@ -172,7 +194,7 @@ public class InternalUserController {
 	@RequestMapping(value = "/sysadmin-setting", method = RequestMethod.GET)
 	public String getAdminSetting(ModelMap model,@ModelAttribute("user") User user) {
 		
-		User sysadmin = internalUserService.searchInternalUserByType("admin");
+		User sysadmin = userService.getUserDetails();
 		model.addAttribute("user", sysadmin);
 		return "employee/setting_sys_admin";
 	}
@@ -188,7 +210,7 @@ public class InternalUserController {
 
 
 	
-//********************************MANAGER**************************		
+	//********************************MANAGER**************************		
 	
 	@RequestMapping(value = "/manager-home", method = RequestMethod.GET)
 	public String getManagerHome(ModelMap model) {
@@ -208,7 +230,7 @@ public class InternalUserController {
 	public String SearchInternalUserManager(ModelMap model,
 			@ModelAttribute("empSearch") EmployeeSearch empSearch, BindingResult result,RedirectAttributes redirectAttrs) {
 		
-		User user = internalUserService.searchInternalUser(empSearch.getEmployeeID());
+		User user = internalUserService.searchExternalUser(empSearch.getEmployeeID());
 		if (user == null){
 			redirectAttrs.addFlashAttribute(
 					"failureMsg",
@@ -277,10 +299,16 @@ public class InternalUserController {
 			@ModelAttribute("user") User user, BindingResult result,RedirectAttributes redirectAttrs) {
 		System.out.println("inside controller");
 		model.addAttribute("user",new User());
+		if(internalUserService.findUserByEmail(user.getEmail())!= null){
+			redirectAttrs.addFlashAttribute(
+					"failureMsg",
+					"User Already Exists with the same Email Address");
+			return "redirect:/manager-customer-search"; 
+		}
 		internalUserService.addInternalUser(user);
 		redirectAttrs.addFlashAttribute(
 				"successMsg",
-				"updated the userinfo Successfully");
+				"Added the User Successfully");
 		return "redirect:/manager-customer-search";
 	}
 	
@@ -312,11 +340,55 @@ public class InternalUserController {
 		}
 		
 		return "redirect:/internalemployee-pendingtransaction";
-		
-			
+					
 	}
+	
+	@RequestMapping(value = "/manager-setting", method = RequestMethod.GET)
+	public String getManagerSetting(ModelMap model,@ModelAttribute("user") User user) {
+		
+		System.out.println("inside get");
+		User manager = userService.getUserDetails();
+		model.addAttribute("user", manager);
+		return "employee/setting_manager";
+	}
+		@RequestMapping(value = "/manager-setting_success", method = RequestMethod.POST)
+	public String changeManagerSetting(ModelMap model,
+			@ModelAttribute("user") User user,BindingResult result) {
+		
+		System.out.println("inside post");
+		User current_user= userService.getUserDetails();
+		System.out.println("id is "+current_user.getCustomerID());
+		ModifiedUser modifiedUser = new ModifiedUser();
+		modifiedUser.setCustomerID(current_user.getCustomerID());
+		modifiedUser.setAddressLine1(user.getAddressLine1());
+		modifiedUser.setAddressLine2(user.getAddressLine2());
+		modifiedUser.setPassword(user.getPassword());
+		modifiedUser.setEmail(current_user.getEmail());
+		modifiedUser.setEmployeeOverride(current_user.getEmployeeOverride());
+		modifiedUser.setEnabled(current_user.getEnabled());
+		modifiedUser.setFirstName(user.getFirstName());
+		modifiedUser.setLastName(user.getLastName());
+		modifiedUser.setMiddleName(user.getMiddleName());
+		modifiedUser.setState(user.getState());
+		modifiedUser.setZipCode(user.getZipCode());
+		modifiedUser.setuserType(current_user.getUserType());
+		modifiedUser.setPhone(user.getPhone());
+		modifiedUser.setCreatedAt(current_user.getCreatedAt());
+		modifiedUser.setUpdatedAt(current_user.getUpdatedAt());
+		modifiedUser.setLastLoginAt(current_user.getLastLoginAt());
+		modifiedUser.setStatus("pending");
+		
+		
+		modifiedService.addRequest(modifiedUser);
+		//internalUserService.updateInternalUser(user);
+		
+		return "redirect:/manager-home";
+	}
+	
+	
+	
 
-///***************EXTERNAL REQUESTS
+	///***************EXTERNAL REQUESTS
 	
 	@RequestMapping(value = "/requests-pending-ext", method = RequestMethod.GET)
 	public String getAdminSettingManager(ModelMap model) {
@@ -420,7 +492,7 @@ public class InternalUserController {
 				
 			}
 			
-			User user = userService.getUserbyCustomerID(accountSender.getCustomerID());  
+			User user = userService.getUserbyCustomerID(accountSender.getUser().getCustomerID());  
 			if(user.getEmployeeOverride()==1){
 				
 		
@@ -494,7 +566,7 @@ public class InternalUserController {
 				
 			}
 			
-			User user = userService.getUserbyCustomerID(accountSender.getCustomerID());  
+			User user = userService.getUserbyCustomerID(accountSender.getUser().getCustomerID());  
 			if(user.getEmployeeOverride()==1){
 				
 		
@@ -583,7 +655,7 @@ public class InternalUserController {
 		// Overrrrrrride Check
 		Transaction transaction = transactionService.getTransaction(request.getParameter("transactionID"));
 		Account account = accountService.getAccountByNumber(transaction.getSenderAccNumber());
-		User user = userService.getUserbyCustomerID(account.getCustomerID());
+		User user = userService.getUserbyCustomerID(account.getUser().getCustomerID());
 		
 		if(user.getEmployeeOverride()==1){
 			model.addAttribute("transaction", transaction);
@@ -683,6 +755,49 @@ public class InternalUserController {
 
 	//**********************INTERNAL EMPLOYEE/REGULAR
 		
+		
+		@RequestMapping(value = "/int-employee-setting", method = RequestMethod.GET)
+		public String getEmployeeSetting(ModelMap model,@ModelAttribute("user") User user) {
+			
+			System.out.println("inside get");
+			User manager = userService.getUserDetails();
+			model.addAttribute("user", manager);
+			return "employee/setting_employee";
+		}
+			@RequestMapping(value = "/int-employee-setting_success", method = RequestMethod.POST)
+		public String changeEmployeeSetting(ModelMap model,
+				@ModelAttribute("user") User user,BindingResult result) {
+			
+			System.out.println("inside post");
+			User current_user= userService.getUserDetails();
+			System.out.println("id is "+current_user.getCustomerID());
+			ModifiedUser modifiedUser = new ModifiedUser();
+			modifiedUser.setCustomerID(current_user.getCustomerID());
+			modifiedUser.setAddressLine1(user.getAddressLine1());
+			modifiedUser.setAddressLine2(user.getAddressLine2());
+			modifiedUser.setPassword(user.getPassword());
+			modifiedUser.setEmail(current_user.getEmail());
+			modifiedUser.setEmployeeOverride(current_user.getEmployeeOverride());
+			modifiedUser.setEnabled(current_user.getEnabled());
+			modifiedUser.setFirstName(user.getFirstName());
+			modifiedUser.setLastName(user.getLastName());
+			modifiedUser.setMiddleName(user.getMiddleName());
+			modifiedUser.setState(user.getState());
+			modifiedUser.setZipCode(user.getZipCode());
+			modifiedUser.setuserType(current_user.getUserType());
+			modifiedUser.setPhone(user.getPhone());
+			modifiedUser.setCreatedAt(current_user.getCreatedAt());
+			modifiedUser.setUpdatedAt(current_user.getUpdatedAt());
+			modifiedUser.setLastLoginAt(current_user.getLastLoginAt());
+			modifiedUser.setStatus("pending");
+			modifiedService.addRequest(modifiedUser);
+			//internalUserService.updateInternalUser(user);
+			
+			return "redirect:/int-employee-home";
+		}
+		
+		
+		
 		@RequestMapping(value = "/int-employee-home", method = RequestMethod.GET)
 		public String getInternalEmployeeHome(ModelMap model) {
 			
@@ -701,7 +816,7 @@ public class InternalUserController {
 		public String SearchInternalUserIntEmployee(ModelMap model,
 				@ModelAttribute("empSearch") EmployeeSearch empSearch, BindingResult result,RedirectAttributes redirectAttrs) {
 			
-			User user = internalUserService.searchInternalUser(empSearch.getEmployeeID());
+			User user = internalUserService.searchExternalUser(empSearch.getEmployeeID());
 			if (user == null){
 				redirectAttrs.addFlashAttribute(
 						"failureMsg",
@@ -744,6 +859,52 @@ public class InternalUserController {
 
 
 	//**transactions
+		
+	
+	@RequestMapping(value = "/addTransaction", method = RequestMethod.GET)
+	public String addTransactionView(ModelMap model){
+				
+		return "employee/add_txn_search";
+	}
+	
+	@RequestMapping(value = "/addTransaction", method = RequestMethod.POST)
+	public String SearchExternalUser(ModelMap model,
+			@ModelAttribute("empSearch") EmployeeSearch empSearch, BindingResult result,RedirectAttributes redirectAttrs) {
+		User user = internalUserService.searchExternalUser(empSearch.getEmployeeID());
+		if (user == null){
+			redirectAttrs.addFlashAttribute(
+					"failureMsg",
+					"Not a valid User");
+			return "redirect:/addTransaction";
+		}
+		else if(user.getEmployeeOverride() == 0)
+		{
+			redirectAttrs.addFlashAttribute(
+					"failureMsg",
+					"Employee not allowed by user to modify accounts for this customer");
+			return "redirect:/addTransaction";
+			
+		}
+		
+		redirectAttrs.addFlashAttribute("user", user);
+		return "redirect:/addCustomerTransaction";
+	}
+	
+	@RequestMapping(value = "/addCustomerTransaction", method = RequestMethod.GET)
+	public String addCustomerTransaction(ModelMap model,@ModelAttribute("user") User user, BindingResult result,RedirectAttributes redirectAttrs){
+		
+
+		List<Account> accounts = accountService.getAccountsByCustomerID(user
+				.getCustomerID());
+		
+		model.addAttribute("accounts", accounts);
+		model.addAttribute("user", user);
+		
+		return "employee/int_employee_add_transaction";
+	}
+	
+	
+		
 	@RequestMapping(value = "/critical-decline", method = RequestMethod.POST)
 	public String CriticalTransactionDecline( ModelMap model,
 			  HttpServletRequest request) {
@@ -803,4 +964,179 @@ public class InternalUserController {
 	
 		
 	}
+	
+	
+	@RequestMapping(value = "/addTransactionSuccess", method = RequestMethod.POST)
+	public String postFundTransfer(ModelMap model, HttpServletRequest request,
+			@ModelAttribute("transaction") Transaction senderTransaction,
+			BindingResult result, RedirectAttributes attr) {
+
+		
+		boolean isTransferAccountValid;
+		Account account = accountService.getAccountByNumber(senderTransaction.getSenderAccNumber());
+		
+		// Exit the transaction if Account doesn't exist
+		if (account == null) {
+			logger.warn("Someone tried credit/debit functionality for some other account. Details:");
+			logger.warn("Credit/Debit Acc No: "
+					+ request.getParameter("number"));
+			
+			attr.addFlashAttribute("failureMsg",
+					"Could not process the transaction.Account seems to be Null or tampered.Please try again ");
+			return "redirect:/addTransaction";
+		}
+		
+		
+		String receiverAccNumber = "";
+		if (request.getParameter("type").equalsIgnoreCase("internal")) {
+			receiverAccNumber = request.getParameter("receiverAccNumber");
+			logger.info("internal transfer");
+		} else {
+			receiverAccNumber = request.getParameter("receiverAccNumberExternal");
+			logger.info("external transfer");
+		}
+
+
+		Account toAccount = accountService.getAccountByNumber(receiverAccNumber); 
+
+		
+		if(toAccount != null)
+		{
+			isTransferAccountValid = true;
+		}
+		else
+		{
+			isTransferAccountValid = false;
+			
+		}
+		
+		logger.debug("isTransferAccountValid: " + isTransferAccountValid);
+		if (isTransferAccountValid) {
+			
+			BigDecimal amount = transactionService.getBigDecimal(request
+					.getParameter("amount"));
+			
+					
+			logger.debug("receiverAccNumber: " + receiverAccNumber);
+			
+			String isCritical = transactionService.isCritical(amount, CRITICAL_VALUE);
+			String pairId = UUID.randomUUID().toString();
+			
+			// create the transaction object
+			senderTransaction = new Transaction(
+					transactionService.getUniqueTransactionID(), 
+					"Fund Transfer",
+					receiverAccNumber,
+					request.getParameter("senderAccNumber"), 
+					"completed", 
+					"Debit",
+					amount, 
+					isCritical,
+					request.getParameter("senderAccNumber"),
+					pairId
+				);
+			
+			logger.debug("Sender Transaction created: " + senderTransaction);
+			
+			if(amount.longValue() > 500)
+			{
+				senderTransaction.setIsCritical("yes");
+			}
+			else
+			{
+				senderTransaction.setIsCritical("no");
+			}
+			
+			// Validate the model
+			validator.validate(senderTransaction, result);
+			logger.debug("Validated model");
+			
+			if (result.hasErrors()) {
+				logger.debug("Validation errors: ");
+				logger.debug(result);
+	
+				// attributes for validation failures
+				attr.addFlashAttribute(
+						"failureMsg",
+						"Could not process your transaction");
+				attr.addFlashAttribute("transaction", senderTransaction);
+	
+				// redirect to the credit debit view page
+				return "redirect:/addTransaction";
+			}
+			
+			logger.debug("No validation errors");
+	
+			// Check if Debit amount is < balance in the account
+			if ( amount.compareTo(account.getBalance()) >= 0) {
+				logger.debug("Debit < Balance");
+				attr.addFlashAttribute(
+						"failureMsg",
+						"Could not process your transaction. Debit amount cannot be higher than account balance");
+				return "redirect:/addTransaction";
+			}
+			
+			
+			Transaction receiverTransaction = new Transaction(
+					transactionService.getUniqueTransactionID(), 
+					"Fund Transfer",
+					receiverAccNumber,
+					request.getParameter("senderAccNumber"), 
+					"completed", 
+					"Credit",
+					amount,
+					isCritical,
+					receiverAccNumber,
+					pairId
+				);
+			
+			receiverTransaction.setIsCritical("no");
+			
+			logger.debug("Receiver Transaction created: " + receiverTransaction);
+			
+			try {
+				logger.debug("Trying to transfer funds");
+				accountService.transferFunds(transactionService, accountService, senderTransaction, receiverTransaction, amount);
+			} catch (Exception e) {
+				logger.warn(e);
+				attr.addFlashAttribute(
+						"failureMsg",
+						"Transfer unsucessful. Please try again or contact the admin.");
+				return "redirect:/addTransaction";
+			}
+	
+			attr.addFlashAttribute(
+					"successMsg",
+					"Transaction completed successfully. Transaction should show up on the user account now");
+			
+		} else {
+			attr.addFlashAttribute(
+					"failureMsg",
+					"Transfer unsucessful. Please try again or contact the admin");
+		}
+
+		// redirect to the view page
+		return "redirect:/addTransaction";
+	}
+	
+	
+	//***************************PII************************
+	
+	@RequestMapping(value = "/sys-admin-PII", method = RequestMethod.GET)
+	public String getPII(ModelMap model){
+		
+		List<User> piiusers = internalUserService.getPIIUsersService();
+		
+		model.addAttribute("pii", piiusers);
+		
+		return "employee/PII_sys_admin";
+				
+	}
+	
+	
+	
+	
+
+	
+	
 }

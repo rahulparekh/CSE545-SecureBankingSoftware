@@ -15,8 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.sbs.group11.dao.PaymentRequestDao;
 import com.sbs.group11.dao.TransactionDao;
 import com.sbs.group11.model.Account;
+import com.sbs.group11.model.PaymentRequest;
 import com.sbs.group11.model.StatementMonthYear;
 import com.sbs.group11.model.Transaction;
 import com.sbs.group11.model.User;
@@ -25,11 +27,25 @@ import com.sbs.group11.model.User;
 @Transactional
 public class TransactionServiceImpl implements TransactionService {
 	final static Logger logger = Logger.getLogger(TransactionServiceImpl.class);
+	final private BigDecimal CRITICAL_VALUE = new BigDecimal(500);
+	
+	@Autowired
+	private AccountService accountService;
+		
+	@Autowired
+	private SendEmailService emailService;
 
 	@Autowired
 	private TransactionDao dao;
+	
+	@Autowired
+	private PaymentRequestDao paymentRequestDao;
 
 	public void addTransaction(Transaction transaction) {
+			
+		transaction.setIsCritical(isCritical(transaction.getAmount(),
+				CRITICAL_VALUE));
+		
 		dao.addTransaction(transaction);
 	}
 
@@ -53,7 +69,8 @@ public class TransactionServiceImpl implements TransactionService {
 	public BigDecimal getBigDecimal(String number) {
 		try {
 			return new BigDecimal(number);
-		} catch (NumberFormatException nfe) {
+		} catch (Exception e) {
+			logger.error(e);
 			return null;
 		}
 	}
@@ -112,8 +129,7 @@ public class TransactionServiceImpl implements TransactionService {
 		return dao.getCompletedTransactionsByAccountNummber(accNumber, month, year);
 	}
 
-	public boolean isTransferAccountValid(AccountService accountService,
-			TransactionService transactionService, List<Account> accounts,
+	public boolean isTransferAccountValid(List<Account> accounts,
 			HttpServletRequest request, ModelMap model, User user, RedirectAttributes attr) {
 		
 		// null pointer checks
@@ -175,6 +191,109 @@ public class TransactionServiceImpl implements TransactionService {
 		
 		return dao.getTransactionsForAccountNumber(accNumber);
 		
+	}
+
+	public void initiatePayment(PaymentRequest paymentRequest) {
+		
+		paymentRequestDao.savePaymentRequest(paymentRequest);
+		String content = null;
+		String email = null;
+		
+		// check if the user has initiated the payment
+		// or merchant has
+		if ( paymentRequest.getUserAccepted() == 1 ) {
+			
+			email = accountService
+							.getAccountByNumber(paymentRequest.getMerchantAccNumber())
+							.getUser()
+							.getEmail();
+		}
+		
+		// send email to user
+		content = "A new payment request has been made. "
+				+ "To process the payment, please go to "
+				+ "https://group11.mobicloud.asu.edu/home/merchant-payment-requests.\n\n"
+				+ "The payment request will expire in 2 hours from now.\n\n"
+				+ "Please use the following OTP to accept the payment: " + paymentRequest.getOtp() + "\n\n" 
+				+ "You can accept the payment or let it expire.";
+		
+		email = accountService
+						.getAccountByNumber(paymentRequest.getCustomerAccNumber())
+						.getUser()
+						.getEmail();
+		
+		// send email
+		emailService.sendEmail(email, "Sun Devil Banking. New Payment Request", content);
+		
+		
+	}
+
+	public void acceptPayment(PaymentRequest paymentRequest) {
+		String senderAccNumber = paymentRequest.getSenderAccNumber();
+		String receiverAccountNumber = paymentRequest.getReceiverAccNumber();
+		
+		paymentRequest.setUserAccepted(1);
+		paymentRequest.setMerchantAccepted(1);
+		
+		// update the payment request
+		paymentRequestDao.savePaymentRequest(paymentRequest);
+		
+		String isCritical = isCritical(paymentRequest.getAmount(),
+				CRITICAL_VALUE);
+		
+		String pairId = UUID.randomUUID().toString();
+		
+		// Create two transactions
+		Transaction transaction1 = new Transaction(
+				getUniqueTransactionID(), 
+				"Payment From " + senderAccNumber + " To: " + receiverAccountNumber, 
+				receiverAccountNumber, 
+				senderAccNumber,
+				"pending", 
+				"Debit", 
+				paymentRequest.getAmount(), 
+				isCritical,
+				senderAccNumber,
+				pairId);
+		
+		Transaction transaction2 = new Transaction(
+				getUniqueTransactionID(), 
+				"Payment From " + senderAccNumber + " To: " + receiverAccountNumber, 
+				receiverAccountNumber, 
+				senderAccNumber,
+				"pending", 
+				"Credit", 
+				paymentRequest.getAmount(), 
+				isCritical,
+				receiverAccountNumber,
+				pairId);
+		
+		addTransaction(transaction1);
+		addTransaction(transaction2);
+		
+	}
+
+	public List<PaymentRequest> getPaymentsByAccNumber(String accNumber, int initiatedBy) {
+		return paymentRequestDao.getPaymentsByAccNumber(accNumber, initiatedBy);
+	}
+
+	public String isCritical(BigDecimal amount, BigDecimal critical_value) {
+		
+		if (amount != null && amount.compareTo(critical_value) >= 0) {
+			logger.debug("Critical transaction with critical value " + critical_value.toString() + " and amount " + amount.toString());
+			return "Yes";
+		}
+		
+		return "No";
+	}
+
+	public PaymentRequest getPaymentRequest(int id) {
+		return paymentRequestDao.getPaymentRequest(id);
+	}
+
+	public Transaction getTransactionByPairId(String pairId,
+			String transactionID) {
+		return dao.getTransactionByPairId(pairId, transactionID);
 	}
 
 }

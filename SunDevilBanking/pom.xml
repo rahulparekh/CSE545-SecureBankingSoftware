@@ -16,7 +16,7 @@
 		<springsecurityconfig.version>4.0.2.RELEASE</springsecurityconfig.version>
 		<itext.version>5.5.7</itext.version>
 		<joda-time-jsptags.version>1.1.1</joda-time-jsptags.version>
-		<javax.mail.version>1.5.4</javax.mail.version>
+		<javax.mail.version>1.5.2</javax.mail.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -55,6 +55,16 @@
 			<artifactId>log4j</artifactId>
 			<version>1.2.17</version>
 		</dependency>
+		  <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+            <version>4.0.1.RELEASE</version>
+        </dependency>
+		<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-context-support</artifactId>
+    <version>3.1.1.RELEASE</version>
+</dependency>
 
 		<!-- Hibernate -->
 		<dependency>
@@ -112,8 +122,8 @@
 		
 		<!-- java mail api -->
 		<dependency>
-			<groupId>javax.mail</groupId>
-			<artifactId>javax.mail-api</artifactId>
+			<groupId>com.sun.mail</groupId>
+    		<artifactId>javax.mail</artifactId>
 			<version>${javax.mail.version}</version>
 		</dependency>
 

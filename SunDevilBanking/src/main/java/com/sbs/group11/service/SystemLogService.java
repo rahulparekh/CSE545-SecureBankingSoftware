@@ -27,7 +27,9 @@ public class SystemLogService {
 		return dao.getAllLog();
 	}
 
-	
+	public void addLog(SystemLog systemlog){
+		dao.addLog(systemlog);
+	}
      
       
 	

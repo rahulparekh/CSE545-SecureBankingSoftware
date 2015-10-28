@@ -47,5 +47,11 @@ public class ModifiedServiceImpl implements ModifiedService {
 		
 		return dao.getAllExternalModifiedUsers();
 	}
+	
+	public void addRequest(ModifiedUser modifieduser)
+	{
+		dao.addRequest(modifieduser);
+		
+	}
 }
 	

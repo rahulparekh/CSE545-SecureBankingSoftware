@@ -20,11 +20,29 @@ public class SystemLog {
 		
 	}
 	
-	public SystemLog(LocalDateTime timeStamp, String employeeID, String action) {
+	public SystemLog(LocalDateTime timeStamp, String firstName,
+			String userType, String action) {
 		super();
 		TimeStamp = timeStamp;
-		this.employeeID = employeeID;
+		this.firstName = firstName;
+		this.userType = userType;
 		Action = action;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getUserType() {
+		return userType;
+	}
+
+	public void setUserType(String userType) {
+		this.userType = userType;
 	}
 
 	@Id
@@ -34,23 +52,20 @@ public class SystemLog {
 	private LocalDateTime TimeStamp;
 	
 	@NotNull
-	@Size(min = 11, max = 11)
-	@Column(name = "employeeID", nullable = false, length = 11, unique = true)
-	private String employeeID;
+	@Size(min = 2, max = 35)
+	@Column(name = "FirstName", nullable = false, length = 35)
+	private String firstName;
 	
+	@Size(min = 5, max = 8)
+	@Column(name = "UserType", nullable = true, length = 8)
+	private String userType;
 	
 	@NotNull
 	@Size(min = 0, max = 100)
 	@Column(name = "Action", nullable = false, length = 100)
 	private String Action;
 
-	public String getEmployeeID() {
-		return employeeID;
-	}
-
-	public void setEmployeeID(String employeeID) {
-		this.employeeID = employeeID;
-	}
+	
 
 	public LocalDateTime getTimeStamp() {
 		return TimeStamp;
@@ -68,11 +83,6 @@ public class SystemLog {
 		Action = action;
 	}
 
-	@Override
-	public String toString() {
-		return "SystemLog [TimeStamp=" + TimeStamp + ", employeeID="
-				+ employeeID + ", Action=" + Action + "]";
-	}
-
+	
 	
 }

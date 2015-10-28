@@ -44,7 +44,7 @@
             <li><a href="${pageContext.servletContext.contextPath}/manage-customer">Add Users</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/manager-customer-search">View-Edit-Delete Users</a></li>
 			<li><a href="${pageContext.servletContext.contextPath}/requests-pending-ext">Pending Requests</a></li>
-			<li><a href="${pageContext.servletContext.contextPath}/">Settings</a></li>
+			<li><a href="${pageContext.servletContext.contextPath}/manager-setting">Settings</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
           </ul>
           

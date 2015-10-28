@@ -34,10 +34,14 @@ public class UserServiceImpl implements UserService {
 	public List<User> getUsersOfType(String type) {
 		return dao.getUsersOfType(type);
 	}
+
 	
 	public User getUserbyCustomerID(String customerID){
 		
 		return dao.findByCustomerID(customerID);
 	}
 
+
+
 }
+

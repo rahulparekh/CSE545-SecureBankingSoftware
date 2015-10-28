@@ -8,7 +8,5 @@ public interface UserService {
 
 	User getUserDetails();
 	List<User> getUsersOfType(String type);
-	public User getUserbyCustomerID(String customerID);
-	
-	
+	public User getUserbyCustomerID(String customerID);	
 }

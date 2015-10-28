@@ -1,5 +1,6 @@
 <%@page language="java" contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <!DOCTYPE html>
 <html lang="en">
@@ -12,7 +13,7 @@
     <meta name="author" content="">
     <link rel="icon" href="${pageContext.servletContext.contextPath}/static/favicon.ico">
 
-    <title>SBS System Admin Settings - Group 11</title>
+    <title>SBS System Admin - View PII Information </title>
 
     <!-- Bootstrap core CSS -->
     <link href="${pageContext.servletContext.contextPath}/static/css/bootstrap.min.css" rel="stylesheet">
@@ -37,7 +38,7 @@
         
         <div class="col-sm-3 col-md-2 sidebar">
 
-<ul class="nav nav-sidebar">
+          <ul class="nav nav-sidebar">
              <li><a href="${pageContext.servletContext.contextPath}/sysadmin-home">Home</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/manage-employee">Add Employees</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/systemLog-sys-admin">System Log</a></li>
@@ -52,66 +53,39 @@
         <div class="col-sm-9 col-md-10 main">
 
           <div class="page-header">
-            <h1>SBS - Welcome System Admin </h1>
-          </div>
+            <h1>SBS - Welcome SysAdmin</h1>
 
-          <h2>Settings:</h2>
+          <h2>PII:</h2>
 		  <br>
-
-          <div id="fund-transfer">
-            <div class="modal-body">
-            <form:form method="POST" modelAttribute="user" action="${pageContext.servletContext.contextPath}/sysadmin-setting_success">
-              <form:input type="hidden" path="customerID" id="customerID"/>
-              <p>
-					<label>First Name:</label>
-					<form:input path="firstName" id="firstName"  />
-			  </p>
-			  <p>
-					<label>Last Name:</label>
-					<form:input path="lastName" id="lastName" />
-			  </p>
-			   <p>
-					<label>Address:</label>
-					<form:input path="addressLine1" id="addressLine1" type="text" 
-						Class="form-control" placeholder="ex: 1009 E University Dr" />
-			  </p>
-			   <p>
-					<label>Password:</label>
-					<form:input path="Password" id="Password" type="password"
-						class="form-control" placeholder="ex: user123" />
-			  </p>
-			   <p>
-					<label>Email:</label>
-					<form:input path="email" id="email" type="text"
-						class="form-control" placeholder="ex:john@example.com" />
-			  </p>
-				
-			   <p>
-					<label>Phone No:</label>
-					<form:input path="phone"  id="phone" type="text"
-						class="form-control" placeholder="ex:986-712-345" />
-			  </p>
-				
-			   <p>
-					<label>Zip Code:</label>
-					<form:input path="zipCode" id="zipCode" type="text"
-						class="form-control" placeholder="ex:85281" />
-			   </p>
-			
-			   <p>
-					<label>State:</label>
-					<form:input path="state" id="state" type="text"
-						class="form-control" placeholder="AZ" />
-			   </p>	
-				
-				<div class="modal-footer">
-					<button type="submit" class="btn btn-success">Submit</button>
-				</div>
-
-                          
-            </form:form>
-		
-            </div><!-- /. -->
+			 <table class="table">
+            <thead>
+              <tr>
+                <th>Customer ID</th>
+				<th>First Name</th>
+				<th>Last Name</th>
+				<th>Address</th>
+				<th>State</th>
+				<th>ZipCode</th>
+				<th>Phone no</th>
+                <th>Email</th>
+                           			
+              </tr>
+            </thead>
+            <tbody>
+        	  <c:forEach var="pii" items="${pii}" >
+              <tr>
+                <td>${pii.customerID}</td>
+                <td>${pii.firstName}</td>
+                <td>${pii.lastName}</td>
+                <td>${pii.addressLine1}</td>
+                <td>${pii.state}</td>
+                <td>${pii.zipCode}</td>
+                <td>${pii.phone}</td>
+				<td>${pii.email}</td>
+              </tr>
+             </c:forEach>
+            </tbody>
+          </table>
           
         </div> <!-- /main -->
 
@@ -127,8 +101,8 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="${pageContext.servletContext.contextPath}/static/js/bootstrap.min.js"></script>
-    <script src="${pageContext.servletContext.contextPath}/static/js/jsKeyboard.js"></script>
-    <script src="${pageContext.servletContext.contextPath}/static/js/common.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jsKeyboard.js"></script>
+    <script src="js/common.js"></script>
   </body>
 </html>

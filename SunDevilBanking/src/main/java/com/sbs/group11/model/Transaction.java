@@ -1,10 +1,16 @@
 package com.sbs.group11.model;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.DecimalMin;
@@ -30,9 +36,10 @@ public class Transaction {
 
 	}
 
-	public Transaction(String transactionID, String name, String receiverAccNumber,
-			String senderAccNumber, String status, String type,
-			BigDecimal amount, String  transactionOwner) {
+	public Transaction(String transactionID, String name,
+			String receiverAccNumber, String senderAccNumber, String status,
+			String type, BigDecimal amount, String isCritical,
+			String transactionOwner, String pairId) {
 		super();
 		this.transactionID = transactionID;
 		this.name = name;
@@ -43,12 +50,16 @@ public class Transaction {
 		this.amount = amount;
 		this.createdAt = new DateTime().toLocalDateTime();
 		this.updatedAt = new DateTime().toLocalDateTime();
+
+		this.isCritical = isCritical;
 		this.transactionOwner = transactionOwner;
+		this.pairId = pairId;
 	}
-	
-	public Transaction(String transactionID, String name, String receiverAccNumber,
-			String senderAccNumber, String status, String type,
-			BigDecimal amount, BigDecimal balance, String  transactionOwner) {
+
+	public Transaction(String transactionID, String name,
+			String receiverAccNumber, String senderAccNumber, String status,
+			String type, BigDecimal amount, BigDecimal balance,
+			String isCritical, String transactionOwner, String pairId) {
 		super();
 		this.transactionID = transactionID;
 		this.name = name;
@@ -60,8 +71,26 @@ public class Transaction {
 		this.createdAt = new DateTime().toLocalDateTime();
 		this.updatedAt = new DateTime().toLocalDateTime();
 		this.balance = balance;
+		this.isCritical = isCritical;
 		this.transactionOwner = transactionOwner;
+		this.pairId = pairId;
 	}
+
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "transaction")
+	private Set<OTP> otp = new HashSet<OTP>(0);
+
+	public Set<OTP> getOtp() {
+		return otp;
+	}
+
+	public void setOtp(Set<OTP> otp) {
+		this.otp = otp;
+	}
+
+	/** Payment Requests. For the One-to-Many relationship */
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "TransactionID")
+	private Set<PaymentRequest> paymentRequests = new HashSet<PaymentRequest>(0);
 
 	/** The transaction id. */
 	@Id
@@ -69,7 +98,7 @@ public class Transaction {
 	@Size(min = 1, max = 17)
 	@Column(name = "TransactionID", nullable = false, length = 17, unique = true)
 	private String transactionID;
-	
+
 	/** The transaction name (description). */
 	@NotEmpty
 	@Size(min = 3, max = 255)
@@ -106,20 +135,20 @@ public class Transaction {
 	@DecimalMin("0.01")
 	@Column(name = "Amount", nullable = false)
 	private BigDecimal amount;
-	
+
 	/** The amount. */
 	@Digits(integer = 11, fraction = 2)
 	@Column(name = "Balance", nullable = true)
 	private BigDecimal balance;
-	
+
 	/** The transaction owner */
-	
+
 	@Size(min = 0, max = 17)
 	@Column(name = "TransactionOwner", nullable = false, length = 17)
 	private String transactionOwner;
-	
-		@NotEmpty
-	@Size(min = 0, max = 10)
+
+	@NotEmpty
+	@Size(min = 0, max = 6)
 	@Column(name = "isCritical", nullable = false, length = 6)
 	private String isCritical;
 
@@ -144,11 +173,26 @@ public class Transaction {
 	private LocalDateTime updatedAt;
 
 	/**
+	 * The pair id. To maintain a single action which leads to two transctions.
+	 * i.e. payments and fund transfer
+	 */
+	@Column(name = "PairId", nullable=true, length=36)
+	private String pairId;
+
+	/**
 	 * The month. This is not to be part of the database table as we can easily
 	 * query it with MySQLs "monthname"
 	 */
 	@Transient
 	private String month;
+
+	public Set<PaymentRequest> getPaymentRequests() {
+		return paymentRequests;
+	}
+
+	public void setPaymentRequests(Set<PaymentRequest> paymentRequests) {
+		this.paymentRequests = paymentRequests;
+	}
 
 	/**
 	 * Gets the transaction id.
@@ -285,7 +329,8 @@ public class Transaction {
 	/**
 	 * Sets the balance.
 	 *
-	 * @param balance the new balance
+	 * @param balance
+	 *            the new balance
 	 */
 	public void setBalance(BigDecimal balance) {
 		this.balance = balance;
@@ -303,7 +348,8 @@ public class Transaction {
 	/**
 	 * Sets the transaction owner.
 	 *
-	 * @param transactionOwner the new transaction owner
+	 * @param transactionOwner
+	 *            the new transaction owner
 	 */
 	public void setTransactionOwner(String transactionOwner) {
 		this.transactionOwner = transactionOwner;
@@ -347,21 +393,33 @@ public class Transaction {
 		this.updatedAt = updatedAt;
 	}
 
-	@Override
-	public String toString() {
-		return "Transaction [transactionID=" + transactionID
-				+ ", receiverAccNumber=" + receiverAccNumber
-				+ ", senderAccNumber=" + senderAccNumber + ", status=" + status
-				+ ", type=" + type + ", amount=" + amount + ", createdAt="
-				+ createdAt + ", updatedAt=" + updatedAt + "]";
-	}
-
 	public String getMonth() {
 		return month;
 	}
 
 	public void setMonth(String month) {
 		this.month = month;
+	}
+
+	public String getPairId() {
+		return pairId;
+	}
+
+	public void setPairId(String pairId) {
+		this.pairId = pairId;
+	}
+
+	@Override
+	public String toString() {
+		return "Transaction [paymentRequests=" + paymentRequests
+				+ ", transactionID=" + transactionID + ", name=" + name
+				+ ", receiverAccNumber=" + receiverAccNumber
+				+ ", senderAccNumber=" + senderAccNumber + ", status=" + status
+				+ ", type=" + type + ", amount=" + amount + ", balance="
+				+ balance + ", transactionOwner=" + transactionOwner
+				+ ", isCritical=" + isCritical + ", createdAt=" + createdAt
+				+ ", updatedAt=" + updatedAt + ", pairId=" + pairId
+				+ ", month=" + month + "]";
 	}
 
 }

@@ -39,11 +39,12 @@
         <div class="col-sm-3 col-md-2 sidebar">
 
           <ul class="nav nav-sidebar">
-            <li><a href="${pageContext.servletContext.contextPath}/sysadmin-home">Home</a></li>
+             <li><a href="${pageContext.servletContext.contextPath}/sysadmin-home">Home</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/manage-employee">Add Employees</a></li>
-            <li><a href="#">System Log</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/systemLog-sys-admin">System Log</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/requests-pending">Pending Requests</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/sysadmin-setting">Settings</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/sys-admin-PII">Access PII</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
           </ul>
           

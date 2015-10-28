@@ -12,7 +12,7 @@
     <meta name="author" content="">
     <link rel="icon" href="${pageContext.servletContext.contextPath}/static/favicon.ico">
 
-    <title>SBS System Admin Settings - Group 11</title>
+    <title>SBS Manager Settings - Group 11</title>
 
     <!-- Bootstrap core CSS -->
     <link href="${pageContext.servletContext.contextPath}/static/css/bootstrap.min.css" rel="stylesheet">
@@ -44,7 +44,7 @@
             <li><a href="${pageContext.servletContext.contextPath}/manage-customer">Add Users</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/manager-customer-search">View-Edit-Delete Users</a></li>
 			<li><a href="${pageContext.servletContext.contextPath}/requests-pending-ext">Pending Requests</a></li>
-			<li><a href="${pageContext.servletContext.contextPath}/">Settings</a></li>
+			<li><a href="${pageContext.servletContext.contextPath}/manager-setting">Settings</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
           </ul>
           
@@ -61,54 +61,52 @@
 
           <div id="fund-transfer">
             <div class="modal-body">
-            <form:form method="POST" modelAttribute="user" action="${pageContext.servletContext.contextPath}/sysadmin-setting_success">
+            <form:form method="POST" modelAttribute="user" action="manager-setting_success">
               <form:input type="hidden" path="customerID" id="customerID"/>
-              <p>
+				<p>
 					<label>First Name:</label>
-					<form:input path="firstName" id="firstName"  />
-			  </p>
-			  <p>
+					<form:input path="firstName" id="firstName"  minlength='2' maxlength='35' required='required'/>
+				</p>
+				<p>
 					<label>Last Name:</label>
-					<form:input path="lastName" id="lastName" />
-			  </p>
-			   <p>
+					<form:input path="lastName" id="lastName" minlength='3' maxlength='70' required='required'/>
+				</p>
+				<p>
 					<label>Address:</label>
 					<form:input path="addressLine1" id="addressLine1" type="text" 
-						Class="form-control" placeholder="ex: 1009 E University Dr" />
-			  </p>
-			   <p>
+						Class="form-control" placeholder="ex: 1009 E University Dr" minlength='5' maxlength='50' required='required' />
+				</p>
+				<p>
 					<label>Password:</label>
 					<form:input path="Password" id="Password" type="password"
-						class="form-control" placeholder="ex: user123" />
-			  </p>
-			   <p>
+						class="form-control" placeholder="ex: user123" minlength='6' maxlength='60' required='required'/>
+				</p>
+				<p>
 					<label>Email:</label>
-					<form:input path="email" id="email" type="text"
-						class="form-control" placeholder="ex:john@example.com" />
-			  </p>
+					<form:input path="email" id="email" type="email" required='required'
+						class="form-control" placeholder="ex:john@example.com" disabled='true' />
+				</p>
 				
-			   <p>
+				<p>
 					<label>Phone No:</label>
-					<form:input path="phone"  id="phone" type="text"
+					<form:input path="phone"  id="phone" type="number" required='required'
 						class="form-control" placeholder="ex:986-712-345" />
-			  </p>
+				</p>
 				
-			   <p>
+				<p>
 					<label>Zip Code:</label>
-					<form:input path="zipCode" id="zipCode" type="text"
+					<form:input path="zipCode" id="zipCode" type="number" required='required'
 						class="form-control" placeholder="ex:85281" />
-			   </p>
+				</p>
 			
-			   <p>
+				<p>
 					<label>State:</label>
-					<form:input path="state" id="state" type="text"
+					<form:input path="state" id="state" type="text" minlength='2' maxlength='2' required='required'
 						class="form-control" placeholder="AZ" />
-			   </p>	
-				
+				</p>	
 				<div class="modal-footer">
-					<button type="submit" class="btn btn-success">Submit</button>
+					<button type="submit" class="btn btn-success" >Submit</button>
 				</div>
-
                           
             </form:form>
 		

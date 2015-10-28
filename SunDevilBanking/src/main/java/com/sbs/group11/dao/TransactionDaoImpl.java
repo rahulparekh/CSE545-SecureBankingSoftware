@@ -9,7 +9,10 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+
 import com.sbs.group11.model.Account;
+import com.sbs.group11.model.OTP;
+
 import com.sbs.group11.model.StatementMonthYear;
 import com.sbs.group11.model.Transaction;
 import com.sbs.group11.model.User;
@@ -29,15 +32,7 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 
 	public void addTransaction(Transaction transaction) {
 		
-		if(isCriticalTransaction(transaction)){
-			
-			transaction.setIsCritical("Yes");
-		}
-		else{
-			transaction.setIsCritical("No");
-		}
-		
-		getSession().save(transaction);
+		getSession().saveOrUpdate(transaction);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -136,7 +131,7 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 			
 			Transaction transaction = transactions.get(i);
 			Account account = accountService.getAccountByNumber(transaction.getSenderAccNumber());
-			User user = userService.getUserbyCustomerID(account.getCustomerID());
+			User user = userService.getUserbyCustomerID(account.getUser().getCustomerID());
 			
 			if(user.getEmployeeOverride()==1){
 				
@@ -202,7 +197,7 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 			
 			Transaction transaction = transactions.get(i);
 			Account account = accountService.getAccountByNumber(transaction.getSenderAccNumber());
-			User user = userService.getUserbyCustomerID(account.getCustomerID());
+			User user = userService.getUserbyCustomerID(account.getUser().getCustomerID());
 			
 			 if(user.getEmployeeOverride()==1){
 				
@@ -257,17 +252,6 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 		
 	}
 	
-	public boolean isCriticalTransaction(Transaction transaction){
-		
-		BigDecimal amount = transaction.getAmount();
-		BigDecimal critical_amount = new BigDecimal(500.00);
-		
-		if(amount.compareTo(critical_amount)==1)
-			return true;
-		else
-			return false;
-	}
-	
 
 	public void  declineTransaction(Transaction transaction){
 		
@@ -293,4 +277,20 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 		return null;
 	}
 
+
+
+	public Transaction getTransactionByPairId(String pairId,
+			String transactionID) {
+		
+		Transaction transaction = (Transaction) getSession()
+				.createQuery("from Transaction where pairId = :pairId and TransactionID <> :transactionID")
+				.setParameter("pairId", pairId)
+				.setParameter("transactionID", transactionID)
+				.setMaxResults(1)
+				.uniqueResult();
+		
+		return transaction;
+	}
+
 }
+

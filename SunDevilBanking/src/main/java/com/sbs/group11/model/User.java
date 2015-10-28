@@ -33,17 +33,16 @@ import org.joda.time.LocalDateTime;
 public class User {
 
 	/** The security questions. For the One-to-Many relationship */
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "CustomerID")
 	private Set<SecurityQuestion> securityQuestions = new HashSet<SecurityQuestion>(
 			0);
 
 	/** The accounts. For the One-to-Many relationship */
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "CustomerID")
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
 	private Set<Account> accounts = new HashSet<Account>(0);
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
 	private Set<Role> role = new HashSet<Role>(0);
 
 	/**
@@ -96,6 +95,11 @@ public class User {
 	@Size(min = 5, max = 50)
 	@Column(name = "AddressLine2", nullable = true, length = 50)
 	private String addressLine2;
+	
+	/** Public Key */
+	@Size(min = 5, max = 50)
+	@Column(name = "publicKey", nullable = true, length = 50)
+	private String publicKey;
 
 	/** The state. */
 	@NotNull
@@ -456,6 +460,15 @@ public class User {
 	public String getUserType() {
 		return userType;
 	}
+	
+	/**
+	 * Gets the public key
+	 *
+	 * @return the public key
+	 */
+	public String getPublicKey() {
+		return publicKey;
+	}
 
 	/**
 	 * Sets the customer type.
@@ -541,6 +554,20 @@ public class User {
 	 */
 	public void setUpdatedAt(LocalDateTime updatedAt) {
 		this.updatedAt = updatedAt;
+	}
+
+	@Override
+	public String toString() {
+		return "User [accounts="
+				+ accounts + ", role=" + role + ", customerID=" + customerID
+				+ ", firstName=" + firstName + ", middleName=" + middleName
+				+ ", lastName=" + lastName + ", addressLine1=" + addressLine1
+				+ ", addressLine2=" + addressLine2 + ", state=" + state
+				+ ", zipCode=" + zipCode + ", phone=" + phone + ", email="
+				+ email + ", password=" + password + ", employeeOverride="
+				+ employeeOverride + ", enabled=" + enabled + ", userType="
+				+ userType + ", createdAt=" + createdAt + ", lastLoginAt="
+				+ lastLoginAt + ", updatedAt=" + updatedAt + "]";
 	}
 
 }
