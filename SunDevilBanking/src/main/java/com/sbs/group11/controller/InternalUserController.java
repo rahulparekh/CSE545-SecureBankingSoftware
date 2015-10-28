@@ -374,8 +374,8 @@ public class InternalUserController {
 		modifiedUser.setUpdatedAt(current_user.getUpdatedAt());
 		modifiedUser.setLastLoginAt(current_user.getLastLoginAt());
 		modifiedUser.setStatus("pending");
-		
-		
+		long epoch = System.currentTimeMillis()/1000;
+		modifiedUser.setRequestid(epoch);
 		modifiedService.addRequest(modifiedUser);
 		//internalUserService.updateInternalUser(user);
 		
@@ -406,7 +406,8 @@ public class InternalUserController {
 	
 		System.out.println(request.getParameter("modificationuserID"));
 		ModifiedUser modifiedUser = 
-				modifiedService.findModifiedUserByID(request.getParameter("modificationuserID"));
+				modifiedService.findModifiedUserByRequestID(request.getParameter("modificationrequestid"));
+		System.out.println("request id "+modifiedUser.getRequestid());
 		model.addAttribute("modifiedUser", modifiedUser);
 		return "employee/approve_requests_ext";
 	}
@@ -415,7 +416,7 @@ public class InternalUserController {
 		public String approveModificationManager(ModelMap model,
 				HttpServletRequest request) {
 			System.out.println("See this " + request.getParameter("modifiedUserId"));
-			ModifiedUser modifieduser = modifiedService.findModifiedUserByID(request.getParameter("modifiedUserId"));
+			ModifiedUser modifieduser = modifiedService.findModifiedUserByRequestID(request.getParameter("modifiedrequestid")); 
 			System.out.println("Customer id" + modifieduser.getCustomerID());
 			modifiedService.approveRequest(modifieduser);
 			return "redirect:/requests-pending-ext";
@@ -426,7 +427,7 @@ public class InternalUserController {
 		public String declineModificationManager(ModelMap model,
 				 HttpServletRequest request) {
 			System.out.print("Inside decline transaction");
-			ModifiedUser modifieduser = modifiedService.findModifiedUserByID(request.getParameter("modifiedUserId"));
+			ModifiedUser modifieduser = modifiedService.findModifiedUserByRequestID(request.getParameter("modifiedrequestid"));
 			modifiedService.denyRequest(modifieduser);
 			
 			return "redirect:/requests-pending-ext";
@@ -504,7 +505,7 @@ public class InternalUserController {
 	
 		System.out.println(request.getParameter("modificationuserID"));
 		ModifiedUser modifiedUser = 
-				modifiedService.findModifiedUserByID(request.getParameter("modificationuserID"));
+				modifiedService.findModifiedUserByRequestID(request.getParameter("modificationrequestid"));
 		model.addAttribute("modifiedUser", modifiedUser);
 		return "employee/approve_requests";
 	}
@@ -513,7 +514,7 @@ public class InternalUserController {
 		public String approveModification(ModelMap model,
 				HttpServletRequest request) {
 			System.out.println("See this " + request.getParameter("modifiedUserId"));
-			ModifiedUser modifieduser = modifiedService.findModifiedUserByID(request.getParameter("modifiedUserId"));
+			ModifiedUser modifieduser = modifiedService.findModifiedUserByRequestID(request.getParameter("modifiedrequestid"));
 			System.out.println("Customer id" + modifieduser.getCustomerID());
 			modifiedService.approveRequest(modifieduser);
 			return "redirect:/requests-pending";
@@ -524,7 +525,7 @@ public class InternalUserController {
 		public String declineModification(ModelMap model,
 				 HttpServletRequest request) {
 			System.out.print("Inside decline transaction");
-			ModifiedUser modifieduser = modifiedService.findModifiedUserByID(request.getParameter("modifiedUserId"));
+			ModifiedUser modifieduser = modifiedService.findModifiedUserByRequestID(request.getParameter("modifiedrequestid"));
 			modifiedService.denyRequest(modifieduser);
 			
 			return "redirect:/requests-pending";
@@ -574,6 +575,8 @@ public class InternalUserController {
 			modifiedUser.setUpdatedAt(current_user.getUpdatedAt());
 			modifiedUser.setLastLoginAt(current_user.getLastLoginAt());
 			modifiedUser.setStatus("pending");
+			long epoch = System.currentTimeMillis()/1000;
+			modifiedUser.setRequestid(epoch);
 			modifiedService.addRequest(modifiedUser);
 			//internalUserService.updateInternalUser(user);
 			

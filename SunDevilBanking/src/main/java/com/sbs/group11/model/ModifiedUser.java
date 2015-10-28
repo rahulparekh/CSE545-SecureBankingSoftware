@@ -44,16 +44,28 @@ public class ModifiedUser {
 	
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "RequestId")
-	private int requestid;
+	private long  requestid;
 	
-	public int getId()
-	{
+	
+	
+	
+	public long getRequestid() {
 		return requestid;
 	}
-	
-	
+
+	public void setRequestid(long requestid) {
+		this.requestid = requestid;
+	}
+
+	public String getUserType() {
+		return userType;
+	}
+
+	public void setUserType(String userType) {
+		this.userType = userType;
+	}
+
 	@NotNull
 	@Size(min = 1, max = 100)
 	@Column(name = "CustomerID", nullable = false, length = 11)

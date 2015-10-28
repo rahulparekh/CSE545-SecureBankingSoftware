@@ -84,7 +84,7 @@
 			<table>
 			<tr>
             <form:form method="POST" action="decline-modification"> 
-            <input type = hidden name="modifiedUserId" value="${modifiedUser.customerID}" ></input>
+            <input type = hidden name="modifiedrequestid" value="${modifiedUser.requestid}" ></input>
 			<td><button type="submit" class="btn btn-danger"">Decline</button></td>
 			</form:form>
 			<form:form method="POST" action="back-modification"> 
@@ -92,7 +92,7 @@
 			</form:form>
                         
             <form:form method="POST"  action="approve-modification">             
-               <input type = hidden name="modifiedUserId" value="${modifiedUser.customerID}" ></input>
+               <input type = hidden name="modifiedrequestid" value="${modifiedUser.requestid}" ></input>
                <td><button type="submit" class="btn btn-success">Approve</button></td>
                </form:form>
             

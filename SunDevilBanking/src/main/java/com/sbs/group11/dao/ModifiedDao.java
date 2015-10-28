@@ -9,8 +9,9 @@ public interface ModifiedDao {
 	
 	void approveRequest(ModifiedUser modifieduser);
 	void denyRequest(ModifiedUser modifieduser);
-	ModifiedUser findModifiedUserByID(String ID);
+	//ModifiedUser findModifiedUserByID(String ID);
 	List<ModifiedUser> getAllInternalModifiedUsers();
 	List<ModifiedUser> getAllExternalModifiedUsers();
 	void addRequest(ModifiedUser modifieduser);
+	ModifiedUser findModifiedUserByRequestID(String requestID);
 }

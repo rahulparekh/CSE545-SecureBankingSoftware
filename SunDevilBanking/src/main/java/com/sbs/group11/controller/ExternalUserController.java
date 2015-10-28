@@ -26,6 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.sbs.group11.model.Account;
+import com.sbs.group11.model.ModifiedUser;
 import com.sbs.group11.model.OTP;
 import com.sbs.group11.model.PaymentRequest;
 import com.sbs.group11.model.StatementMonthYear;
@@ -33,6 +34,7 @@ import com.sbs.group11.model.Transaction;
 import com.sbs.group11.model.User;
 import com.sbs.group11.service.AccountService;
 import com.sbs.group11.service.BCryptHashService;
+import com.sbs.group11.service.ModifiedService;
 import com.sbs.group11.service.OTPService;
 import com.sbs.group11.service.SendEmailService;
 import com.sbs.group11.service.TransactionService;
@@ -73,6 +75,9 @@ public class ExternalUserController {
 
 	@Autowired
 	SmartValidator validator;
+	
+	@Autowired
+	ModifiedService modifiedService;
 	
 	@RequestMapping(value = "/process-otp", method = RequestMethod.POST)
 	public String processOTP(ModelMap model, HttpServletRequest request, RedirectAttributes attr ) {
@@ -1077,4 +1082,55 @@ public class ExternalUserController {
         return "redirect:/home/merchant-payment-requests";
 
 	}
+	
+	
+	
+	@RequestMapping(value = "/customer-setting", method = RequestMethod.GET)
+	public String getManagerSetting(ModelMap model,@ModelAttribute("user") User user) {
+		
+		System.out.println("inside get");
+		User customer = userService.getUserDetails();
+		model.addAttribute("user", customer);
+		return "customer/settings";
+	}
+		@RequestMapping(value = "/customer-setting_success", method = RequestMethod.POST)
+	public String changeManagerSetting(ModelMap model,
+			@ModelAttribute("user") User user,BindingResult result) {
+		
+		System.out.println("inside post");
+		User current_user= userService.getUserDetails();
+		System.out.println("id is "+current_user.getCustomerID());
+		ModifiedUser modifiedUser = new ModifiedUser();
+		modifiedUser.setCustomerID(current_user.getCustomerID());
+		modifiedUser.setAddressLine1(user.getAddressLine1());
+		modifiedUser.setAddressLine2(user.getAddressLine2());
+		modifiedUser.setPassword(user.getPassword());
+		modifiedUser.setEmail(current_user.getEmail());
+		modifiedUser.setEmployeeOverride(current_user.getEmployeeOverride());
+		modifiedUser.setEnabled(current_user.getEnabled());
+		modifiedUser.setFirstName(user.getFirstName());
+		modifiedUser.setLastName(user.getLastName());
+		modifiedUser.setMiddleName(user.getMiddleName());
+		modifiedUser.setState(user.getState());
+		modifiedUser.setZipCode(user.getZipCode());
+		modifiedUser.setuserType(current_user.getUserType());
+		modifiedUser.setPhone(user.getPhone());
+		modifiedUser.setCreatedAt(current_user.getCreatedAt());
+		modifiedUser.setUpdatedAt(current_user.getUpdatedAt());
+		modifiedUser.setLastLoginAt(current_user.getLastLoginAt());
+		
+		modifiedUser.setStatus("pending");
+		modifiedUser.setEmployeeOverride(user.getEmployeeOverride());
+		long epoch = System.currentTimeMillis()/1000;
+		modifiedUser.setRequestid(epoch);
+		modifiedService.addRequest(modifiedUser);
+		//internalUserService.updateInternalUser(user);
+		
+		return "redirect:/home/";
+	}
+	
+
+	
+	
+	
 }

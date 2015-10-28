@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.sbs.group11.model.ModifiedUser;
 import com.sbs.group11.model.User;
+import com.sbs.group11.service.BCryptHashService;
 import com.sbs.group11.service.InternalUserService;
 import com.sbs.group11.service.UserService;
 
@@ -19,14 +20,17 @@ public class ModifiedDaoImpl extends AbstractDao<Integer, ModifiedUser> implemen
 @Autowired
 InternalUserService internaluserservice;
 
+@Autowired
+private BCryptHashService hashService;
+
 	@SuppressWarnings("unchecked")
 	
-	public ModifiedUser findModifiedUserByID(String ID) {
+	public ModifiedUser findModifiedUserByRequestID(String ID) {
 		List<ModifiedUser> users = new ArrayList<ModifiedUser>();
 		
 		
 		users = getSession()
-				.createQuery("from ModifiedUser where CustomerID=?")
+				.createQuery("from ModifiedUser where RequestId=? order by RequestId")
 				.setParameter(0, ID)
 				.list();
 
@@ -51,7 +55,11 @@ InternalUserService internaluserservice;
 				current_user.setAddressLine2(modifieduser.getAddressLine2());
 				current_user.setFirstName(modifieduser.getFirstName());
 				current_user.setLastName(modifieduser.getLastName());
-				current_user.setPassword(modifieduser.getPassword());
+				if(!current_user.getPassword().equals(modifieduser.getPassword()))
+				{	
+					modifieduser.setPassword(hashService.getBCryptHash((modifieduser.getPassword())));
+				}
+				//current_user.setPassword(modifieduser.getPassword());
 				current_user.setEmail(modifieduser.getEmail());
 				current_user.setPhone(modifieduser.getPhone());
 				current_user.setZipCode(modifieduser.getZipCode());
