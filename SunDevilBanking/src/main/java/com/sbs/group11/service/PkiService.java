@@ -137,7 +137,7 @@ private UserDao userDAO;
 	        messageemail.setSubject("Your private Key");
 	        messageemail.setText("Private Key "+"\n"+privatekey+"\n");
 	        
-	        //mailSender.send(messageemail); 
+	         mailSender.send(messageemail); 
 			
 			return publickey;
 			
