@@ -56,9 +56,9 @@ private UserDao userDAO;
 		
 	
 	
-	@Override
+
 	@Transactional
-	public String paymentinfoencryption(Integer userId, String oprivatekey) 
+	public String paymentinfoencryption(String userId, String oprivatekey) 
 	{
 	
 		
@@ -99,7 +99,7 @@ private UserDao userDAO;
 	
 	
 	
-	@Override
+
 	@Transactional
 	public String generatekeypair(String mailer){
 		
@@ -150,9 +150,9 @@ private UserDao userDAO;
 		return null; // Unreachable code !!
 	}
 	
-	@Override
+
 	@Transactional
-	public boolean paymentinfodecryption(Integer userId, String payment)
+	public boolean paymentinfodecryption(String userId, String payment)
 	{
 		
 		String alias_publicKey = userDAO.findByCustomerID(userId).getPublicKey(userId);
