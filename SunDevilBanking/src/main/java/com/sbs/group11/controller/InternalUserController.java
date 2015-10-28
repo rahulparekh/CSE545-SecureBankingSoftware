@@ -1,5 +1,6 @@
 package com.sbs.group11.controller;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -11,16 +12,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.sbs.group11.model.*;
+import com.sbs.group11.service.AccountService;
 import com.sbs.group11.service.InternalUserService;
 import com.sbs.group11.service.SystemLogService;
 import com.sbs.group11.service.ModifiedService;
 import com.sbs.group11.service.TransactionService;
+import com.sbs.group11.service.UserService;
 
 @Controller
 public class InternalUserController {
@@ -33,6 +37,13 @@ public class InternalUserController {
 	SystemLogService systemLogService;
 	@Autowired
 	ModifiedService modifiedService;
+	@Autowired
+	AccountService accountService;
+	@Autowired
+	UserService userService;
+	@Autowired
+	SmartValidator validator;
+	
 	
 
 	@ModelAttribute("user")
@@ -359,12 +370,6 @@ public class InternalUserController {
 		}
 	
 
-
-
-
-
-
-
 	
 	@RequestMapping(value = "/decline", method = RequestMethod.POST)
 	public String TransactionDecline( ModelMap model,
@@ -374,6 +379,225 @@ public class InternalUserController {
 		
 		return "redirect:/internalemployee-pendingtransaction";
 			
+	}
+	
+	//
+	@RequestMapping(value = "/modificiation-transction-approve", method = RequestMethod.POST)
+	public String ModificationTransactionApprove( ModelMap model,
+			@ModelAttribute("modificationTransaction") ModificationTransaction modificationTransaction,HttpServletRequest request,
+			RedirectAttributes attr) {
+	    
+		
+		
+		
+		Transaction transaction = transactionService.getTransaction(request.getParameter("modifytransactionID"));
+		System.out.println("Amount test "+modificationTransaction.getAmount() + "SenderNumber "+ modificationTransaction.getSenderAccNumber());
+		
+		if(modificationTransaction.getAmount()!=null){
+			BigDecimal amount = new BigDecimal(modificationTransaction.getAmount());
+			transaction.setAmount(amount);
+			transaction.setSenderAccNumber(modificationTransaction.getSenderAccNumber());
+			transaction.setReceiverAccNumber(modificationTransaction.getRecieverAccNumber());
+		
+			
+			Account accountSender = accountService.getAccountByNumber(modificationTransaction.getSenderAccNumber());
+			
+			if(accountSender==null){
+				
+				attr.addFlashAttribute(
+						"failureMsg","Invalid AccountNumber");
+				return "redirect:/internalemployee-pendingtransaction";
+			}
+			
+			Account accountReciever = accountService.getAccountByNumber(modificationTransaction.getRecieverAccNumber());
+			
+			
+			if(accountReciever == null){
+				
+				attr.addFlashAttribute(
+						"failureMsg","Invalid AccountNumber");
+				return "redirect:/internalemployee-pendingtransaction";
+				
+			}
+			
+			User user = userService.getUserbyCustomerID(accountSender.getCustomerID());  
+			if(user.getEmployeeOverride()==1){
+				
+		
+				boolean result = transactionService.approveTransactionafterModification(transaction);
+		
+				System.out.print(result);
+				if(!result){
+					attr.addFlashAttribute(
+					"failureMsg",
+					"Could not process your transaction. Debit amount cannot be higher than account balance. Please decline this transaction");
+				}
+				else{
+					
+					attr.addFlashAttribute(
+							"sucessMsg",
+							"Transaction Approved Sucessfully with modifications");
+				}
+		   }else{
+			   
+			   attr.addFlashAttribute("failureMsg","You may not have the neccessary permissions to approve this transaction");
+		   }
+		
+		
+		
+		}else{
+			  
+			attr.addFlashAttribute("failureMsg","Please put to a valid amount to process this transaction");
+			model.addAttribute("modificationTransaction", modificationTransaction);
+			return "redirect:/modify";
+		}
+		
+		return "redirect:/internalemployee-pendingtransaction";
+	}
+	
+	
+	@RequestMapping(value = "/modificiation-critical-transction-approve", method = RequestMethod.POST)
+	public String ModificationCriticalTransactionApprove( ModelMap model,
+			@ModelAttribute("modificationTransaction") ModificationTransaction modificationTransaction,HttpServletRequest request,
+			RedirectAttributes attr) {
+	    
+		
+		
+		
+		Transaction transaction = transactionService.getTransaction(request.getParameter("modifytransactionID"));
+		System.out.println("Amount test "+modificationTransaction.getAmount() + "SenderNumber "+ modificationTransaction.getSenderAccNumber());
+		
+		if(modificationTransaction.getAmount()!=null){
+			BigDecimal amount = new BigDecimal(modificationTransaction.getAmount());
+			transaction.setAmount(amount);
+			transaction.setSenderAccNumber(modificationTransaction.getSenderAccNumber());
+			transaction.setReceiverAccNumber(modificationTransaction.getRecieverAccNumber());
+		
+			
+			Account accountSender = accountService.getAccountByNumber(modificationTransaction.getSenderAccNumber());
+			
+			if(accountSender==null){
+				
+					attr.addFlashAttribute(
+						"failureMsg","Invalid AccountNumber");
+					return "redirect:/internalemployee-pending-critical-transaction";
+			}
+			
+			Account accountReciever = accountService.getAccountByNumber(modificationTransaction.getRecieverAccNumber());
+			
+			
+			if(accountReciever == null){
+				
+					attr.addFlashAttribute(
+						"failureMsg","Invalid AccountNumber");
+					return "redirect:/internalemployee-pending-critical-transaction";
+				
+			}
+			
+			User user = userService.getUserbyCustomerID(accountSender.getCustomerID());  
+			if(user.getEmployeeOverride()==1){
+				
+		
+				boolean result = transactionService.approveTransactionafterModification(transaction);
+		
+				System.out.print(result);
+				if(!result){
+					attr.addFlashAttribute(
+					"failureMsg",
+					"Could not process your transaction. Debit amount cannot be higher than account balance. Please decline this transaction");
+				}
+				else{
+					
+					attr.addFlashAttribute(
+							"sucessMsg",
+							"Transaction Approved Sucessfully with modifications");
+				}
+		   }else{
+			   
+			   attr.addFlashAttribute("failureMsg","You may not have the neccessary permissions to approve this transaction");
+		   }
+		
+		
+		
+		}else{
+			  
+			attr.addFlashAttribute("failureMsg","Please put to a valid amount to process this transaction");
+			model.addAttribute("modificationTransaction", modificationTransaction);
+			return "redirect:/critical-modify";
+		}
+		
+		return "redirect:/internalemployee-pending-critical-transaction";
+	}
+	
+	
+	
+	
+	
+	
+	
+	@RequestMapping(value = "/get-list-of-accounts-for-transaction", method = RequestMethod.GET)
+	public String searchTransactionsbyAccounts(ModelMap model, HttpServletRequest request){
+	
+		return "employee/home_int_employee";
+	}
+	
+	@RequestMapping(value = "/get-list-of-accounts-for", method = RequestMethod.POST)
+	public String getAccountsforaCustomer(ModelMap model, HttpServletRequest request,
+			RedirectAttributes attr){
+		
+		System.out.println("Hi welcome to get");
+		// Overrrrride check
+		User user = userService.getUserbyCustomerID(request.getParameter("customerID"));
+		if(user.getEmployeeOverride()==1){
+			List<Account> accounts = accountService.getAccountsByCustomerID(request.getParameter("customerID"));
+			model.addAttribute("accounts", accounts);
+			return "employee/home_int_employee";
+		}
+		else{
+			//Flash Attribute
+			attr.addFlashAttribute(
+					"failureMsg",
+					"Could not process the request. You may not have the necessary permissions !!");
+			return "redirect:/get-list-of-accounts-for-transaction";
+			
+		}
+		
+	}
+	
+	
+	@RequestMapping(value = "/getTransactionforAccount", method = RequestMethod.GET)
+	public String getTransactionsforAccounts(ModelMap model,HttpServletRequest request){
+		
+		
+		
+		List<Transaction> transactions = transactionService.getTransactionsForAccountNumber(request.getParameter("accNumber"));
+		model.addAttribute("transactions", transactions);
+		return "employee/int_employee_show_transactions";
+	}
+	
+	
+	@RequestMapping(value = "/get-transaction-for-transactionID", method = RequestMethod.GET)
+	public String getTransactionforTransactionID(ModelMap model,HttpServletRequest request,
+			RedirectAttributes attr){
+		
+		// Overrrrrrride Check
+		Transaction transaction = transactionService.getTransaction(request.getParameter("transactionID"));
+		Account account = accountService.getAccountByNumber(transaction.getSenderAccNumber());
+		User user = userService.getUserbyCustomerID(account.getCustomerID());
+		
+		if(user.getEmployeeOverride()==1){
+			model.addAttribute("transaction", transaction);
+			return "employee/int_employee_show_single_transaction";
+		}
+		else{
+			// Flash attribute
+			attr.addFlashAttribute(
+					"failureMsg",
+					"Could not process the request. You may not have the necessary permissions !!");
+			 return "redirect:/get-list-of-accounts-for-transaction";
+		}
+		
+		
 	}
 	
 	@RequestMapping(value = "/internalemployee-pending-critical-transaction", method = RequestMethod.GET)
@@ -515,12 +739,7 @@ public class InternalUserController {
 			
 			
 			
-			
-
-
-
-
-
+		
 
 
 
@@ -544,10 +763,27 @@ public class InternalUserController {
 		modificationTransaction.setAmount(request.getParameter("amount"));
 		modificationTransaction.setSenderAccNumber(request.getParameter("senderAccNumber"));
 		modificationTransaction.setRecieverAccNumber(request.getParameter("receiverAccNumber"));
+		modificationTransaction.setTransactionID(request.getParameter("transactionID"));
 		model.addAttribute("modificationTransaction", modificationTransaction);
 		
 		
 		return "employee/int_employee_modify_transaction";
+	
+   }
+	
+	@RequestMapping(value = "/critical-modify", method = RequestMethod.POST)
+	public String ModifyCriticalTransactions( ModelMap model,
+			  HttpServletRequest request) {
+		
+		ModificationTransaction modificationTransaction = getModificationTransaction();
+		modificationTransaction.setAmount(request.getParameter("amount"));
+		modificationTransaction.setSenderAccNumber(request.getParameter("senderAccNumber"));
+		modificationTransaction.setRecieverAccNumber(request.getParameter("receiverAccNumber"));
+		modificationTransaction.setTransactionID(request.getParameter("transactionID"));
+		model.addAttribute("modificationTransaction", modificationTransaction);
+		
+		
+		return "employee/int_employee_modify_critical_transaction";
 	
    }
 

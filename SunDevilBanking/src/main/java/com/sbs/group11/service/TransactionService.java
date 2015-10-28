@@ -32,6 +32,7 @@ public interface TransactionService {
 
 	public List<Transaction> getPendingCriticalTransaction();
 	
+	boolean approveTransactionafterModification(Transaction transaction);
 	boolean approveTransaction(String transactionID);
 	
 	void declineTransaction(String transactionID);
@@ -43,5 +44,7 @@ public interface TransactionService {
 			List<Account> senderAccounts,
 			HttpServletRequest request,
 			ModelMap model, User user, RedirectAttributes attr);
+	
+	List<Transaction> getTransactionsForAccountNumber(String accNumber);
 
 }

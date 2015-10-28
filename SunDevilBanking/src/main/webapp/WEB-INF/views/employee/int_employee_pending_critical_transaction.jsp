@@ -3,6 +3,7 @@
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html lang="en">
@@ -41,13 +42,12 @@
         <div class="col-sm-3 col-md-2 sidebar">
 
           <ul class="nav nav-sidebar">
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Pending Transactions</a></li>
-            <li><a href="#">Add Transactions</a></li>
-            <li><a href="#">Request Manager</a></li>
-            <li><a href="#">Request Admin</a></li>
-            <li><a href="#">Settings</a></li>
-            <li><a href="#">Logout</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/int-employee-home">Home</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/">Add Transaction</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/">Pending Transactions</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/int-employee-customer-search">View-Edit-Delete Users</a></li>
+			<li><a href="${pageContext.servletContext.contextPath}/">Settings</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
           </ul>
           
         </div> <!-- sidebar -->
@@ -71,7 +71,18 @@
               	<th>Date</th>				
               </tr>
             </thead>
-            <tbody>
+            <tbody>  
+               <c:if test="${!empty failureMsg}">
+					<div class="alert alert-danger">						
+						${fn:escapeXml(failureMsg)}
+					</div>
+				</c:if>
+				<c:if test="${!empty sucessMsg}">
+					<div class="alert alert-success">						
+						${fn:escapeXml(sucessMsg)}
+					</div>
+				</c:if>
+				
         	  <c:forEach var="transaction" items="${pendingCriticalTransaction}" varStatus="loopCounter">
         	   
               <tr>
@@ -88,9 +99,17 @@
 				<input type="hidden" name="transactionID" value="${transaction.transactionID}"></input>
 				<td><button type="submit" class="btn btn-danger">Decline</button></td>
 				</form:form>
+				<form:form method="POST" action="critical-modify">
+				<input type="hidden" name="transactionID" value="${transaction.transactionID}"></input>
+				<input type="hidden" name="senderAccNumber" value="${transaction.senderAccNumber}"></input>
+				<input type="hidden" name="receiverAccNumber" value="${transaction.receiverAccNumber}"></input>
+				<input type="hidden" name="amount" value="${transaction.amount}"></input>
+				<td><button type="submit" class="btn btn-primary">Modify</button></td>
+				</form:form>
               </tr>
               
              </c:forEach>
+             
             </tbody>
           </table>
           

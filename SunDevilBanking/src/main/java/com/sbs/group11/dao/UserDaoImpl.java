@@ -49,4 +49,16 @@ public class UserDaoImpl extends AbstractDao<Integer, User> implements UserDao {
 
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<User> getUsersOfType(String type) {
+		List<User> users = new ArrayList<User>();
+
+		users = getSession()
+			.createQuery("from User where UserType=:type")
+			.setParameter("type", type)
+			.list();
+		
+		return users;
+	}
+
 }

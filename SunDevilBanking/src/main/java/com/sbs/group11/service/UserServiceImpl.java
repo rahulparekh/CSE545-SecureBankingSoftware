@@ -1,5 +1,7 @@
 package com.sbs.group11.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,5 +30,14 @@ public class UserServiceImpl implements UserService {
         
         return dao.findByCustomerID(customerID);
     }
+
+	public List<User> getUsersOfType(String type) {
+		return dao.getUsersOfType(type);
+	}
+	
+	public User getUserbyCustomerID(String customerID){
+		
+		return dao.findByCustomerID(customerID);
+	}
 
 }

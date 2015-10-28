@@ -4,19 +4,26 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.sbs.group11.model.Account;
 import com.sbs.group11.model.StatementMonthYear;
 import com.sbs.group11.model.Transaction;
+import com.sbs.group11.model.User;
 import com.sbs.group11.service.AccountService;
+import com.sbs.group11.service.UserService;
 
 @Repository("transactionDaoImpl")
 public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implements TransactionDao {
 	
 	@Autowired
     public AccountService accountService;
+	
+	@Autowired
+	public UserService userService;
 	
 	final static Logger logger = Logger.getLogger(UserDaoImpl.class);
 
@@ -103,7 +110,9 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 				.createQuery("from Transaction where TransactionID = :transactionID")
 				.setParameter("transactionID", transactionID)
 				.list();
+				
 		if (transactions.size() > 0) {
+			getSession().evict(transactions.get(0));
 			return transactions.get(0);
 		} else {
 			return null;
@@ -120,10 +129,26 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 				.createQuery("from Transaction where status = :pending_status and isCritical = :isCriticalValue")
 				.setParameter("pending_status", pending_status).setParameter("isCriticalValue",isCriticalValue)
 				.list();
-		if (transactions.size() > 0) {
-			return transactions;
+		
+       List<Transaction>  filteredTransaction = new ArrayList<Transaction>();
+		
+		for(int i=0; i < transactions.size();i++){
+			
+			Transaction transaction = transactions.get(i);
+			Account account = accountService.getAccountByNumber(transaction.getSenderAccNumber());
+			User user = userService.getUserbyCustomerID(account.getCustomerID());
+			
+			if(user.getEmployeeOverride()==1){
+				
+				filteredTransaction.add(transaction);
+				
+			}
+		}
+		
+		if (filteredTransaction.size() > 0) {
+				return transactions;
 		} else {
-			return null;
+				return null;
 		}		
 	}
 	
@@ -137,6 +162,7 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 			         createQuery("from Transaction where TransactionID = :transactionID")
 				     .setParameter("transactionID", transactionID)
 				     .list();
+	   
 	   
 	   if (status.size() > 0) {
 			
@@ -160,19 +186,38 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 	@SuppressWarnings("unchecked")
 	public List<Transaction> getPendingCriticalTransactions(){
 		
-		String isCriticalValue = "Yes";
+		
 		String pending_status="pending";
-		System.out.print("Inside gettransaction");
+		//System.out.print("Inside gettransaction");
 		List<Transaction> transactions = new ArrayList<Transaction>();		
 		transactions = getSession()
-				.createQuery("from Transaction where status = :pending_status and isCritical = :isCriticalValue")
-				.setParameter("pending_status", pending_status).setParameter("isCriticalValue",isCriticalValue)
+				.createQuery("from Transaction where status = :pending_status")
+				.setParameter("pending_status", pending_status)
 				.list();
-		if (transactions.size() > 0) {
-			return transactions;
+		        //getSession().evict(transactions);
+		
+          List<Transaction>  filteredTransaction = new ArrayList<Transaction>();
+		
+          for(int i=0; i < transactions.size();i++){
+			
+			Transaction transaction = transactions.get(i);
+			Account account = accountService.getAccountByNumber(transaction.getSenderAccNumber());
+			User user = userService.getUserbyCustomerID(account.getCustomerID());
+			
+			 if(user.getEmployeeOverride()==1){
+				
+				filteredTransaction.add(transaction);
+				
+			 }
+	 	}
+		
+		if (filteredTransaction.size() > 0) {
+				return transactions;
 		} else {
-			return null;
-		}		
+				return null;
+		}	
+		
+		
 	}
 	
 	
@@ -185,13 +230,17 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 		    boolean result = accountService.creditorDebit(transaction);
 		    if(result){
 		    	transaction.setStatus("approved");
-		    	 getSession().update(transaction);
+		    	 getSession().merge(transaction);
+		    	// getSession().evict(transaction);
+		    	 
 		    	 return result;
 		    	 
 		    }
 		    else{
 		    	transaction.setStatus("pending");
-		    	getSession().update(transaction);
+		    	getSession().merge(transaction);
+		    	//getSession().evict(transaction);
+		    	
 		    	return result;
 		    }
     	
@@ -224,6 +273,24 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 		
 		transaction.setStatus("declined");
 		getSession().update(transaction);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Transaction> getTransactionsForAccountNumber(String accNumber){
+		
+		List<Transaction> transactions = new ArrayList<Transaction>();		
+		transactions = getSession()
+				.createQuery("from Transaction where senderAccNumber = :accNumber or receiverAccNumber = :accNumber")
+				.setParameter("accNumber", accNumber)
+				.list();
+		
+		
+		
+		
+		if(transactions.size()>0)
+			return transactions;
+		
+		return null;
 	}
 
 }

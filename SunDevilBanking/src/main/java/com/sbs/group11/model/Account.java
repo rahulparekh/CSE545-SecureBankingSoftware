@@ -25,14 +25,14 @@ public class Account {
 	
 	/** The Customer ID. Foreign Key */
 	@NotNull
-	@Size(min = 11, max = 11)
+	@Size(min = 1, max = 11)
 	@Column(name = "CustomerID", nullable = false, length = 11, unique = false)
 	private String customerID;
 	
 	/** The Account Number. */
 	@Id
 	@NotNull
-	@Size(min = 17, max = 17)
+	@Size(min = 1, max = 17)
 	@Column(name = "Number", nullable = false, length = 17, unique = true)
 	private String number;
 	

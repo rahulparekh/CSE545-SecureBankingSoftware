@@ -1,6 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
-    <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -12,7 +15,7 @@
     <meta name="author" content="">
     <link rel="icon" href="${pageContext.servletContext.contextPath}/static/favicon.ico">
 
-    <title>SBS Internal Employee Add Transactions - Group 11</title>
+    <title>SBS Internal Employee Pending Transactions- Group 11</title>
 
     <!-- Bootstrap core CSS -->
     <link href="${pageContext.servletContext.contextPath}/static/css/bootstrap.min.css" rel="stylesheet">
@@ -38,13 +41,12 @@
         <div class="col-sm-3 col-md-2 sidebar">
 
           <ul class="nav nav-sidebar">
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Pending Transactions</a></li>
-            <li><a href="#">Add Transactions</a></li>
-            <li><a href="#">Request Manager</a></li>
-            <li><a href="#">Request Admin</a></li>
-            <li><a href="#">Settings</a></li>
-            <li><a href="#">Logout </a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/int-employee-home">Home</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/">Add Transaction</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/">Pending Transactions</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/int-employee-customer-search">View-Edit-Delete Users</a></li>
+			<li><a href="${pageContext.servletContext.contextPath}/">Settings</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
           </ul>
           
         </div> <!-- sidebar -->
@@ -52,47 +54,44 @@
         <div class="col-sm-9 col-md-10 main">
 
           <div class="page-header">
-            <h1>SBS - Welcome Jack Doe </h1>
+            <h1>SBS - Welcome Andrew </h1>
           </div>
 
-          <h2>Add Transactions:</h2>
+          <h2>Pending Transactions:</h2>
 		  <br>
-        <form:form method="POST"  modelAttribute="modificationTransaction" action="modificiation-transction-approve">
-          <div id="fund-transfer">
-            <div class="modal-body">
-              <p>
-                    <label>Sender Account No.:</label>
-                    <form:input type="text" class="form-control" path="senderAccNumber" placeholder="ex: 123456789"/>
-                  </p>                
-              <hr>
-             
-              <hr>
-              <div>
-                <p>
-                    <label>Reciever Account No.:</label>
-                    <form:input type="text" class="form-control" path = "recieverAccNumber" placeholder="ex: 123456789"/>
-                  </p>   
-                </div>
 
-              </div>
-              <hr>
-              <p>
-                <label>Amount to Transfer:</label>
-                <form:input type="text" path="amount" class="form-control" placeholder="ex: 0.00"/>
-              </p>
-            </div>
-            <div class="modal-footer">  
-			<tr>
-			  <input type="hidden" name="modifytransactionID"  value="${modificationTransaction.transactionID}"></input>
-              <td><button type="submit" class="btn btn-success">Approve</button></td>
-              </form:form>
-              <form:form method="POST" action="internalemployee-pendingtransaction"> 
-			  <td><button type="submit" class="btn btn-primary">Back</button></td>
-			  </form:form>f
-			  </tr>
-            </div>
-			
-          </div><!-- /. -->
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Sender Account No.</th>
+				<th>Receiver Account No.</th>
+                <th>Transaction ID</th>              
+			    <th>Amount</th>
+              	<th>Date</th>	
+              	<th>Status</th>			
+              </tr>
+            </thead>
+            <tbody>
+        	  <c:forEach var="transaction" items="${transactions}" varStatus="loopCounter">
+        	   
+              <tr>
+                <td>${transaction.senderAccNumber}</td>
+				<td>${transaction.receiverAccNumber}</td>
+				<td>${transaction.transactionID}</td>
+				<td>${transaction.amount}</td>
+				<td>${transaction.createdAt}</td>
+				<td>${transaction.status}</td>
+				
+              </tr>
+              
+             </c:forEach>
+             
+                <form:form method="GET" action="get-list-of-accounts-for-transaction" >
+				<td><button type="submit" class="btn btn-primary">Back</button></td>
+				</form:form>
+             
+            </tbody>
+          </table>
           
         </div> <!-- /main -->
 

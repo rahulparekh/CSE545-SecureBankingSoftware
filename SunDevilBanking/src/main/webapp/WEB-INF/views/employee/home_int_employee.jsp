@@ -1,5 +1,7 @@
 <%@page language="java" contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -54,17 +56,53 @@
             <h1>SBS - Welcome Regular Employee </h1>
           </div>
 
-          <h2>Search By:</h2>
+          <h2>Search Transactions By:</h2>
 		  <br>
-
+          
           <div id="payment">
             <p>
+            <form:form method="POST" action="get-list-of-accounts-for">
               <label>Customer ID:</label>
-              <input type="text" class="form-control" placeholder="ex: 123456789">
-            </p>
+              <input type="text" name="customerID" class="form-control" placeholder="ex: 123456789">
+             </p>
+            <p>
+            
 			<div class="modal-footer">                
-              <button type="button" class="btn btn-success">Search</button>
+              <button type="submit" class="btn btn-success">Search</button>
             </div>
+            </form:form>
+            <p>
+            <form:form method="GET" action="get-transaction-for-transactionID">
+              <label>Transaction ID:</label>
+              <input type="text" name="transactionID" class="form-control" placeholder="ex: 123456789">
+             </p>
+            <p>
+            
+			<div class="modal-footer">                
+              <button type="submit" class="btn btn-success">Search</button>
+            </div>
+            </form:form>
+            <tbody>
+            
+				<c:if test="${!empty failureMsg}">
+					<div class="alert alert-danger">						
+						${fn:escapeXml(failureMsg)}
+					</div>
+				</c:if>
+            <c:forEach var="account" items="${accounts}" varStatus="loopCounter">
+        	 <p>
+        	 <tr>
+        	   
+        	    <form:form method="GET" action= "getTransactionforAccount">
+                <td><b>Account Number. :</b> ${account.number}</td>
+                <input type="hidden" name="accNumber" value="${account.number}"></input>
+                <td><button type="submit" class="btn btn-success" >View Transactions</button></td>
+                </form:form>
+                
+                </tr>
+                </p>
+			</c:forEach>
+			</tbody>
           </div><!-- /payment -->
           
         </div> <!-- /main -->

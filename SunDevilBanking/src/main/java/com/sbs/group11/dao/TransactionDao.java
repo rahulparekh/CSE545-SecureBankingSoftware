@@ -29,4 +29,5 @@ public interface TransactionDao {
 	
 	List<Transaction> getCompletedTransactionsByAccountNummber(String accNumber, String month, int year);
 	
+	List<Transaction> getTransactionsForAccountNumber(String accNumber);
 }

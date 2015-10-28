@@ -85,6 +85,10 @@ public class TransactionServiceImpl implements TransactionService {
 		
 	}
 	
+	public boolean approveTransactionafterModification(Transaction transaction){
+		 return dao.approveTransaction(transaction);
+	}
+	
 	public void declineTransaction(String transactionID){
 		
 		String status="declined";
@@ -165,6 +169,12 @@ public class TransactionServiceImpl implements TransactionService {
 		
 		logger.debug("receiverAccount was not returned");
 		return false;
+	}
+	
+	public List<Transaction> getTransactionsForAccountNumber(String accNumber){
+		
+		return dao.getTransactionsForAccountNumber(accNumber);
+		
 	}
 
 }
