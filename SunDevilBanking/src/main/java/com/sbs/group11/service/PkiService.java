@@ -155,7 +155,7 @@ private UserDao userDAO;
 	public boolean paymentinfodecryption(String userId, String payment)
 	{
 		
-		String alias_publicKey = userDAO.findByCustomerID(userId).getPublicKey(userId);
+		String alias_publicKey = userDAO.findByCustomerID(userId).getPublicKey();
 		
 		byte[] decryption = null;
 			try {
