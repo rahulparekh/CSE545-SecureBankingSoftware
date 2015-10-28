@@ -11,8 +11,6 @@ public interface TransactionDao {
 	
 	boolean isUniqueTransactionID(String transactionID);
 	
-	boolean isCriticalTransaction(Transaction transaction);
-	
 	Transaction getTransactionByID(String transactionID);
 	
 	List<Transaction> getPendingTransactions();
@@ -28,5 +26,7 @@ public interface TransactionDao {
 	List<StatementMonthYear> getStatementMonths(String accNumber);
 	
 	List<Transaction> getCompletedTransactionsByAccountNummber(String accNumber, String month, int year);
+
+	Transaction getTransactionByPairId(String pairId, String transactionID);
 	
 }

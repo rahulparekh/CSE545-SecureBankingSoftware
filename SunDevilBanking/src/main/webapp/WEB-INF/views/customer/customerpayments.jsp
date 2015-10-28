@@ -44,21 +44,12 @@
 				</c:forEach>
 			</select>
 			<form:errors path="merchantAccNumber" cssClass="error" element="label" />
+			<br>
 		</p>
 		<p>
 			<label>Amount to be Transferred:</label> <input type="text"
 				class="form-control" name="amount" placeholder="0.00">
 			<form:errors path="amount" cssClass="error" element="label"/>
-		</p>
-		<hr>
-		<p>
-			<label>// To be implemented // Upload Security Token :</label> <input type="file"
-				class="form-control">
-		</p>
-		<p>
-			<label>// To be implemented // One time password: <a href=""
-				class="btn btn-xs btn-info">Generate OTP</a></label> <input type="text"
-				class="form-control">
 		</p>
 		<div class="modal-footer">
 			<button type="submit" class="btn btn-success">Make Payment</button>
