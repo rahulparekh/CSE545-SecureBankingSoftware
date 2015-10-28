@@ -455,6 +455,15 @@ public class User {
 	public String getUserType() {
 		return userType;
 	}
+	
+	/**
+	 * Gets the public key
+	 *
+	 * @return the public key
+	 */
+	public String getPublicKey() {
+		return publicKey;
+	}
 
 	/**
 	 * Sets the customer type.
