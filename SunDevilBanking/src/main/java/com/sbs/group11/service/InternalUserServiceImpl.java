@@ -55,7 +55,7 @@ public class InternalUserServiceImpl implements InternalUserService {
 		Set<SecurityQuestion> secquestions = user.getSecurityQuestions();
 		for(SecurityQuestion question:secquestions)
 		{
-			question.setCustomerID(customerID);			
+			question.setCustomerID(customerID);	
 		}
 		user.setCustomerID(customerID);
 		user.setCreatedAt(LocalDateTime.now());
@@ -156,7 +156,6 @@ public class InternalUserServiceImpl implements InternalUserService {
 		
 	
 	public  void deleteInternalUserById(String id){
-		// TODO Auto-generated method stub
 		dao.deleteInternalUserById(id);
 	}
 	
