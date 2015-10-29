@@ -211,31 +211,6 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 	}
 	
 	
-    /*public boolean approveTransaction(Transaction transaction){    	
-		  
-    	
-    	if(!isTransactionPending(transaction.getTransactionID())) {
-    		return false; 
-    	}
-    	
-		boolean result = accountService.creditorDebit(transaction);
-		if (result) {
-			transaction.setStatus("approved");
-			logger.debug("transaction: " + transaction);
-
-			return result;
-
-		} else {
-			transaction.setStatus("pending");
-			getSession().merge(transaction);
-			// getSession().evict(transaction);
-
-			return result;
-		}
-    	
-    }*/
-	
-	
 	public void modifyTransaction(Transaction transaction){		
 		getSession().update(transaction);				
 	}
