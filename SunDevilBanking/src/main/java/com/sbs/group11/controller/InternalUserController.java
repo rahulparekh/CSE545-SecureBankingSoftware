@@ -89,6 +89,78 @@ public class InternalUserController {
 		return new ModificationTransaction();
 	}
 
+	//**************************PII starts************************************
+	@RequestMapping(value = "/government-home", method = RequestMethod.GET)
+	public String getGovernemntHomePage(ModelMap model) {
+		
+		
+		model.addAttribute("title" , "Welcome Government authority");		
+		return "employee/home_government";
+	}
+	
+	@RequestMapping(value = "/government-home", method = RequestMethod.POST)
+	public String SearchInternalUserbyGovAuthority(ModelMap model,
+			@ModelAttribute("empSearch") EmployeeSearch empSearch, BindingResult result,RedirectAttributes redirectAttrs) {
+		User user = internalUserService.searchExternalUser(empSearch.getEmployeeID());
+		if (user == null){
+			redirectAttrs.addFlashAttribute(
+					"failureMsg",
+					"Not a valid User");
+			return "redirect:/government-home";
+		}
+		
+		
+		redirectAttrs.addFlashAttribute("user", user);
+		return "redirect:/viewcustomer-government";
+	}
+	
+	@RequestMapping(value = "/viewcustomer-government", method = RequestMethod.GET)
+	public String getGovermentViewCustomerPage(ModelMap model , @ModelAttribute("user") User user) {
+		model.addAttribute("PIIUser", user);
+		model.addAttribute("title" , "Welcome Government authority");		
+		return "employee/approve_govt";
+	}
+	
+	
+	
+		@RequestMapping(value = "/approve-modification-govt", method = RequestMethod.POST)
+		public String approveModificationGOVT(ModelMap model,
+				HttpServletRequest request) {
+			System.out.println("See this " + request.getParameter("PIImodifiedUserID"));
+			User user = internalUserService.findUserByID(request.getParameter("PIImodifiedUserID"));
+			System.out.println("Customer id" + user.getCustomerID());
+			internalUserService.approvePIIUserModification(user);
+			return "redirect:/government-home";
+			
+		}
+		
+		
+		@RequestMapping(value = "/decline-govt", method = RequestMethod.POST)
+		public String DeclineModificationGOVT(ModelMap model,
+				HttpServletRequest request) {
+			
+			User user = internalUserService.findUserByID(request.getParameter("PIImodifiedUserID"));
+			
+			internalUserService.declinePIIUserModification(user);
+			return "redirect:/government-home";
+			
+		}
+		
+		
+		
+		@RequestMapping(value = "/back-modification-govt", method = RequestMethod.POST)
+		public String BackModificationGOVT(ModelMap model,
+				HttpServletRequest request) {
+			
+			
+			return "redirect:/government-home";
+			
+		}
+			
+		//**************************PII ends************************************
+	
+	
+	
 	
 	
 	@RequestMapping(value = "/sysadmin-home", method = RequestMethod.GET)
@@ -290,16 +362,6 @@ public class InternalUserController {
 	}
 	
 	
-	@RequestMapping(value = "/customer_success", params="update" ,method = RequestMethod.POST)
-	public String addUserInfoPostManager(ModelMap model,
-			@ModelAttribute("user") User user, BindingResult result,RedirectAttributes redirectAttrs) {
-		model.addAttribute("user",new User());
-		internalUserService.updateInternalUser(user);
-		redirectAttrs.addFlashAttribute(
-				"successMsg",
-				"Updated the userinformation Successfully");
-		return "redirect:/manager-customer-search";
-	}
 	
 
 	@RequestMapping(value = "/customer_success", params = "delete" ,method = RequestMethod.POST)
@@ -378,11 +440,16 @@ public class InternalUserController {
 
 	@RequestMapping(value = "/internalemployee-pendingtransaction", method = RequestMethod.GET)
 	public String getPendingTransactions(ModelMap model){
-		
+		User user = userService.getUserDetails();
 		List<Transaction> pendingTransaction = transactionService.getPendingTransactions();
 		//System.out.println("Pending Transaction" + pendingTransaction.get(0).getTransactionID());
 		model.addAttribute("pendingTransaction", pendingTransaction);
-		return "employee/int_employee_pending_transaction";
+		if(user.getUserType()=="regular")
+			
+			return "employee/int_employee_pending_transaction";
+		else
+			
+			return "employee/manage_pending_transaction";
 
 	}
 	
@@ -869,56 +936,7 @@ public class InternalUserController {
 			
 		}
 		
-		@RequestMapping(value = "/int-employee-customer-search", method = RequestMethod.GET)
-		public String getCustomerSearchIntEmployee(ModelMap model) {
-			return "employee/int_employee_customer_search";
-		}
-
 		
-		@RequestMapping(value = "/int-employee-customer-search", method = RequestMethod.POST)
-		public String SearchInternalUserIntEmployee(ModelMap model,
-				@ModelAttribute("empSearch") EmployeeSearch empSearch, BindingResult result,RedirectAttributes redirectAttrs) {
-			
-			User user = internalUserService.searchExternalUser(empSearch.getEmployeeID());
-			if (user == null){
-				redirectAttrs.addFlashAttribute(
-						"failureMsg",
-						"Not a valid User");
-				return "redirect:/sysadmin-home";
-			}
-			redirectAttrs.addFlashAttribute("user", user);
-			return "redirect:/edit-customer-int";
-		}
-		
-		
-		
-		@RequestMapping(value = "/edit-customer-int", method = RequestMethod.GET)
-		public String getEditUserInfoIntEmployee(ModelMap model,@ModelAttribute("user") User user) {
-			Map<String,String> userTypes = new LinkedHashMap<String,String>();
-			userTypes.put("customer", "customer");
-			userTypes.put("merchant", "merchant");
-			model.addAttribute("user", user);
-			model.addAttribute("userTypes", userTypes);
-			return "employee/int_employee_customers_edt";
-		}
-		
-		
-		@RequestMapping(value = "/customer_success-int", params="update" ,method = RequestMethod.POST)
-		public String addUserInfoPostIntEmployee(ModelMap model,
-				@ModelAttribute("user") User user, BindingResult result,RedirectAttributes redirectAttrs) {
-			model.addAttribute("user",new User());
-			internalUserService.updateInternalUser(user);
-			redirectAttrs.addFlashAttribute(
-					"successMsg",
-					"UserInformation updated Successfully");
-			return "redirect:/int-employee-customer-search";
-		}
-			
-			
-			
-			
-		
-
 
 
 	//**transactions

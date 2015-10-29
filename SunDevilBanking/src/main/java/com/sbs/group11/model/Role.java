@@ -1,5 +1,6 @@
 package com.sbs.group11.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -38,7 +39,7 @@ public class Role {
 		this.RoleID = RoleID;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
 	@JoinColumn(name = "CustomerID", nullable = false)
 	public User getUser() {
 		return this.user;

@@ -38,13 +38,10 @@
         <div class="col-sm-3 col-md-2 sidebar">
 
           <ul class="nav nav-sidebar">
-            <li><a href="${pageContext.servletContext.contextPath}/manager-home">Home</a></li>
+           <li><a href="${pageContext.servletContext.contextPath}/int-employee-home">Home</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/addTransaction">Add Transaction</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/">Pending Transactions</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/">Critical Transactions</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/manage-customer">Add Users</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/manager-customer-search">View-Edit-Delete Users</a></li>
-			<li><a href="${pageContext.servletContext.contextPath}/requests-pending-ext">Pending Requests</a></li>
-			<li><a href="${pageContext.servletContext.contextPath}/manager-setting">Settings</a></li>
+			<li><a href="${pageContext.servletContext.contextPath}/int-employee-setting">Settings</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
           </ul>
           

@@ -40,12 +40,12 @@
 
 <ul class="nav nav-sidebar">
             <li><a href="${pageContext.servletContext.contextPath}/manager-home">Home</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/">Pending Transactions</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/">Critical Transactions</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/internalemployee-pendingtransaction">Pending Transactions</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/internalemployee-pending-critical-transaction">Critical Transactions</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/manage-customer">Add Users</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/manager-customer-search">View-Edit-Delete Users</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/manager-customer-search">View-Delete Users</a></li>
 			<li><a href="${pageContext.servletContext.contextPath}/requests-pending-ext">Pending Requests</a></li>
-			<li><a href="${pageContext.servletContext.contextPath}/">Settings</a></li>
+			<li><a href="${pageContext.servletContext.contextPath}/manager-setting">Settings</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
           </ul>
           
@@ -116,11 +116,7 @@
 				<div class="modal-footer">
 					<button type="submit" class="btn btn-success" name= "delete" value="delete">Delete</button>
 				</div>
-				<div class="modal-footer">
-					<button type="submit" class="btn btn-success" name = "update" value = "update">Update</button>
-				</div>
-				
-				<div id="virtualKeyboard"></div>
+								<div id="virtualKeyboard"></div>
 			</div>
 		</form:form>
 	    </div>
