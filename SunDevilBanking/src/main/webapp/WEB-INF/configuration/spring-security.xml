@@ -24,6 +24,10 @@
 		<intercept-url pattern="/home/merchant-payment-requests" access="hasRole('ROLE_MERCHANT')" />
 		<intercept-url pattern="/home/merchant-payments" access="hasRole('ROLE_MERCHANT')" />
 		<intercept-url pattern="/home/**" access="hasAnyRole('ROLE_CUSTOMER,ROLE_MERCHANT')" />
+		<intercept-url pattern="/manager/**" access="hasRole('ROLE_MANAGER')" />
+		<intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')" />
+		<intercept-url pattern="/regular/**" access="hasRole('ROLE_REGULAR')" />
+		<intercept-url pattern="/government/**" access="hasRole('ROLE_GOVERNMENT')" />
 		
 	</http>
 	
