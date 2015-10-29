@@ -671,33 +671,66 @@ public class InternalUserController {
 
 	@RequestMapping(value = "/manager/manager-setting_success", method = RequestMethod.POST)
 	public String changeManagerSetting(ModelMap model,
-			@ModelAttribute("user") User user, BindingResult result) {
+			@ModelAttribute("user") User user, BindingResult result,RedirectAttributes attr) {
 
-		User current_user = userService.getUserDetails();
+		User currentUser = userService.getUserDetails();
+
+		// Validate fields
+		user.setCustomerID(currentUser.getCustomerID());
+		user.setEmail(currentUser.getEmail());
+		user.setEmployeeOverride(currentUser.getEmployeeOverride());
+		user.setEnabled(currentUser.getEnabled());
+		user.setUserType(currentUser.getUserType());
+		user.setCreatedAt(new DateTime().toLocalDateTime());
+		user.setLastLoginAt(currentUser.getLastLoginAt());
+		user.setPassword(currentUser.getPassword());
+		user.setUpdatedAt(new DateTime().toLocalDateTime());
+
+		validator.validate(user, result);
+		if (result.hasErrors()) {
+			logger.debug(result);
+
+			// attributes for validation failures
+			attr.addFlashAttribute(
+					"org.springframework.validation.BindingResult.user", result);
+			attr.addFlashAttribute("user", user);
+
+			attr.addFlashAttribute("failureMsg",
+					"You have errors in your request.");
+
+			// redirect to the credit debit view page
+			return "redirect:/home/customer-setting";
+		}
 
 		ModifiedUser modifiedUser = new ModifiedUser();
-		modifiedUser.setCustomerID(current_user.getCustomerID());
+		modifiedUser.setCustomerID(currentUser.getCustomerID());
 		modifiedUser.setAddressLine1(user.getAddressLine1());
 		modifiedUser.setAddressLine2(user.getAddressLine2());
-		modifiedUser.setPassword(user.getPassword());
-		modifiedUser.setEmail(current_user.getEmail());
-		modifiedUser.setEmployeeOverride(current_user.getEmployeeOverride());
-		modifiedUser.setEnabled(current_user.getEnabled());
+		modifiedUser.setPassword(currentUser.getPassword());
+		modifiedUser.setEmail(currentUser.getEmail());
+		modifiedUser.setEmployeeOverride(currentUser.getEmployeeOverride());
+		modifiedUser.setEnabled(currentUser.getEnabled());
 		modifiedUser.setFirstName(user.getFirstName());
 		modifiedUser.setLastName(user.getLastName());
 		modifiedUser.setMiddleName(user.getMiddleName());
 		modifiedUser.setState(user.getState());
 		modifiedUser.setZipCode(user.getZipCode());
-		modifiedUser.setUserType(current_user.getUserType());
+		modifiedUser.setUserType(currentUser.getUserType());
 		modifiedUser.setPhone(user.getPhone());
-		modifiedUser.setCreatedAt(current_user.getCreatedAt());
-		modifiedUser.setUpdatedAt(current_user.getUpdatedAt());
-		modifiedUser.setLastLoginAt(current_user.getLastLoginAt());
+		modifiedUser.setCreatedAt(currentUser.getCreatedAt());
+		modifiedUser.setUpdatedAt(new DateTime().toLocalDateTime());
+		modifiedUser.setLastLoginAt(currentUser.getLastLoginAt());
 		modifiedUser.setStatus("pending");
+		modifiedUser.setEmployeeOverride(user.getEmployeeOverride());
 		long epoch = System.currentTimeMillis() / 1000;
 		modifiedUser.setRequestid(epoch);
 		modifiedService.addRequest(modifiedUser);
-		// internalUserService.updateInternalUser(user);
+
+		model.addAttribute("title", "Your Settings!");
+
+		attr.addFlashAttribute("successMsg",
+				"Your request was successful. Please wait for bank approval.");
+
 
 		return "redirect:/manager/manager-home";
 	}
@@ -1193,33 +1226,65 @@ public class InternalUserController {
 
 	@RequestMapping(value = "/regular/int-employee-setting_success", method = RequestMethod.POST)
 	public String changeEmployeeSetting(ModelMap model,
-			@ModelAttribute("user") User user, BindingResult result) {
+			@ModelAttribute("user") User user, BindingResult result,RedirectAttributes attr) {
 
-		User current_user = userService.getUserDetails();
+		User currentUser = userService.getUserDetails();
+
+		// Validate fields
+		user.setCustomerID(currentUser.getCustomerID());
+		user.setEmail(currentUser.getEmail());
+		user.setEmployeeOverride(currentUser.getEmployeeOverride());
+		user.setEnabled(currentUser.getEnabled());
+		user.setUserType(currentUser.getUserType());
+		user.setCreatedAt(new DateTime().toLocalDateTime());
+		user.setLastLoginAt(currentUser.getLastLoginAt());
+		user.setPassword(currentUser.getPassword());
+		user.setUpdatedAt(new DateTime().toLocalDateTime());
+
+		validator.validate(user, result);
+		if (result.hasErrors()) {
+			logger.debug(result);
+
+			// attributes for validation failures
+			attr.addFlashAttribute(
+					"org.springframework.validation.BindingResult.user", result);
+			attr.addFlashAttribute("user", user);
+
+			attr.addFlashAttribute("failureMsg",
+					"You have errors in your request.");
+
+			// redirect to the credit debit view page
+			return "redirect:/home/customer-setting";
+		}
 
 		ModifiedUser modifiedUser = new ModifiedUser();
-		modifiedUser.setCustomerID(current_user.getCustomerID());
+		modifiedUser.setCustomerID(currentUser.getCustomerID());
 		modifiedUser.setAddressLine1(user.getAddressLine1());
 		modifiedUser.setAddressLine2(user.getAddressLine2());
-		modifiedUser.setPassword(user.getPassword());
-		modifiedUser.setEmail(current_user.getEmail());
-		modifiedUser.setEmployeeOverride(current_user.getEmployeeOverride());
-		modifiedUser.setEnabled(current_user.getEnabled());
+		modifiedUser.setPassword(currentUser.getPassword());
+		modifiedUser.setEmail(currentUser.getEmail());
+		modifiedUser.setEmployeeOverride(currentUser.getEmployeeOverride());
+		modifiedUser.setEnabled(currentUser.getEnabled());
 		modifiedUser.setFirstName(user.getFirstName());
 		modifiedUser.setLastName(user.getLastName());
 		modifiedUser.setMiddleName(user.getMiddleName());
 		modifiedUser.setState(user.getState());
 		modifiedUser.setZipCode(user.getZipCode());
-		modifiedUser.setUserType(current_user.getUserType());
+		modifiedUser.setUserType(currentUser.getUserType());
 		modifiedUser.setPhone(user.getPhone());
-		modifiedUser.setCreatedAt(current_user.getCreatedAt());
-		modifiedUser.setUpdatedAt(current_user.getUpdatedAt());
-		modifiedUser.setLastLoginAt(current_user.getLastLoginAt());
+		modifiedUser.setCreatedAt(currentUser.getCreatedAt());
+		modifiedUser.setUpdatedAt(new DateTime().toLocalDateTime());
+		modifiedUser.setLastLoginAt(currentUser.getLastLoginAt());
 		modifiedUser.setStatus("pending");
+		modifiedUser.setEmployeeOverride(user.getEmployeeOverride());
 		long epoch = System.currentTimeMillis() / 1000;
 		modifiedUser.setRequestid(epoch);
 		modifiedService.addRequest(modifiedUser);
-		// internalUserService.updateInternalUser(user);
+
+		model.addAttribute("title", "Your Settings!");
+
+		attr.addFlashAttribute("successMsg",
+				"Your request was successful. Please wait for bank approval.");
 
 		return "redirect:/regular/int-employee-home";
 	}

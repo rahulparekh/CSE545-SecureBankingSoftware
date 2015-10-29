@@ -1369,7 +1369,7 @@ public class ExternalUserController {
 		modifiedUser.setCustomerID(currentUser.getCustomerID());
 		modifiedUser.setAddressLine1(user.getAddressLine1());
 		modifiedUser.setAddressLine2(user.getAddressLine2());
-		modifiedUser.setPassword(user.getPassword());
+		modifiedUser.setPassword(currentUser.getPassword());
 		modifiedUser.setEmail(currentUser.getEmail());
 		modifiedUser.setEmployeeOverride(currentUser.getEmployeeOverride());
 		modifiedUser.setEnabled(currentUser.getEnabled());
