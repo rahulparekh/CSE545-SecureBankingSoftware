@@ -186,7 +186,7 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 		//System.out.print("Inside gettransaction");
 		List<Transaction> transactions = new ArrayList<Transaction>();		
 		transactions = getSession()
-				.createQuery("from Transaction where status = :pending_status")
+				.createQuery("from Transaction where status = :pending_status Order By UpdatedAt DESC")
 				.setParameter("pending_status", pending_status)
 				.list();
 		        //getSession().evict(transactions);
@@ -220,24 +220,25 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
     	
 		  
     	
-    	if(!isTransactionPending(transaction.getTransactionID())) return false; 
+    	if(!isTransactionPending(transaction.getTransactionID())) {
+    		return false; 
+    	}
     	
-		    boolean result = accountService.creditorDebit(transaction);
-		    if(result){
-		    	transaction.setStatus("approved");
-		    	 getSession().merge(transaction);
-		    	// getSession().evict(transaction);
-		    	 
-		    	 return result;
-		    	 
-		    }
-		    else{
-		    	transaction.setStatus("pending");
-		    	getSession().merge(transaction);
-		    	//getSession().evict(transaction);
-		    	
-		    	return result;
-		    }
+		boolean result = accountService.creditorDebit(transaction);
+		if (result) {
+			transaction.setStatus("approved");
+			getSession().merge(transaction);
+			// getSession().evict(transaction);
+
+			return result;
+
+		} else {
+			transaction.setStatus("pending");
+			getSession().merge(transaction);
+			// getSession().evict(transaction);
+
+			return result;
+		}
     	
     }
 	

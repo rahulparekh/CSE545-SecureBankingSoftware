@@ -523,15 +523,7 @@ public class InternalUserController {
 	}
 	
 	
-	@RequestMapping(value = "/internalemployee-pending-critical-transaction", method = RequestMethod.GET)
-	public String getPendingCriticalTransactions(ModelMap model){
-		
-		List<Transaction> pendingTransaction = transactionService.getPendingCriticalTransaction();
-		model.addAttribute("pendingCriticalTransaction", pendingTransaction);
-		return "employee/int_employee_pending_critical_transaction";
 
-	}
-	
 	@RequestMapping(value = "/critical-approve", method = RequestMethod.POST)
 	public String CriticalTransactionApprove( ModelMap model,
 			  HttpServletRequest request, RedirectAttributes attr) {
@@ -664,8 +656,6 @@ public class InternalUserController {
 		modificationTransaction.setRecieverAccNumber(request.getParameter("receiverAccNumber"));
 		modificationTransaction.setTransactionID(request.getParameter("transactionID"));
 		model.addAttribute("modificationTransaction", modificationTransaction);
-		
-		
 		return "employee/int_employee_modify_critical_transaction";
 	
    }
@@ -1092,6 +1082,7 @@ public class InternalUserController {
 		
 		Transaction transaction = transactionService.getTransaction(request.getParameter("modifytransactionID"));
 		System.out.println("Amount test "+modificationTransaction.getAmount() + "SenderNumber "+ modificationTransaction.getSenderAccNumber());
+
 		
 		if(modificationTransaction.getAmount()!=null){
 			
@@ -1283,14 +1274,18 @@ public class InternalUserController {
 				System.out.print("HI");
 				return "redirect:/requests-pending-ext";
 			}
-		
-
-
-	
-		
-		
 	
 	
+	
+	@RequestMapping(value = "/internalemployee-pending-critical-transaction", method = RequestMethod.GET)
+	public String getPendingCriticalTransactions(ModelMap model){
+		
+		List<Transaction> pendingTransaction = transactionService.getPendingCriticalTransaction();
+		logger.debug("Pending transactions here:" + pendingTransaction);
+		model.addAttribute("pendingCriticalTransaction", pendingTransaction);
+		return "employee/int_employee_pending_critical_transaction";
+	
+	}
 /////**************INTERNAL REQUESTS
 	
 	@RequestMapping(value = "/requests-pending", method = RequestMethod.GET)
