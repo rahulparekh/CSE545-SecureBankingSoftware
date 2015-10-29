@@ -62,16 +62,16 @@
           <div id="fund-transfer">
             <div class="modal-body">
               <p>
-                    <label>Sender Account No.:</label>
-                    <form:input type="text" class="form-control" path="senderAccNumber" maxlength='17' placeholder="ex: 123456789"/>
+                    <label>Sender Account No.:           ${modificationTransaction.senderAccNumber}</label>
+                    <form:input type="hidden" class="form-control" path="senderAccNumber" maxlength='17' placeholder="ex: 123456789"/>
                   </p>                
               <hr>
              
               <hr>
               <div>
                 <p>
-                    <label>Receiver Account No.:</label>
-                    <form:input type="text" class="form-control" path = "recieverAccNumber" maxlength='17' placeholder="ex: 123456789"/>
+                    <label>Receiver Account No.:     ${modificationTransaction.recieverAccNumber} </label>
+                    <form:input type="hidden" class="form-control" path = "recieverAccNumber" maxlength='17' placeholder="ex: 123456789"/>
                   </p>   
                 </div>
 

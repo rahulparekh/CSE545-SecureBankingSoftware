@@ -59,16 +59,16 @@
           <div id="fund-transfer">
             <div class="modal-body">
               <p>
-                    <label>Sender Account No.:</label>
-                    <form:input type="text" class="form-control" path="senderAccNumber" maxlength='17' placeholder="ex: 123456789"/>
+                    <label>Sender Account No.:      ${modificationTransaction.senderAccNumber} </label>
+                    <form:input type ="hidden" path ="senderAccNumber" maxlength='17' placeholder="ex: 123456789"/>
                   </p>                
               <hr>
              
               <hr>
               <div>
                 <p>
-                    <label>Receiver Account No.:</label>
-                    <form:input type="text" class="form-control" path = "recieverAccNumber" maxlength='17' placeholder="ex: 123456789"/>
+                    <label>Receiver Account No.:     ${modificationTransaction.recieverAccNumber}</label>
+                    <form:input type="hidden" class="form-control" path = "recieverAccNumber" maxlength='17' placeholder="ex: 123456789"/>
                   </p>   
                 </div>
 
@@ -84,9 +84,10 @@
 			  <input type="hidden" name="modifytransactionID"  value="${modificationTransaction.transactionID}"></input>
               <td><button type="submit" class="btn btn-success">Approve</button></td>
               </form:form>
+              
               <form:form method="POST" action="internalemployee-pendingtransaction"> 
 			  <td><button type="submit" class="btn btn-primary">Back</button></td>
-			  </form:form>f
+			  </form:form>
 			  </tr>
             </div>
 			
