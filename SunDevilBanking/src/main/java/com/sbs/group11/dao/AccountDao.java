@@ -10,6 +10,5 @@ public interface AccountDao {
 	List<Account> findByCustomerID(String CustomerID);
 	Account findByAccountNumber(String accNumber);
 	public BigDecimal getBalance(String accNumber);
-	// public boolean creditOrDebit(Transaction transaction);
 	public void updateAccount(Account account);
 }
