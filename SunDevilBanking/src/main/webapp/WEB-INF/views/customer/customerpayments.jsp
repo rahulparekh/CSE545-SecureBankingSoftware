@@ -13,7 +13,7 @@
 	</div>
 	
 	
-	<form:form id="payment" modelAttribute="paymentrequest" method="POST" action="payments">
+	<form:form id="payment" modelAttribute="paymentrequest" method="POST" action="payments?${_csrf.parameterName}=${_csrf.token}" enctype="multipart/form-data">
 		<c:if test="${!empty successMsg}">
 			<div class="alert alert-success">${fn:escapeXml(successMsg)}</div>
 		</c:if>
@@ -50,6 +50,11 @@
 			<label>Amount to be Transferred:</label> <input type="text"
 				class="form-control" name="amount" placeholder="0.00">
 			<form:errors path="amount" cssClass="error" element="label"/>
+		</p>
+		<p>
+			<label>Upload Security Token :</label>
+            <input type="file" class="form-control" name="file">
+			
 		</p>
 		<div class="modal-footer">
 			<button type="submit" class="btn btn-success">Make Payment</button>
