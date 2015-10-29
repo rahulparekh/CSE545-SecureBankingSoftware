@@ -563,6 +563,27 @@ public class ExternalUserController {
 		// Get user details
 		User user = userService.getUserDetails();
 		model.put("user", user);
+		
+		
+		String key = request.getParameter("key");
+		try{
+	    System.out.println("received key is "+key);
+		
+		
+		String cipher = pkiService.paymentinfoencryption(user.getCustomerID(), key);
+		if(!pkiService.paymentinfodecryption(user.getCustomerID(), cipher))
+		{
+			attr.addFlashAttribute("failureMsg",
+					"Could not process your transaction. Private key doesnt match.");
+			return "redirect:/home/fund-transfer";
+		}
+		}catch(Exception e){
+			attr.addFlashAttribute("failureMsg",
+					"Could not process your transaction. Private key doesnt match.");
+			return "redirect:/home/fund-transfer";
+			
+		}
+		
 
 		// Get user accounts and other data for display
 		List<Account> accounts = accountService.getAccountsByCustomerID(user

@@ -64,9 +64,10 @@ public class PkiService {
 			return encryptedString;
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			return null;
+			//e.printStackTrace();
 		}
-		return null;
+	
 	}
 
 	@SuppressWarnings("finally")
@@ -127,6 +128,9 @@ public class PkiService {
 
 	//	System.out.println(payment);
 	//	System.out.println(" 1 ");
+		if(payment==null){
+			return false;
+		}
 		String alias_publicKey = userDAO.findByCustomerID(userId).getPublicKey();
 		System.out.println(alias_publicKey);
 
