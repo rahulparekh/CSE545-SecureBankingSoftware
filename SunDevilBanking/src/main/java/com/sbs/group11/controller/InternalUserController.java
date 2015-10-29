@@ -460,19 +460,35 @@ public class InternalUserController {
 			RedirectAttributes attr) {
 	    
 		
-		
+	try{
 		
 		Transaction transaction = transactionService.getTransaction(request.getParameter("modifytransactionID"));
 		System.out.println("Amount test "+modificationTransaction.getAmount() + "SenderNumber "+ modificationTransaction.getSenderAccNumber());
 		
 		if(modificationTransaction.getAmount()!=null){
-			BigDecimal amount = new BigDecimal(modificationTransaction.getAmount());
-			transaction.setAmount(amount);
-			transaction.setSenderAccNumber(modificationTransaction.getSenderAccNumber());
-			transaction.setReceiverAccNumber(modificationTransaction.getRecieverAccNumber());
+			
+			
+			
+				BigDecimal amount = new BigDecimal(modificationTransaction.getAmount());
 		
 			
-			Account accountSender = accountService.getAccountByNumber(modificationTransaction.getSenderAccNumber());
+				BigDecimal zeroamount = new BigDecimal(0);
+					if((amount.compareTo(zeroamount)==0) || (amount.compareTo(zeroamount)==-1)){
+				
+							attr.addFlashAttribute(
+						"failureMsg","Amount should be greater than zero");
+							return "redirect:/internalemployee-pendingtransaction";
+				
+					}
+			
+			
+			
+					transaction.setAmount(amount);
+					transaction.setSenderAccNumber(modificationTransaction.getSenderAccNumber());
+					transaction.setReceiverAccNumber(modificationTransaction.getRecieverAccNumber());
+		
+			
+					Account accountSender = accountService.getAccountByNumber(modificationTransaction.getSenderAccNumber());
 			
 			if(accountSender==null){
 				
@@ -521,10 +537,19 @@ public class InternalUserController {
 			  
 			attr.addFlashAttribute("failureMsg","Please put to a valid amount to process this transaction");
 			model.addAttribute("modificationTransaction", modificationTransaction);
-			return "redirect:/modify";
+			return "redirect:/internalemployee-pendingtransaction";
 		}
 		
+    
+		
 		return "redirect:/internalemployee-pendingtransaction";
+		
+		 }catch(Exception e ){
+				
+			 attr.addFlashAttribute("failureMsg","Please put to a valid amount to process this transaction");
+				model.addAttribute("modificationTransaction", modificationTransaction);
+				return "redirect:/internalemployee-pendingtransaction";
+			}
 	}
 	
 	
@@ -535,12 +560,24 @@ public class InternalUserController {
 	    
 		
 		
+	try{
 		
 		Transaction transaction = transactionService.getTransaction(request.getParameter("modifytransactionID"));
 		System.out.println("Amount test "+modificationTransaction.getAmount() + "SenderNumber "+ modificationTransaction.getSenderAccNumber());
 		
 		if(modificationTransaction.getAmount()!=null){
 			BigDecimal amount = new BigDecimal(modificationTransaction.getAmount());
+			BigDecimal zeroamount = new BigDecimal(0);
+			if((amount.compareTo(zeroamount)==0) || (amount.compareTo(zeroamount)==-1)){
+				
+				attr.addFlashAttribute(
+						"failureMsg","Amount should be greater than zero");
+					return "redirect:/internalemployee-pending-critical-transaction";
+				
+			}
+			
+			
+			
 			transaction.setAmount(amount);
 			transaction.setSenderAccNumber(modificationTransaction.getSenderAccNumber());
 			transaction.setReceiverAccNumber(modificationTransaction.getRecieverAccNumber());
@@ -595,10 +632,16 @@ public class InternalUserController {
 			  
 			attr.addFlashAttribute("failureMsg","Please put to a valid amount to process this transaction");
 			model.addAttribute("modificationTransaction", modificationTransaction);
-			return "redirect:/critical-modify";
+			return "redirect:/internalemployee-pending-critical-transaction";
 		}
 		
 		return "redirect:/internalemployee-pending-critical-transaction";
+	}catch(Exception e){
+		
+		attr.addFlashAttribute("failureMsg","Please put to a valid amount to process this transaction");
+		model.addAttribute("modificationTransaction", modificationTransaction);
+		return "redirect:/internalemployee-pending-critical-transaction";
+	}
 	}
 	
 	
@@ -620,6 +663,18 @@ public class InternalUserController {
 		System.out.println("Hi welcome to get");
 		// Overrrrride check
 		User user = userService.getUserbyCustomerID(request.getParameter("customerID"));
+		
+			if(user==null){
+				
+				attr.addFlashAttribute(
+						"failureMsg",
+						"The CustomerID entered is either Invalid or does exist");
+				return "redirect:/get-list-of-accounts-for-transaction";
+				
+			}
+		
+		
+		
 		if(user.getEmployeeOverride()==1){
 			List<Account> accounts = accountService.getAccountsByCustomerID(request.getParameter("customerID"));
 			model.addAttribute("accounts", accounts);
@@ -654,6 +709,16 @@ public class InternalUserController {
 		
 		// Overrrrrrride Check
 		Transaction transaction = transactionService.getTransaction(request.getParameter("transactionID"));
+		
+		if(transaction==null){
+			
+			attr.addFlashAttribute(
+					"failureMsg",
+					"TransactionID Invalid or Not Found");
+			return "redirect:/get-list-of-accounts-for-transaction";
+		}
+		
+		
 		Account account = accountService.getAccountByNumber(transaction.getSenderAccNumber());
 		User user = userService.getUserbyCustomerID(account.getUser().getCustomerID());
 		
