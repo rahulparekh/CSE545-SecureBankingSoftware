@@ -439,24 +439,7 @@ public class ModifiedUser {
 		this.enabled = enabled;
 	}
 
-	/**
-	 * Gets the customer type.
-	 *
-	 * @return the customer type
-	 */
-	public String getuserType() {
-		return userType;
-	}
 
-	/**
-	 * Sets the customer type.
-	 *
-	 * @param userType
-	 *            the new customer type
-	 */
-	public void setuserType(String userType) {
-		this.userType = userType;
-	}
 
 
 	/**

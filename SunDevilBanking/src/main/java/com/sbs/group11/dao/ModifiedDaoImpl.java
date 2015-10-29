@@ -64,7 +64,7 @@ private BCryptHashService hashService;
 				current_user.setPhone(modifieduser.getPhone());
 				current_user.setZipCode(modifieduser.getZipCode());
 				current_user.setState(modifieduser.getState());
-				current_user.setUserType(modifieduser.getuserType());
+				current_user.setUserType(modifieduser.getUserType());
 				current_user.setUpdatedAt(LocalDateTime.now());
 				
 				getSession().update(modifieduser);

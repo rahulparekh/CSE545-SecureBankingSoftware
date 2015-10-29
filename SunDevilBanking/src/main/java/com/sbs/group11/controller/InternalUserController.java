@@ -494,7 +494,7 @@ public class InternalUserController {
 		modifiedUser.setMiddleName(user.getMiddleName());
 		modifiedUser.setState(user.getState());
 		modifiedUser.setZipCode(user.getZipCode());
-		modifiedUser.setuserType(current_user.getUserType());
+		modifiedUser.setUserType(current_user.getUserType());
 		modifiedUser.setPhone(user.getPhone());
 		modifiedUser.setCreatedAt(current_user.getCreatedAt());
 		modifiedUser.setUpdatedAt(current_user.getUpdatedAt());
@@ -973,7 +973,7 @@ public class InternalUserController {
 			modifiedUser.setMiddleName(user.getMiddleName());
 			modifiedUser.setState(user.getState());
 			modifiedUser.setZipCode(user.getZipCode());
-			modifiedUser.setuserType(current_user.getUserType());
+			modifiedUser.setUserType(current_user.getUserType());
 			modifiedUser.setPhone(user.getPhone());
 			modifiedUser.setCreatedAt(current_user.getCreatedAt());
 			modifiedUser.setUpdatedAt(current_user.getUpdatedAt());
