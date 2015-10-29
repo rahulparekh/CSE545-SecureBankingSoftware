@@ -146,7 +146,7 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 		}
 		
 		if (filteredTransaction.size() > 0) {
-				return transactions;
+				return filteredTransaction;
 		} else {
 				return null;
 		}		
@@ -184,24 +184,9 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 				.createQuery("from Transaction where status = :pending_status Order By UpdatedAt DESC")
 				.setParameter("pending_status", pending_status)
 				.list();
-		        //getSession().evict(transactions);
+		       
 		
-          List<Transaction>  filteredTransaction = new ArrayList<Transaction>();
-		
-          for(int i=0; i < transactions.size();i++){
-			
-			Transaction transaction = transactions.get(i);
-			Account account = accountService.getAccountByNumber(transaction.getSenderAccNumber());
-			User user = userService.getUserbyCustomerID(account.getUser().getCustomerID());
-			
-			 if(user.getEmployeeOverride()==1){
-				
-				filteredTransaction.add(transaction);
-				
-			 }
-	 	}
-		
-		if (filteredTransaction.size() > 0) {
+		if (transactions.size() > 0) {
 				return transactions;
 		} else {
 				return null;
