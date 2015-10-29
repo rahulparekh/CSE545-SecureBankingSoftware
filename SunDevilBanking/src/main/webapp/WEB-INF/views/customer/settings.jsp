@@ -8,23 +8,32 @@
 <t:page>
 
 
-<div class="page-header">
-		<h1>Welcome ${fn:escapeXml(fullname)}</h1>
-	</div>
-          <h2>Settings:</h2>
-		  <br>
+		<div class="page-header">
+			<h1>Your Settings:</h1>
+		</div>
 
-          <div id="fund-transfer">
-            <div class="modal-body">
-            <form:form method="POST" modelAttribute="user" action="customer-setting_success">
+        <div id="customer-settings">
+
+		<c:if test="${!empty successMsg}">
+			<div class="alert alert-success">${fn:escapeXml(successMsg)}</div>
+		</c:if>
+		<c:if test="${!empty failureMsg}">
+			<div class="alert alert-danger">
+				${fn:escapeXml(failureMsg)}:
+				<form:errors path="*" cssClass="error" />
+			</div>
+		</c:if>
+
+		<div class="modal-body">
+            <form:form method="POST" modelAttribute="user" action="customer-setting">
               <form:input type="hidden" path="customerID" id="customerID"/>
 				<p>
 					<label>First Name:</label>
-					<form:input path="firstName" id="firstName"  minlength='2' maxlength='35' required='required'/>
+					<form:input class="form-control" path="firstName" id="firstName"  minlength='2' maxlength='35' required='required'/>
 				</p>
 				<p>
 					<label>Last Name:</label>
-					<form:input path="lastName" id="lastName" minlength='3' maxlength='70' required='required'/>
+					<form:input class="form-control" path="lastName" id="lastName" minlength='3' maxlength='70' required='required'/>
 				</p>
 				<p>
 					<label>Address:</label>
@@ -33,8 +42,8 @@
 				</p>
 				<p>
 					<label>Password:</label>
-					<form:input path="Password" id="Password" type="password"
-						class="form-control" placeholder="ex: user123" minlength='6' maxlength='60' required='required'/>
+					<input type="Password" id="Password" type="password"
+						class="form-control" minlength='6' maxlength='60' value=""/>
 				</p>
 				<p>
 					<label>Email:</label>
@@ -60,7 +69,7 @@
 						class="form-control" placeholder="AZ" />
 				</p>	
 				<p>
-					<label>Provide Access to view</label>
+					<label>Provide Access to Transactions</label>
 					<form:radiobutton path="employeeOverride"  
 						 value="1"/>Yes
 					<form:radiobutton path="employeeOverride"  
