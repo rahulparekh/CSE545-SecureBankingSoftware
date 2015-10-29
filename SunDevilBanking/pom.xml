@@ -126,6 +126,14 @@
     		<artifactId>javax.mail</artifactId>
 			<version>${javax.mail.version}</version>
 		</dependency>
+		
+		<!-- fileupload -->
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.3.1</version>
+		</dependency>
+		
 
 
 		<!-- Below declared dependencies are included for the servers who may complain 
