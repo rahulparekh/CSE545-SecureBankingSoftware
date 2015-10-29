@@ -13,6 +13,7 @@
 					</div>
 				</c:if>
 		
+		<h3>Welcome to Sun Devil Banking - Group 11</h3>
 		<h2 class="form-signin-heading">Please Login</h2>
 
 		<c:if test="${not empty SPRING_SECURITY_LAST_EXCEPTION}">

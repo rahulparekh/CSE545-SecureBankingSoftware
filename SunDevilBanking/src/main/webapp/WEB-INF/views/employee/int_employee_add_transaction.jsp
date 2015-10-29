@@ -47,6 +47,7 @@
             <li><a href="${pageContext.servletContext.contextPath}/internalemployee-pendingtransaction">Pending Transactions</a></li>
 			<li><a href="${pageContext.servletContext.contextPath}/int-employee-setting">Settings</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
+
           </ul>
           
         </div> <!-- sidebar -->

@@ -31,8 +31,16 @@ public class SecurityQuestion {
 	/** The Customer ID. Foreign Key */
 	@NotNull
 	@Size(min = 11, max = 11)
-	@Column(name = "CustomerID", nullable = false, length = 11, unique = true)
+	@Column(name = "CustomerID", nullable = false, length = 11 )
 	private String customerID;
+
+	public String getCustomerID() {
+		return customerID;
+	}
+
+	public void setCustomerID(String customerID) {
+		this.customerID = customerID;
+	}
 
 	/** The question. */
 	@NotNull
@@ -42,19 +50,19 @@ public class SecurityQuestion {
 
 	/** The answer. */
 	@NotNull
-	@Size(min = 60, max = 60)
+	@Size(min = 3, max = 60)
 	@Column(name = "Answer", nullable = false, length = 60)
 	private String answer;
 
 	/** The created at. */
-	@NotNull
-	@Column(name = "CreatedAt", nullable = false)
+	
+	@Column(name = "CreatedAt")
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
 	private LocalDateTime createdAt;
 
 	/** The updated at. */
-	@NotNull
-	@Column(name = "UpdatedAt", nullable = false)
+	
+	@Column(name = "UpdatedAt")
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
 	private LocalDateTime updatedAt;
 

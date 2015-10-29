@@ -63,15 +63,15 @@
             <div class="modal-body">
               <p>
                     <label>Sender Account No.:</label>
-                    <form:input type="text" class="form-control" path="senderAccNumber" placeholder="ex: 123456789"/>
+                    <form:input type="text" class="form-control" path="senderAccNumber" maxlength='17' placeholder="ex: 123456789"/>
                   </p>                
               <hr>
              
               <hr>
               <div>
                 <p>
-                    <label>Reciever Account No.:</label>
-                    <form:input type="text" class="form-control" path = "recieverAccNumber" placeholder="ex: 123456789"/>
+                    <label>Receiver Account No.:</label>
+                    <form:input type="text" class="form-control" path = "recieverAccNumber" maxlength='17' placeholder="ex: 123456789"/>
                   </p>   
                 </div>
 
@@ -89,7 +89,7 @@
               </form:form>
               <form:form method="POST" action="internalemployee-pending-critical-transaction"> 
 			  <td><button type="submit" class="btn btn-primary">Back</button></td>
-			  </form:form>f
+			  </form:form>
 			  </tr>
             </div>
 			
@@ -110,6 +110,8 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="${pageContext.servletContext.contextPath}/static/js/bootstrap.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.js"></script>
+	<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/additional-methods.js"></script>
     <script src="${pageContext.servletContext.contextPath}/static/js/jsKeyboard.js"></script>
     <script src="${pageContext.servletContext.contextPath}/static/js/common.js"></script>
   </body>

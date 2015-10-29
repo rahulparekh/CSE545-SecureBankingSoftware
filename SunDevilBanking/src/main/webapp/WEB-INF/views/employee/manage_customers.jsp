@@ -40,8 +40,7 @@
 
           <ul class="nav nav-sidebar">
             <li><a href="${pageContext.servletContext.contextPath}/manager-home">Home</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/internalemployee-pendingtransaction">Pending Transactions</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/internalemployee-pending-critical-transaction">Critical Transactions</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/internalemployee-pending-critical-transaction">Pending and Critical Transactions</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/manage-customer">Add Users</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/manager-customer-search">View-Delete Users</a></li>
 			<li><a href="${pageContext.servletContext.contextPath}/requests-pending-ext">Pending Requests</a></li>
@@ -120,6 +119,32 @@
 					<form:radiobutton path="employeeOverride"  
 						 value = "0"/>No	
 				</p>
+				
+				<label>Security Question1</label>
+				<input name="secQuestion1"  class="form-control" />
+				</p>
+				<p>
+				<label>Answer</label>
+				<input name="answer1"  class="form-control" />
+				</p>
+				<p>
+				<label>Security Question2</label>
+				<input name="secQuestion2"  class="form-control" />
+				</p>
+				<p>
+				<label>Answer</label>
+				<input name="answer2"  class="form-control" />
+				</p>
+				<p>
+				<label>Security Question3</label>
+				<input name="secQuestion3"  class="form-control" />
+				</p>
+				<p>
+				<label>Answer</label>
+				<input name="answer3"  class="form-control" />
+				</p>
+				
+				
 				<div class="modal-footer">
 					<button type="submit" class="btn btn-success">Submit</button>
 				</div>

@@ -1,5 +1,7 @@
 package com.sbs.group11.controller;
 
+import java.util.Set;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -19,17 +21,18 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.sbs.group11.model.ChangePassword;
 import com.sbs.group11.model.EmailSearch;
 import com.sbs.group11.model.SecurityQues;
+import com.sbs.group11.model.SecurityQuestion;
 import com.sbs.group11.model.User;
 import com.sbs.group11.service.InternalUserService;
-import com.sbs.group11.service.SecurityQuesService;
+//import com.sbs.group11.service.SecurityQuesService;
 
 
 @Controller
 public class AuthController {
 	
 	final static Logger logger = Logger.getLogger(AuthController.class);
-	@Autowired
-	SecurityQuesService securityQuesService;
+	//@Autowired
+	//SecurityQuesService securityQuesService;
 	@Autowired
 	InternalUserService internalUserService;
 	
@@ -73,18 +76,29 @@ public class AuthController {
     EmailSearch emailSearch,BindingResult result,RedirectAttributes attr){
     	model.addAttribute("title", "Forgot Password");
     	System.out.println(emailSearch.getEmail());
-    	SecurityQues securityques = securityQuesService.findSecurityquesByEmail(emailSearch.getEmail());
-    	if(securityques == null)
+    	User user = internalUserService.findUserByEmail(emailSearch.getEmail());
+    	if(user == null)
     	{
     			attr.addFlashAttribute("failureMsg",
     					"Not a Valid User");
     			return "redirect:/forgotpass";
     		
     	}
+    	Set <SecurityQuestion> secques = user.getSecurityQuestions();
+    	int i = 1;
+    	for (SecurityQuestion ques: secques ){
+    		model.addAttribute("question"+Integer.toString(i),ques.getQuestion());		
+    		i++;
+    	}
+    	/*SecurityQues securityques = securityQuesService.findSecurityquesByEmail(emailSearch.getEmail());
+    	if(securityques == null)
+    	{
+    			attr.addFlashAttribute("failureMsg",
+    					"Not a Valid User");
+    			return "redirect:/forgotpass";
+    		
+    	}*/
 		
-		model.addAttribute("question1",securityques.getQuestion1());
-		model.addAttribute("question2",securityques.getQuestion2());
-		model.addAttribute("question3",securityques.getQuestion3());
         return "auth/securityquestions";
          
     }
@@ -96,22 +110,59 @@ public class AuthController {
     SecurityQues securityQues,BindingResult result,RedirectAttributes attr) {
     	
     	System.out.println(securityQues.getEmail());
-    	SecurityQues securityques1 = securityQuesService.findSecurityquesByEmail(securityQues.getEmail());
-    	if(securityques1 == null)
+    	User user = internalUserService.findUserByEmail(securityQues.getEmail());
+    	if(user == null)
     	{
     			attr.addFlashAttribute("failureMsg",
-    					"Not a Valid User address");
+    					"Not a Valid User");
     			return "redirect:/forgotpass";
     		
     	}
-		if((securityques1.getAnswer1().equals(securityQues.getAnswer1())) &&  (securityques1.getAnswer2().equals(securityQues.getAnswer2()) 
-				&& (securityques1.getAnswer3().equals(securityQues.getAnswer3()))))
-			return "auth/confirmpassword";
+    	Set <SecurityQuestion> secques = user.getSecurityQuestions();
+    	
+    	
+    	for (SecurityQuestion ques: secques ){
+    		if(ques.getQuestion().equals(securityQues.getQuestion1()))
+    		{
+    			if((!ques.getAnswer().equals(securityQues.getAnswer1())))
+    			{
+    				
+    				attr.addFlashAttribute("failureMsg",
+    						"The answers entered are not as same as saved ones");
+    				return "redirect:/forgotpass";
+    			}
+    		}
+    		else if(ques.getQuestion().equals(securityQues.getQuestion2()))
+    		{
+    			if(!ques.getAnswer().equals(securityQues.getAnswer2()))
+    			{
+    				
+    				attr.addFlashAttribute("failureMsg",
+    						"The answers entered are not as same as saved ones");
+    				return "redirect:/forgotpass";
+    			}
+    			
+    		}
+    		else if(ques.getQuestion().equals(securityQues.getQuestion3()))
+    		{
+    			if(!ques.getAnswer().equals(securityQues.getAnswer3()))
+    			{
+    				
+    				attr.addFlashAttribute("failureMsg",
+    						"The answers entered are not as same as saved ones");
+    				return "redirect:/forgotpass";
+    			}
+    		}
+    		
+    	}
+    	
+    	
+    	
+    	
 		
-		else
-			attr.addFlashAttribute("failureMsg",
-					"The answers entered are not as same as saved ones");
-			return "redirect:/forgotpass";	
+		return "auth/confirmpassword";
+		
+		
        
     }
     

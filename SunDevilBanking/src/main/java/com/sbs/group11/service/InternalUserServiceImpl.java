@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import com.sbs.group11.dao.InternalUserDaoImpl;
 import com.sbs.group11.model.Account;
 import com.sbs.group11.model.Role;
+import com.sbs.group11.model.SecurityQuestion;
 import com.sbs.group11.model.User;
 /*
  * InternalUserServiceImpl: Used to implement various methods which internal
@@ -51,6 +52,11 @@ public class InternalUserServiceImpl implements InternalUserService {
 				break;
 			}
 		}
+		Set<SecurityQuestion> secquestions = user.getSecurityQuestions();
+		for(SecurityQuestion question:secquestions)
+		{
+			question.setCustomerID(customerID);			
+		}
 		user.setCustomerID(customerID);
 		user.setCreatedAt(LocalDateTime.now());
 		user.setLastLoginAt(LocalDateTime.now());
@@ -69,6 +75,9 @@ public class InternalUserServiceImpl implements InternalUserService {
 		role.setRole("ROLE_" + user.getUserType().toUpperCase());
 		roles.add(role);
 		user.setRole(roles);
+		
+		
+		
 		
 		if( user.getUserType().toString().equals("merchant") || user.getUserType().toString().equals("customer"))
 		{
@@ -168,6 +177,7 @@ public class InternalUserServiceImpl implements InternalUserService {
 
 	public void updatePassword(String email, String password) {
 	
+	    password = hashService.getBCryptHash(password);
 		dao.updatePassword(email,password);
 		
 	}

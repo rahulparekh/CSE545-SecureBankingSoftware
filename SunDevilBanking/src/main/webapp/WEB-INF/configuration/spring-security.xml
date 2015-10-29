@@ -7,8 +7,8 @@
 
 	<http auto-config="true" use-expressions="true">
 
-		<form-login login-page="/" login-processing-url="/login"
-			default-target-url="/home/" always-use-default-target="true"
+		<form-login login-page="/" login-processing-url="/login" 
+			authentication-success-handler-ref="customAuthSuccessHandler"
 			authentication-failure-url="/?err=1" username-parameter="email"
 			password-parameter="password" />
 
@@ -24,7 +24,13 @@
 		<intercept-url pattern="/home/merchant-payment-requests" access="hasRole('ROLE_MERCHANT')" />
 		<intercept-url pattern="/home/merchant-payments" access="hasRole('ROLE_MERCHANT')" />
 		<intercept-url pattern="/home/**" access="hasAnyRole('ROLE_CUSTOMER,ROLE_MERCHANT')" />
+		<intercept-url pattern="/admin**" access="hasRole('ROLE_ADMIN')" />
+		<intercept-url pattern="/manager**" access="hasRole('ROLE_MANAGER')" />
+		<intercept-url pattern="/employee**" access="hasRole('ROLE_EMPLOYEE')" />
 	</http>
+	
+	<beans:bean id="customAuthSuccessHandler"
+        class="com.sbs.group11.configuration.CustomAuthenticationSuccessHandler" />
 
 	<authentication-manager>
 		<authentication-provider>

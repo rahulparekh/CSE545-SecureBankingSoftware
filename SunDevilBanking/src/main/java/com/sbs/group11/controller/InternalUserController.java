@@ -2,9 +2,11 @@ package com.sbs.group11.controller;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.apache.log4j.Logger;
@@ -12,6 +14,7 @@ import org.apache.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -215,7 +218,7 @@ public class InternalUserController {
 	
 	@RequestMapping(value = "/manage-employee_success", method = RequestMethod.POST)
 	public String AddExternalUserpost(ModelMap model,
-			@ModelAttribute("user") User user, BindingResult result,RedirectAttributes redirectAttrs) {
+			@ModelAttribute("user") User user, BindingResult result,RedirectAttributes redirectAttrs, HttpServletRequest request) {
 		System.out.println("inside controller");
 		model.addAttribute("user",new User());
 		if(internalUserService.findUserByEmail(user.getEmail())!= null){
@@ -224,6 +227,36 @@ public class InternalUserController {
 					"User Already Exists with the same Email Address");
 			return "redirect:/sysadmin-home"; 
 		}
+		
+		Set<SecurityQuestion> secQuestions = new HashSet<SecurityQuestion>();
+		
+		SecurityQuestion question1 = new SecurityQuestion();
+		question1.setQuestion(request.getParameter("secQuestion1"));
+		question1.setAnswer(request.getParameter("answer1"));
+		question1.setCreatedAt(LocalDateTime.now());
+		question1.setUpdatedAt(LocalDateTime.now());
+		
+		
+		SecurityQuestion question2 = new SecurityQuestion();
+		question2.setQuestion(request.getParameter("secQuestion2"));
+		question2.setAnswer(request.getParameter("answer2"));
+		question2.setCreatedAt(LocalDateTime.now());
+		question2.setUpdatedAt(LocalDateTime.now());
+		
+		
+		SecurityQuestion question3 = new SecurityQuestion();
+		question3.setQuestion(request.getParameter("secQuestion3"));
+		question3.setAnswer(request.getParameter("answer3"));
+		question3.setCreatedAt(LocalDateTime.now());
+		question3.setUpdatedAt(LocalDateTime.now());
+		
+		
+		secQuestions.add(question1);
+		secQuestions.add(question2);
+		secQuestions.add(question3);
+		
+		
+		user.setSecurityQuestions(secQuestions);
 		internalUserService.addInternalUser(user);
 		SystemLog systemLog = new SystemLog(new DateTime().toLocalDateTime(),user.getFirstName(),user.getUserType(),"The user "+user.getFirstName()+" is created");
 		systemLogService.addLog(systemLog);
@@ -358,7 +391,7 @@ public class InternalUserController {
 	
 	@RequestMapping(value = "/manage-customer_success", method = RequestMethod.POST)
 	public String AddExternalUserpostManager(ModelMap model,
-			@ModelAttribute("user") User user, BindingResult result,RedirectAttributes redirectAttrs) {
+			@ModelAttribute("user") User user, BindingResult result,RedirectAttributes redirectAttrs,HttpServletRequest request ) {
 		System.out.println("inside controller");
 		model.addAttribute("user",new User());
 		if(internalUserService.findUserByEmail(user.getEmail())!= null){
@@ -367,6 +400,36 @@ public class InternalUserController {
 					"User Already Exists with the same Email Address");
 			return "redirect:/manager-customer-search"; 
 		}
+		
+		
+		Set<SecurityQuestion> secQuestions = new HashSet<SecurityQuestion>();
+		
+		SecurityQuestion question1 = new SecurityQuestion();
+		question1.setQuestion(request.getParameter("secQuestion1"));
+		question1.setAnswer(request.getParameter("answer1"));
+		question1.setCreatedAt(LocalDateTime.now());
+		question1.setUpdatedAt(LocalDateTime.now());
+		
+		
+		SecurityQuestion question2 = new SecurityQuestion();
+		question2.setQuestion(request.getParameter("secQuestion2"));
+		question2.setAnswer(request.getParameter("answer2"));
+		question2.setCreatedAt(LocalDateTime.now());
+		question2.setUpdatedAt(LocalDateTime.now());
+		
+		
+		SecurityQuestion question3 = new SecurityQuestion();
+		question3.setQuestion(request.getParameter("secQuestion3"));
+		question3.setAnswer(request.getParameter("answer3"));
+		question3.setCreatedAt(LocalDateTime.now());
+		question3.setUpdatedAt(LocalDateTime.now());
+		
+		
+		secQuestions.add(question1);
+		secQuestions.add(question2);
+		secQuestions.add(question3);
+		user.setSecurityQuestions(secQuestions);
+		
 		internalUserService.addInternalUser(user);
 		redirectAttrs.addFlashAttribute(
 				"successMsg",
@@ -374,9 +437,6 @@ public class InternalUserController {
 		return "redirect:/manager-customer-search";
 	}
 	
-	
-	
-
 
 	@RequestMapping(value = "/internalemployee-pendingtransaction", method = RequestMethod.GET)
 	public String getPendingTransactions(ModelMap model){
@@ -384,13 +444,9 @@ public class InternalUserController {
 		List<Transaction> pendingTransaction = transactionService.getPendingTransactions();
 		//System.out.println("Pending Transaction" + pendingTransaction.get(0).getTransactionID());
 		model.addAttribute("pendingTransaction", pendingTransaction);
-		if(user.getUserType()=="regular")
 			
 			return "employee/int_employee_pending_transaction";
-		else
-			
-			return "employee/manage_pending_transaction";
-
+		
 	}
 	
 	@RequestMapping(value = "/approve", method = RequestMethod.POST)
@@ -528,19 +584,35 @@ public class InternalUserController {
 			RedirectAttributes attr) {
 	    
 		
-		
+	try{
 		
 		Transaction transaction = transactionService.getTransaction(request.getParameter("modifytransactionID"));
 		System.out.println("Amount test "+modificationTransaction.getAmount() + "SenderNumber "+ modificationTransaction.getSenderAccNumber());
 		
 		if(modificationTransaction.getAmount()!=null){
-			BigDecimal amount = new BigDecimal(modificationTransaction.getAmount());
-			transaction.setAmount(amount);
-			transaction.setSenderAccNumber(modificationTransaction.getSenderAccNumber());
-			transaction.setReceiverAccNumber(modificationTransaction.getRecieverAccNumber());
+			
+			
+			
+				BigDecimal amount = new BigDecimal(modificationTransaction.getAmount());
 		
 			
-			Account accountSender = accountService.getAccountByNumber(modificationTransaction.getSenderAccNumber());
+				BigDecimal zeroamount = new BigDecimal(0);
+					if((amount.compareTo(zeroamount)==0) || (amount.compareTo(zeroamount)==-1)){
+				
+							attr.addFlashAttribute(
+						"failureMsg","Amount should be greater than zero");
+							return "redirect:/internalemployee-pendingtransaction";
+				
+					}
+			
+			
+			
+					transaction.setAmount(amount);
+					transaction.setSenderAccNumber(modificationTransaction.getSenderAccNumber());
+					transaction.setReceiverAccNumber(modificationTransaction.getRecieverAccNumber());
+		
+			
+					Account accountSender = accountService.getAccountByNumber(modificationTransaction.getSenderAccNumber());
 			
 			if(accountSender==null){
 				
@@ -589,10 +661,19 @@ public class InternalUserController {
 			  
 			attr.addFlashAttribute("failureMsg","Please put to a valid amount to process this transaction");
 			model.addAttribute("modificationTransaction", modificationTransaction);
-			return "redirect:/modify";
+			return "redirect:/internalemployee-pendingtransaction";
 		}
 		
+    
+		
 		return "redirect:/internalemployee-pendingtransaction";
+		
+		 }catch(Exception e ){
+				
+			 attr.addFlashAttribute("failureMsg","Please put to a valid amount to process this transaction");
+				model.addAttribute("modificationTransaction", modificationTransaction);
+				return "redirect:/internalemployee-pendingtransaction";
+			}
 	}
 	
 	
@@ -603,12 +684,24 @@ public class InternalUserController {
 	    
 		
 		
+	try{
 		
 		Transaction transaction = transactionService.getTransaction(request.getParameter("modifytransactionID"));
 		System.out.println("Amount test "+modificationTransaction.getAmount() + "SenderNumber "+ modificationTransaction.getSenderAccNumber());
 		
 		if(modificationTransaction.getAmount()!=null){
 			BigDecimal amount = new BigDecimal(modificationTransaction.getAmount());
+			BigDecimal zeroamount = new BigDecimal(0);
+			if((amount.compareTo(zeroamount)==0) || (amount.compareTo(zeroamount)==-1)){
+				
+				attr.addFlashAttribute(
+						"failureMsg","Amount should be greater than zero");
+					return "redirect:/internalemployee-pending-critical-transaction";
+				
+			}
+			
+			
+			
 			transaction.setAmount(amount);
 			transaction.setSenderAccNumber(modificationTransaction.getSenderAccNumber());
 			transaction.setReceiverAccNumber(modificationTransaction.getRecieverAccNumber());
@@ -663,10 +756,16 @@ public class InternalUserController {
 			  
 			attr.addFlashAttribute("failureMsg","Please put to a valid amount to process this transaction");
 			model.addAttribute("modificationTransaction", modificationTransaction);
-			return "redirect:/critical-modify";
+			return "redirect:/internalemployee-pending-critical-transaction";
 		}
 		
 		return "redirect:/internalemployee-pending-critical-transaction";
+	}catch(Exception e){
+		
+		attr.addFlashAttribute("failureMsg","Please put to a valid amount to process this transaction");
+		model.addAttribute("modificationTransaction", modificationTransaction);
+		return "redirect:/internalemployee-pending-critical-transaction";
+	}
 	}
 	
 	
@@ -688,6 +787,18 @@ public class InternalUserController {
 		System.out.println("Hi welcome to get");
 		// Overrrrride check
 		User user = userService.getUserbyCustomerID(request.getParameter("customerID"));
+		
+			if(user==null){
+				
+				attr.addFlashAttribute(
+						"failureMsg",
+						"The CustomerID entered is either Invalid or does exist");
+				return "redirect:/get-list-of-accounts-for-transaction";
+				
+			}
+		
+		
+		
 		if(user.getEmployeeOverride()==1){
 			List<Account> accounts = accountService.getAccountsByCustomerID(request.getParameter("customerID"));
 			model.addAttribute("accounts", accounts);
@@ -722,6 +833,16 @@ public class InternalUserController {
 		
 		// Overrrrrrride Check
 		Transaction transaction = transactionService.getTransaction(request.getParameter("transactionID"));
+		
+		if(transaction==null){
+			
+			attr.addFlashAttribute(
+					"failureMsg",
+					"TransactionID Invalid or Not Found");
+			return "redirect:/get-list-of-accounts-for-transaction";
+		}
+		
+		
 		Account account = accountService.getAccountByNumber(transaction.getSenderAccNumber());
 		User user = userService.getUserbyCustomerID(account.getUser().getCustomerID());
 		
