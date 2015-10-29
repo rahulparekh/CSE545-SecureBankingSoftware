@@ -10,47 +10,6 @@
         <h1>Account Statements</h1>
     </div>
 
-    <h2>Transaction search:</h2>
-    <form class="transaction-form" action="#">
-        <div class="form-group">
-          <div class="row">
-              <div class="col-xs-8">
-                  <label class="control-label">Account</label>
-                  <select class="form-control" id="select-account-statements" name="number">
-                    <option value="">Select an Account</option>
-                    <c:set var="count" value="0" scope="page" />
-                    <c:forEach items="${accounts}" var="account">
-                        <option id="acc${count}" value="${fn:escapeXml(account.number)}" ${transactionAccNumber == account.number? 'selected': ''}>${fn:escapeXml(account.name)}
-                            (*${fn:escapeXml(fn:substring(account.number, fn:length(account.number) - 4, fn:length(account.number)))})</option>
-                        
-                        <c:set var="count" value="${count + 1}" scope="page" />
-                    </c:forEach>
-                </select>
-              </div>
-          </div>            
-        </div>
-        <div class="form-group">
-          <div class="row">
-            <div class="col-xs-4">
-                <label class="control-label">Date From</label>
-                <input type="text" class="form-control" name="title" />
-            </div>
-
-            <div class="col-xs-4 selectContainer">
-                <label class="control-label">Date To</label>
-                <input type="text" class="form-control" name="title" />
-            </div>
-          </div>
-        </div>
-
-        <button type="submit" class="btn btn-success">Submit</button>
-
-    </form>
-
-    <hr>
-
-    <h2>Statements:</h2>
-
     <div class="row">
     <form:form id="statements-form" method="POST" modelAttribute="transaction" action="statements">
         

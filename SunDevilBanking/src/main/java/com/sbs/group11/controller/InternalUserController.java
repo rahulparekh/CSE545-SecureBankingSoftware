@@ -959,7 +959,7 @@ public class InternalUserController {
 			senderTransaction = new Transaction(
 					transactionService.getUniqueTransactionID(),
 					"Fund Transfer", receiverAccNumber,
-					request.getParameter("senderAccNumber"), "completed",
+					request.getParameter("senderAccNumber"), "approved",
 					"Debit", amount, isCritical,
 					request.getParameter("senderAccNumber"), pairId);
 
@@ -996,7 +996,7 @@ public class InternalUserController {
 			Transaction receiverTransaction = new Transaction(
 					transactionService.getUniqueTransactionID(),
 					"Fund Transfer", receiverAccNumber,
-					request.getParameter("senderAccNumber"), "completed",
+					request.getParameter("senderAccNumber"), "approved",
 					"Credit", amount, isCritical, receiverAccNumber, pairId);
 
 			receiverTransaction.setIsCritical("no");

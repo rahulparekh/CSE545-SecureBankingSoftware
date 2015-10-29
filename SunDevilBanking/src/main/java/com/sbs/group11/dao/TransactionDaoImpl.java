@@ -65,7 +65,7 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 								+ "from Transaction "
 								+ "where "
 								+ "TransactionOwner = :accNumber "
-								+ "and MONTH(updatedAt) <= MONTH(CURRENT_DATE - INTERVAL 1 MONTH)")
+								+ "and MONTH(updatedAt) <= MONTH(CURRENT_DATE)")
 				.setParameter("accNumber", accNumber).list();
 
 		Iterator itr = result.iterator();
@@ -88,7 +88,7 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 						"from Transaction "
 						+ "where "
 						+ "TransactionOwner = :accNumber "
-						+ "and status = 'completed' "
+						+ "and status = 'approved' "
 						+ "and MONTHNAME(updatedAt) = :month "
 						+ "and YEAR(updatedAt) = :year "
 						+ "ORDER BY UpdatedAt ASC")

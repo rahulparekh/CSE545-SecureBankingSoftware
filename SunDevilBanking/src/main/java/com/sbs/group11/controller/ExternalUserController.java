@@ -633,8 +633,8 @@ public class ExternalUserController {
 			String isCritical = transactionService.isCritical(amount,
 					CRITICAL_VALUE);
 
-			String statusSender = "completed";
-			String statusReceiver = "completed";
+			String statusSender = "approved";
+			String statusReceiver = "approved";
 			if (isCritical.equalsIgnoreCase("yes")) {
 				statusSender = "pending";
 				statusReceiver = "pairtxn";
