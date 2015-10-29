@@ -1099,7 +1099,21 @@ public class ExternalUserController {
 		} else {
 			senderAccountNumber = request.getParameter("customerAccNumber");
 			receiverAccountNumber = request.getParameter("merchantAccNumber");
-			;
+		}
+		
+		Account senderAccount = accountService.getAccountByNumber(senderAccountNumber);
+		
+		if (senderAccount == null) {
+			attr.addFlashAttribute("failureMsg",
+					"Could not process your request. Please try again or contact the bank.");
+			return "redirect:/home/merchant-payments";
+		}
+		
+		if(amount.compareTo(senderAccount.getBalance()) >= 0) {
+			attr.addFlashAttribute(
+					"failureMsg",
+					"Could not process your transaction. Debit amount cannot be higher than account balance");
+			return "redirect:/home/merchant-payments";
 		}
 
 		// Validate the PaymentReques model
