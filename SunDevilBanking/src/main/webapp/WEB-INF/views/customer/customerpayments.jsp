@@ -13,7 +13,7 @@
 	</div>
 	
 	
-	<form:form id="payment" modelAttribute="paymentrequest" method="POST" action="payments">
+	<form:form id="payment" modelAttribute="paymentrequest" method="POST" action="payments" name="payment">
 		<c:if test="${!empty successMsg}">
 			<div class="alert alert-success">${fn:escapeXml(successMsg)}</div>
 		</c:if>
@@ -50,6 +50,10 @@
 			<label>Amount to be Transferred:</label> <input type="text"
 				class="form-control" name="amount" placeholder="0.00">
 			<form:errors path="amount" cssClass="error" element="label"/>
+		</p>
+		<p>
+		<label>Private Key: </label>
+		<textarea resize: none rows="22" cols="77" name="key" form="payment">Enter your private key here</textarea>
 		</p>
 		<div class="modal-footer">
 			<button type="submit" class="btn btn-success">Make Payment</button>

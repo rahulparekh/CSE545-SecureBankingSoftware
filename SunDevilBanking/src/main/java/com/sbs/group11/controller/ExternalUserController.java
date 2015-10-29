@@ -1,5 +1,8 @@
 package com.sbs.group11.controller;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -7,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.UUID;
 
@@ -22,7 +26,9 @@ import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -37,6 +43,7 @@ import com.sbs.group11.service.AccountService;
 import com.sbs.group11.service.BCryptHashService;
 import com.sbs.group11.service.ModifiedService;
 import com.sbs.group11.service.OTPService;
+import com.sbs.group11.service.PkiService;
 import com.sbs.group11.service.SendEmailService;
 import com.sbs.group11.service.TransactionService;
 import com.sbs.group11.service.UserService;
@@ -55,7 +62,7 @@ public class ExternalUserController {
 
 	final static Logger logger = Logger.getLogger(ExternalUserController.class);
 	final private BigDecimal CRITICAL_VALUE = new BigDecimal(500);
-
+	
 	@Autowired
 	private UserService userService;
 
@@ -80,6 +87,9 @@ public class ExternalUserController {
 	
 	@Autowired
 	ModifiedService modifiedService;
+	
+	@Autowired
+	PkiService pkiService;
 	
 	@RequestMapping(value = "/process-otp", method = RequestMethod.POST)
 	public String processOTP(ModelMap model, HttpServletRequest request,
@@ -778,7 +788,7 @@ public class ExternalUserController {
 		model.addAttribute("title", "Payments");
 
 		List<User> merchants = userService.getUsersOfType("Merchant");
-		logger.info(merchants.get(0).toString());
+		//logger.info(merchants.get(0).toString());
 		model.put("merchants", merchants);
 
 		List<Account> userAccounts = accountService
@@ -789,12 +799,31 @@ public class ExternalUserController {
 
 	}
 
-	@RequestMapping(value = "/payments", method = RequestMethod.POST)
+	@RequestMapping(value = "/payments",method = RequestMethod.POST)
 	public String postPaymentsForCustomer(ModelMap model,
 			HttpServletRequest request,
 			@ModelAttribute("paymentrequest") PaymentRequest paymentRequest,
-			BindingResult result, RedirectAttributes attr) {
+			BindingResult result, RedirectAttributes attr) throws IOException {
+		
+		//ByteArrayInputStream stream = new   ByteArrayInputStream(file.getBytes());
+		//String key = IOUtils.toString(stream, "UTF-8");
+		
+		
+		//byte[] contents = file.getBytes();
+		//String key = new String(contents);
+		//System.out.println("key is "+key);
+		String key = request.getParameter("key");
+	    System.out.println("received key is "+key);
 		User user = userService.getUserDetails();
+		
+		String cipher = pkiService.paymentinfoencryption(user.getCustomerID(), key);
+		if(!pkiService.paymentinfodecryption(user.getCustomerID(), cipher))
+		{
+			attr.addFlashAttribute("failureMsg",
+					"Could not process your transaction. Private key doesnt match.");
+			return "redirect:/home/payments";
+		}
+		
 		model.put("user", user);
 		model.addAttribute("title", "Payments");
 
