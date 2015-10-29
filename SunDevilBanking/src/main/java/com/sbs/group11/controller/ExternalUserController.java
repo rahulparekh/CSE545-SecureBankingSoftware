@@ -1,9 +1,7 @@
 package com.sbs.group11.controller;
 
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -11,7 +9,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Scanner;
 import java.util.Set;
 import java.util.UUID;
 
@@ -27,13 +24,10 @@ import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.sbs.group11.helpers.FileUploadHelper;
 import com.sbs.group11.model.Account;
 import com.sbs.group11.model.ModifiedUser;
 import com.sbs.group11.model.OTP;
@@ -812,23 +806,21 @@ public class ExternalUserController {
 		
 		//byte[] contents = file.getBytes();
 		//String key = new String(contents);
-		//System.out.println("key is "+key);
 		String key = request.getParameter("key");
-	    System.out.println("received key is "+key);
+	    logger.info("received key is "+key);
 		User user = userService.getUserDetails();
 		
 		String cipher = pkiService.paymentinfoencryption(user.getCustomerID(), key);
-		if(!pkiService.paymentinfodecryption(user.getCustomerID(), cipher))
-		{
+		/*if(!pkiService.paymentinfodecryption(user.getCustomerID(), cipher)) {
 			attr.addFlashAttribute("failureMsg",
 					"Could not process your transaction. Private key doesnt match.");
 			return "redirect:/home/payments";
-		}
+		}*/
 		
 		model.put("user", user);
 		model.addAttribute("title", "Payments");
 		
-				List<Account> customerAccounts = accountService
+		List<Account> customerAccounts = accountService
 				.getAccountsByCustomerID(user.getCustomerID());
 
 		BigDecimal amount = transactionService.getBigDecimal(request
@@ -899,6 +891,13 @@ public class ExternalUserController {
 		// verify that the merchant account exists and is of type merchant
 		Account merchantAccount = accountService.getAccountByNumber(request
 				.getParameter("merchantAccNumber"));
+		
+		if ( amount.compareTo(customerAccount.getBalance()) >= 0 ) {
+			attr.addFlashAttribute(
+					"failureMsg",
+					"Could not process your transaction. Debit amount cannot be higher than account balance");
+			return "redirect:/home/payments";
+		}
 
 		if (merchantAccount != null && !merchantAccount.toString().isEmpty()) {
 
