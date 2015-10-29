@@ -72,7 +72,7 @@
             </div>
             </form:form>
             <p>
-            <form:form method="GET" action="get-transaction-for-transactionID">
+            <form:form method="POST" action="get-transaction-for-transactionID">
               <label>Transaction ID:</label>
               <input type="text" name="transactionID" class="form-control" placeholder="ex: 123456789">
              </p>
@@ -93,7 +93,7 @@
         	 <p>
         	 <tr>
         	   
-        	    <form:form method="GET" action= "getTransactionforAccount">
+        	    <form:form method="POST" action= "getTransactionforAccount">
                 <td><b>Account Number. :</b> ${account.number}</td>
                 <input type="hidden" name="accNumber" value="${account.number}"></input>
                 <td><button type="submit" class="btn btn-success" >View Transactions</button></td>

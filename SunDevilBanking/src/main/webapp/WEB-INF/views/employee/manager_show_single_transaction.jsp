@@ -40,11 +40,14 @@
         
         <div class="col-sm-3 col-md-2 sidebar">
 
-          <ul class="nav nav-sidebar">
-           <li><a href="${pageContext.servletContext.contextPath}/int-employee-home">Home</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/addTransaction">Add Transaction</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/internalemployee-pendingtransaction">Pending Transactions</a></li>
-			<li><a href="${pageContext.servletContext.contextPath}/int-employee-setting">Settings</a></li>
+
+           <ul class="nav nav-sidebar">
+            <li><a href="${pageContext.servletContext.contextPath}/manager-home">Home</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/internalemployee-pending-critical-transaction">Pending and Critical Transactions</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/manage-customer">Add Users</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/manager-customer-search">View-Delete Users</a></li>
+			<li><a href="${pageContext.servletContext.contextPath}/requests-pending-ext">Pending Requests</a></li>
+			<li><a href="${pageContext.servletContext.contextPath}/manager-setting">Settings</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
           </ul>
           
@@ -71,7 +74,6 @@
               </tr>
             </thead>
             <tbody>
-        	  <c:forEach var="transaction" items="${transactions}" varStatus="loopCounter">
         	   
               <tr>
                 <td>${transaction.senderAccNumber}</td>
@@ -83,12 +85,11 @@
 				
               </tr>
               
-             </c:forEach>
              
-                <form:form method="GET" action="int-employee-home" >
+             
+                <form:form method="GET" action="/manager-home" >
 				<td><button type="submit" class="btn btn-primary">Back</button></td>
 				</form:form>
-             
             </tbody>
           </table>
           
