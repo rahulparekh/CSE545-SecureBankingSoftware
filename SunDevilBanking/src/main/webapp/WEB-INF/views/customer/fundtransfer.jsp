@@ -12,7 +12,7 @@
 
 	<h2>Transfer Funds:</h2>
 
-	<form:form id="fund-transfer" action="fund-transfer" method="POST" modelAttribute="transaction">
+	<form:form id="fund-transfer" action="fund-transfer" method="POST" modelAttribute="transaction" name="fund-transfer">
 		<div class="modal-body">
 			<c:if test="${!empty successMsg}">
 				<div class="alert alert-success">						
@@ -97,6 +97,12 @@
 				<input name="amount" type="text" class="form-control" placeholder="e.g. 10.50">
 				<form:errors path="amount" cssClass="error" element="label"/>
 			</p>
+			
+		<p>
+		<label>Private Key: </label>
+		<textarea resize: none rows="22" cols="77" name="key" form="fund-transfer">Enter your private key here</textarea>
+		</p>
+		
 		</div>
 		<div class="modal-footer">
 			<button type="submit" class="btn btn-success">Transfer Funds</button>
