@@ -33,11 +33,6 @@ public class PkiService {
 	@Transactional
 	public String paymentinfoencryption(String userId, String oprivatekey) {
 
-		// get corresponding userName of userID
-		String userName = userDAO.findByCustomerID(userId).getFirstName();
-		System.out.println(userName);
-		// String userName="rishi";
-
 		try {
 
 			com.sun.org.apache.xml.internal.security.Init.init();
@@ -55,7 +50,7 @@ public class PkiService {
 			generateCipher.init(Cipher.ENCRYPT_MODE, pkey);
 			//System.out.println(" 1 ");
 
-			byte[] testvals = generateCipher.doFinal(Base64.decode(userName));
+			byte[] testvals = generateCipher.doFinal(Base64.decode(userId));
 			BASE64Encoder b64 = new BASE64Encoder();
 		
 			String encryptedString = b64.encode(testvals);
@@ -98,15 +93,6 @@ public class PkiService {
 			// create private key
 			String privatekey = encoder.encode(info_private.getEncoded());
 			System.out.println(("Private Key " + "\n" + privatekey));
-
-			// Send an email to the user
-			// SimpleMailMessage messageemail = new SimpleMailMessage();
-			// messageemail.setTo(mailer);
-			// messageemail.setSubject("Your private Key");
-			// messageemail.setText("Private Key "+"\n"+privatekey+"\n");
-			//
-			// mailSender.send(messageemail);
-
 			SendEmailService email = new SendEmailServiceImpl();
 			email.sendEmail(mailer, "Your private Key", "Private Key " + "\n"
 					+ privatekey + "\n");
@@ -126,8 +112,7 @@ public class PkiService {
 	@Transactional
 	public boolean paymentinfodecryption(String userId, String payment) {
 
-	//	System.out.println(payment);
-	//	System.out.println(" 1 ");
+
 		if(payment==null){
 			return false;
 		}
@@ -145,9 +130,6 @@ public class PkiService {
 			System.out.println(" Incatch ");
 			e1.printStackTrace();
 		}
-
-		String userName = userDAO.findByCustomerID(userId).getFirstName();
-	
 
 		try {
 			
@@ -167,12 +149,16 @@ public class PkiService {
 			
 		
 
-			byte[] usernamedecrypt = cipher.doFinal(decryption);
+			byte[] userIddecrypt = cipher.doFinal(decryption);
 		
 
-			String uname = Base64.encode(usernamedecrypt);
+			String decryptedUserId = Base64.encode(userIddecrypt);
 	
-			if (uname.equals(userName)) {
+			System.out.println("decryptedUserId  is **** "+decryptedUserId);
+			
+			System.out.println("userId  is **** "+userId);
+			
+			if (decryptedUserId.equals(userId)) {
 				return true;
 			}
 

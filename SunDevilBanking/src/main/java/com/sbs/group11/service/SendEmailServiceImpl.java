@@ -56,29 +56,25 @@ public class SendEmailServiceImpl implements SendEmailService {
 
 		Properties props = new Properties();
 		props.put("mail.smtp.host",
-				environment.getRequiredProperty("mail.smtp.host"));
+				"smtp.gmail.com");
 		props.put("mail.smtp.socketFactory.port",
-				environment.getRequiredProperty("mail.smtp.socketFactory.port"));
-		props.put("mail.smtp.socketFactory.class", environment
-				.getRequiredProperty("mail.smtp.socketFactory.class"));
+				"465");
+		props.put("mail.smtp.socketFactory.class","javax.net.ssl.SSLSocketFactory");
 		props.put("mail.smtp.auth",
-				environment.getRequiredProperty("mail.smtp.auth"));
+				"true");
 		props.put("mail.smtp.port",
-				environment.getRequiredProperty("mail.smtp.port"));
+				"465");
 
 		Session session = Session.getDefaultInstance(props,
 				new javax.mail.Authenticator() {
 					protected PasswordAuthentication getPasswordAuthentication() {
-						return new PasswordAuthentication(environment
-								.getRequiredProperty("EmailAddress"),
-								environment
-										.getRequiredProperty("EmailPassword"));
+						return new PasswordAuthentication("sundevilsbank11@gmail.com",
+								"devilbank");
 					}
 				});
 		try {
 			MimeMessage message = new MimeMessage(session);
-			message.setFrom(new InternetAddress(environment
-					.getRequiredProperty("EmailAddress")));
+			message.setFrom(new InternetAddress("sundevilsbank11@gmail.com"));
 			message.addRecipient(Message.RecipientType.TO, new InternetAddress(
 					emailAddress));
 			message.setSubject(subject);
