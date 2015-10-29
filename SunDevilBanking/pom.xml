@@ -143,8 +143,12 @@
 			<artifactId>commons-fileupload</artifactId>
 			<version>1.3.1</version>
 		</dependency>
-		
-
+		<!-- Fileutilities apache commons io-->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>1.3.2</version>
+		</dependency>
 
 		<!-- Below declared dependencies are included for the servers who may complain 
 			about servlet/jstl missing dependency -->
