@@ -790,11 +790,11 @@ public class ExternalUserController {
 		User user = userService.getUserDetails();
 		
 		String cipher = pkiService.paymentinfoencryption(user.getCustomerID(), key);
-		/*if(!pkiService.paymentinfodecryption(user.getCustomerID(), cipher)) {
+		if(!pkiService.paymentinfodecryption(user.getCustomerID(), cipher)) {
 			attr.addFlashAttribute("failureMsg",
 					"Could not process your transaction. Private key doesnt match.");
 			return "redirect:/home/payments";
-		}*/
+		}
 		
 		model.put("user", user);
 		model.addAttribute("title", "Payments");
