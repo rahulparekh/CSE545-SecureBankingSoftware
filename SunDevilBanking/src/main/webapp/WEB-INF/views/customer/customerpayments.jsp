@@ -53,10 +53,10 @@
 				class="form-control" name="amount" placeholder="0.00">
 			<form:errors path="amount" cssClass="error" element="label"/>
 		</p>
-
+		<hr>
 		<p>
-		<label>Private Key: </label>
-		<textarea resize: none rows="22" cols="77" name="key" form="payment">Enter your private key here</textarea>
+			<label>Your Private Key: </label>
+			<textarea resize="none" rows="22" cols="77" name="key" form="payment" class="form-control">Enter your private key here</textarea>
 		</p>
 
 		
