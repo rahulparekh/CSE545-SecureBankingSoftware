@@ -9,4 +9,7 @@ package com.sbs.group11.service;
 public interface SendEmailService {
 
 	boolean sendEmail(String emailAddress, String subject, String content);
+
+	boolean sendEmailWithAttachment(String emailAddress, String subject, String content);	
+	
 }
