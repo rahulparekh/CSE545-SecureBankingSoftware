@@ -75,14 +75,30 @@ public class AccountDaoImpl extends AbstractDao<Integer, Account> implements
         
 		logger.debug("amount.compare: "+ amount.compareTo(zero) + " amount:balance " + amount.compareTo(senderAcc.getBalance()));
 		
+		// For other transactions
 		if(amount.compareTo(zero) == 1 && senderAcc.getBalance().compareTo(amount) == 1){
-			logger.debug("Inside Account updation");
-			senderAcc.setBalance(senderAcc.getBalance().subtract(amount));
-			senderAcc.setUpdatedAt(now);
-			recieverAcc.setBalance(recieverAcc.getBalance().add(amount));
-			recieverAcc.setUpdatedAt(now);
-			getSession().update(senderAcc);
-			getSession().update(recieverAcc);
+			
+			// Means credit debit
+			if (senderAcc.getNumber().equals(recieverAcc.getNumber())) {
+				if(transaction.getType().equalsIgnoreCase("credit")) {
+					senderAcc.setBalance(senderAcc.getBalance().add(amount));
+				}
+				
+				// otherwise debit
+				senderAcc.setBalance(senderAcc.getBalance().subtract(amount));
+				
+			} else {
+				
+				logger.debug("Inside Account updation");
+				senderAcc.setBalance(senderAcc.getBalance().subtract(amount));
+				senderAcc.setUpdatedAt(now);
+				recieverAcc.setBalance(recieverAcc.getBalance().add(amount));
+				recieverAcc.setUpdatedAt(now);
+				getSession().update(senderAcc);
+				getSession().update(recieverAcc);
+				
+			}
+			
 			return true;
 			
 		}	

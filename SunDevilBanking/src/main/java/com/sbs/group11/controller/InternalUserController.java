@@ -687,7 +687,7 @@ public class InternalUserController {
 	try{
 		
 		Transaction transaction = transactionService.getTransaction(request.getParameter("modifytransactionID"));
-		System.out.println("Amount test "+modificationTransaction.getAmount() + "SenderNumber "+ modificationTransaction.getSenderAccNumber());
+		logger.debug("Amount test "+modificationTransaction.getAmount() + "SenderNumber "+ modificationTransaction.getSenderAccNumber());
 		
 		if(modificationTransaction.getAmount()!=null){
 			BigDecimal amount = new BigDecimal(modificationTransaction.getAmount());
@@ -865,6 +865,7 @@ public class InternalUserController {
 	public String getPendingCriticalTransactions(ModelMap model){
 		
 		List<Transaction> pendingTransaction = transactionService.getPendingCriticalTransaction();
+		logger.debug("Pending transactions here:" + pendingTransaction);
 		model.addAttribute("pendingCriticalTransaction", pendingTransaction);
 		return "employee/int_employee_pending_critical_transaction";
 
