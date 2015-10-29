@@ -97,11 +97,11 @@
 				<input name="amount" type="text" class="form-control" placeholder="e.g. 10.50">
 				<form:errors path="amount" cssClass="error" element="label"/>
 			</p>
-			
-		<p>
-		<label>Private Key: </label>
-		<textarea resize: none rows="22" cols="77" name="key" form="fund-transfer">Enter your private key here</textarea>
-		</p>
+			<hr>
+			<p>
+				<label>Your Private Key: </label>
+				<textarea resize="none" rows="22" cols="77" name="key" form="fund-transfer" class="form-control">Enter your private key here</textarea>
+			</p>
 		
 		</div>
 		<div class="modal-footer">
