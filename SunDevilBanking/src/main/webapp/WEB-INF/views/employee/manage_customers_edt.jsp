@@ -116,11 +116,7 @@
 				<div class="modal-footer">
 					<button type="submit" class="btn btn-success" name= "delete" value="delete">Delete</button>
 				</div>
-				<div class="modal-footer">
-					<button type="submit" class="btn btn-success" name = "update" value = "update">Update</button>
-				</div>
-				
-				<div id="virtualKeyboard"></div>
+								<div id="virtualKeyboard"></div>
 			</div>
 		</form:form>
 	    </div>

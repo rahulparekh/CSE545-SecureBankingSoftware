@@ -329,16 +329,6 @@ public class InternalUserController {
 	}
 	
 	
-	@RequestMapping(value = "/customer_success", params="update" ,method = RequestMethod.POST)
-	public String addUserInfoPostManager(ModelMap model,
-			@ModelAttribute("user") User user, BindingResult result,RedirectAttributes redirectAttrs) {
-		model.addAttribute("user",new User());
-		internalUserService.updateInternalUser(user);
-		redirectAttrs.addFlashAttribute(
-				"successMsg",
-				"Updated the userinformation Successfully");
-		return "redirect:/manager-customer-search";
-	}
 	
 
 	@RequestMapping(value = "/customer_success", params = "delete" ,method = RequestMethod.POST)
@@ -886,56 +876,7 @@ public class InternalUserController {
 			
 		}
 		
-		@RequestMapping(value = "/int-employee-customer-search", method = RequestMethod.GET)
-		public String getCustomerSearchIntEmployee(ModelMap model) {
-			return "employee/int_employee_customer_search";
-		}
-
 		
-		@RequestMapping(value = "/int-employee-customer-search", method = RequestMethod.POST)
-		public String SearchInternalUserIntEmployee(ModelMap model,
-				@ModelAttribute("empSearch") EmployeeSearch empSearch, BindingResult result,RedirectAttributes redirectAttrs) {
-			
-			User user = internalUserService.searchExternalUser(empSearch.getEmployeeID());
-			if (user == null){
-				redirectAttrs.addFlashAttribute(
-						"failureMsg",
-						"Not a valid User");
-				return "redirect:/sysadmin-home";
-			}
-			redirectAttrs.addFlashAttribute("user", user);
-			return "redirect:/edit-customer-int";
-		}
-		
-		
-		
-		@RequestMapping(value = "/edit-customer-int", method = RequestMethod.GET)
-		public String getEditUserInfoIntEmployee(ModelMap model,@ModelAttribute("user") User user) {
-			Map<String,String> userTypes = new LinkedHashMap<String,String>();
-			userTypes.put("customer", "customer");
-			userTypes.put("merchant", "merchant");
-			model.addAttribute("user", user);
-			model.addAttribute("userTypes", userTypes);
-			return "employee/int_employee_customers_edt";
-		}
-		
-		
-		@RequestMapping(value = "/customer_success-int", params="update" ,method = RequestMethod.POST)
-		public String addUserInfoPostIntEmployee(ModelMap model,
-				@ModelAttribute("user") User user, BindingResult result,RedirectAttributes redirectAttrs) {
-			model.addAttribute("user",new User());
-			internalUserService.updateInternalUser(user);
-			redirectAttrs.addFlashAttribute(
-					"successMsg",
-					"UserInformation updated Successfully");
-			return "redirect:/int-employee-customer-search";
-		}
-			
-			
-			
-			
-		
-
 
 
 	//**transactions

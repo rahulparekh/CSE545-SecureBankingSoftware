@@ -37,10 +37,12 @@ public class InternalUserDaoImpl extends AbstractDao<Integer, User> implements I
 	}
 
 	public void deleteInternalUserById(String id) {
-		Query query = getSession().createSQLQuery(
-				"delete from User where CustomerID = :id");
-		query.setParameter("id", id);
-		query.executeUpdate();
+		//Query query = getSession().createSQLQuery(
+			//	"delete from User where CustomerID = :id");
+		//query.setParameter("id", id);
+		//query.executeUpdate();
+		User user = findUserByID(id);
+		getSession().delete(user);
 	}
 
 	@SuppressWarnings("unchecked")
