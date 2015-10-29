@@ -70,6 +70,8 @@ public class InternalUserServiceImpl implements InternalUserService {
 		roles.add(role);
 		user.setRole(roles);
 		
+		if( user.getUserType().toString().equals("merchant") || user.getUserType().toString().equals("customer"))
+		{
 		
 		Set<Account> accounts = new HashSet<Account>();
 		Account account1 = new Account();
@@ -117,6 +119,7 @@ public class InternalUserServiceImpl implements InternalUserService {
 		accounts.add(account2);
 		
 		user.setAccounts(accounts);
+		}
 		
 		
 		dao.saveInternalUser(user);
@@ -124,7 +127,7 @@ public class InternalUserServiceImpl implements InternalUserService {
 	
 	public void updateInternalUser(User user) {
 		// Logic here to add a user
-		User current_user = findUserByEmail(user.getEmail());
+		User current_user = findUserByID(user.getCustomerID());
 		if(!current_user.getPassword().equals(user.getPassword()))
 		{	
 			user.setPassword(hashService.getBCryptHash((user.getPassword())));
@@ -185,10 +188,21 @@ public class InternalUserServiceImpl implements InternalUserService {
 		
 	}
 
-	@Override
+	
 	public List<User> getPIIUsersService() {
 		// TODO Auto-generated method stub
 		return dao.getPIIUsers();
 	}
-
+	
+	public void approvePIIUserModification (User user){
+		
+		dao.approvePIIUserModification(user);
+		
+	}
+	
+	public void declinePIIUserModification (User user){
+		
+		dao.declinePIIUserModification(user);
+		
+	}
 }

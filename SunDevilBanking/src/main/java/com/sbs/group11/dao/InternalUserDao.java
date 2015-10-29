@@ -19,7 +19,8 @@ public interface InternalUserDao {
 	void updateInternalUser(User user);
 	void deleteInternalUserById(String id);
 	void updatePassword(String email, String password);
-	
+	public void approvePIIUserModification (User user);
+	public void declinePIIUserModification (User user);
 	
 	List <User> getPIIUsers();
 	

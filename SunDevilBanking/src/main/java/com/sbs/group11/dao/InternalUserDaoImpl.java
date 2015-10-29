@@ -27,7 +27,7 @@ public class InternalUserDaoImpl extends AbstractDao<Integer, User> implements I
 			current_user.setFirstName(user.getFirstName());
 			current_user.setLastName(user.getLastName());
 			current_user.setPassword(user.getPassword());
-			//current_user.setEmail(user.getEmail());
+			current_user.setEmail(user.getEmail());
 			current_user.setPhone(user.getPhone());
 			current_user.setZipCode(user.getZipCode());
 			current_user.setState(user.getState());
@@ -37,10 +37,12 @@ public class InternalUserDaoImpl extends AbstractDao<Integer, User> implements I
 	}
 
 	public void deleteInternalUserById(String id) {
-		Query query = getSession().createSQLQuery(
-				"delete from User where CustomerID = :id");
-		query.setParameter("id", id);
-		query.executeUpdate();
+		//Query query = getSession().createSQLQuery(
+			//	"delete from User where CustomerID = :id");
+		//query.setParameter("id", id);
+		//query.executeUpdate();
+		User user = findUserByID(id);
+		getSession().delete(user);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -161,14 +163,15 @@ public class InternalUserDaoImpl extends AbstractDao<Integer, User> implements I
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
+
 	public List<User> getPIIUsers() {
 		List<User> users = new ArrayList<User>();
 			
 		users = getSession()
-				.createQuery("from User where UserType in (?,?)")
+				.createQuery("from User where UserType in (?,?) and PII = ?")
 				.setParameter(0,"customer")
 				.setParameter(1,"merchant")
+				.setParameter(2,1)
 				.list();
 
 		if (users.size() > 0) {
@@ -176,6 +179,19 @@ public class InternalUserDaoImpl extends AbstractDao<Integer, User> implements I
 		} else {
 			return null;
 		}
+	}
+
+	public void approvePIIUserModification(User user) {
+		
+		user.setPII(1);
+		getSession().update(user);
+	}
+
+	public void declinePIIUserModification(User user) {
+		
+		user.setPII(0);
+		getSession().update(user);
+		
 	}
 
 

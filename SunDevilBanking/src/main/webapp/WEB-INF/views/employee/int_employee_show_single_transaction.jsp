@@ -40,7 +40,14 @@
         
         <div class="col-sm-3 col-md-2 sidebar">
 
-          
+
+          <ul class="nav nav-sidebar">
+            <li><a href="${pageContext.servletContext.contextPath}/int-employee-home">Home</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/addTransaction">Add Transaction</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/internalemployee-pendingtransaction">Pending Transactions</a></li>
+			<li><a href="${pageContext.servletContext.contextPath}/int-employee-setting">Settings</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
+          </ul>
           
         </div> <!-- sidebar -->
 

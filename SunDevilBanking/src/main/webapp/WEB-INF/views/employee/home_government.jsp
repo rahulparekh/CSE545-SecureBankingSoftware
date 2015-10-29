@@ -1,9 +1,12 @@
 <%@page language="java" contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,7 +15,7 @@
     <meta name="author" content="">
     <link rel="icon" href="${pageContext.servletContext.contextPath}/static/favicon.ico">
 
-    <title>SBS Manager Home - Group 11</title>
+    <title>SBS Group 11 System Admin Home</title>
 
     <!-- Bootstrap core CSS -->
     <link href="${pageContext.servletContext.contextPath}/static/css/bootstrap.min.css" rel="stylesheet">
@@ -37,13 +40,9 @@
         
         <div class="col-sm-3 col-md-2 sidebar">
 
-           <ul class="nav nav-sidebar">
-            <li><a href="${pageContext.servletContext.contextPath}/manager-home">Home</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/internalemployee-pending-critical-transaction">Pending and Critical Transactions</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/manage-customer">Add Users</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/manager-customer-search">View-Delete Users</a></li>
-			<li><a href="${pageContext.servletContext.contextPath}/requests-pending-ext">Pending Requests</a></li>
-			<li><a href="${pageContext.servletContext.contextPath}/manager-setting">Settings</a></li>
+          <ul class="nav nav-sidebar">
+             <li><a href="${pageContext.servletContext.contextPath}/sysadmin-home">Home</a></li>
+          
             <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
           </ul>
           
@@ -52,20 +51,32 @@
         <div class="col-sm-9 col-md-10 main">
 
           <div class="page-header">
-            <h1>SBS - Welcome Manager </h1>
+            <h1>SBS - Welcome System Admin</h1>
           </div>
 
           <h2>Search By:</h2>
 		  <br>
 
-          <div id="payment">
+          <div id="sysadmin">
+          <form:form method="POST" modelAttribute="empSearch">
+          	<c:if test="${!empty successMsg}">
+					<div class="alert alert-success">						
+						${fn:escapeXml(successMsg)}
+					</div>
+				</c:if>
+          	<c:if test="${!empty failureMsg}">
+					<div class="alert alert-danger">						
+						${fn:escapeXml(failureMsg)}
+					</div>
+				</c:if>
             <p>
-              <label>Account No:</label>
-              <input type="text" class="form-control" placeholder="ex: 123456789">
+              <label>Employee ID:</label>
+              <form:input  path = "employeeID" type="text" class="form-control" placeholder="ex: 123456789" minlength ='11' maxlength = '11'></form:input>
             </p>
-			<div class="modal-footer">                
-              <button type="button" class="btn btn-success">Search</button>
+			<div class="modal-footer" >                
+              <button type="submit" class="btn btn-success">Search</button>
             </div>
+		   </form:form>
           </div><!-- /payment -->
           
         </div> <!-- /main -->

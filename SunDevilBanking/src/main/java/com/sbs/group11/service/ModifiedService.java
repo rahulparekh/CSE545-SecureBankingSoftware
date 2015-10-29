@@ -8,7 +8,7 @@ import com.sbs.group11.model.User;
 public interface ModifiedService {
 	void approveRequest(ModifiedUser modifieduser);
 	void denyRequest(ModifiedUser modifieduser);
-	ModifiedUser findModifiedUserByID(String ID);
+	ModifiedUser findModifiedUserByRequestID(String ID);
 	List<ModifiedUser> getAllInternalModifiedUsers();
 	List<ModifiedUser> getAllExternalModifiedUsers();
 	void addRequest(ModifiedUser modifieduser);

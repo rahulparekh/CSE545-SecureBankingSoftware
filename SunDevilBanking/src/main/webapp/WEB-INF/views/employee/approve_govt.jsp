@@ -13,7 +13,7 @@
     <meta name="author" content="">
     <link rel="icon" href="${pageContext.servletContext.contextPath}/static/favicon.ico">
 
-    <title>SBS System Admin - Group 11</title>
+    <title>SBS Manager - Group 11</title>
 
     <!-- Bootstrap core CSS -->
     <link href="${pageContext.servletContext.contextPath}/static/css/bootstrap.min.css" rel="stylesheet">
@@ -55,44 +55,44 @@
           <div id="fund-transfer">
           
             <div class="modal-body">
-              <p><label>FirstName:${modifiedUser.firstName}</label></p>
-              <p><label>MiddleName: ${modifiedUser.middleName}</label></p>
-              <p><label>LastName:${modifiedUser.lastName}</label></p>
+               <p><label>Customer ID:${PIIUser.customerID}</label></p>
+              <p><label>FirstName:${PIIUser.firstName}</label></p>
+             
+              <p><label>LastName:${PIIUser.lastName}</label></p>
               <p>
-                  <label>Address1: ${modifiedUser.addressLine1}</label>
-                  
-			                    <p>
-	              <label>Address2: ${modifiedUser.addressLine2}</label>
+                  <label>Address1: ${PIIUser.addressLine1}</label>
+              <p>
+	             
                   
 			                    
-                    <p><label>Account No.: ${modifiedUser.firstName}</label></p>
-                    <p><label>State: ${modifiedUser.state}</label></p>
-                    <p><label>ZipCode: ${modifiedUser.zipCode}</label></p>
+         
+                    <p><label>State: ${PIIUser.state}</label></p>
+                    <p><label>ZipCode: ${PIIUser.zipCode}</label></p>
                     
                   <p>
-                    <label>Phone No.: ${modifiedUser.phone}</label>
+                    <label>Phone No.: ${PIIUser.phone}</label>
                     
                   </p>
 				  <p>
-                    <label>Email ID.: ${modifiedUser.email}</label>
+                    <label>Email ID.: ${PIIUser.email}</label>
                     
                   </p>
 			
-			     
+           			     
 			   
 			</div>   
 			<table>
 			<tr>
-            <form:form method="POST" action="decline-modification"> 
-            <input type = hidden name="modifiedrequestid" value="${modifiedUser.requestid}" ></input>
+            <form:form method="POST" action="decline-govt"> 
+            <input type = hidden name="PIImodifiedUserID" value="${PIIUser.customerID}" ></input>
 			<td><button type="submit" class="btn btn-danger"">Decline</button></td>
 			</form:form>
-			<form:form method="POST" action="back-modification"> 
+			<form:form method="POST" action="back-modification-govt"> 
 			<td><button type="submit" class="btn btn-primary">Back</button></td>
 			</form:form>
                         
-            <form:form method="POST"  action="approve-modification">             
-               <input type = hidden name="modifiedrequestid" value="${modifiedUser.requestid}" ></input>
+            <form:form method="POST"  action="approve-modification-govt">             
+               <input type = hidden name="PIImodifiedUserID" value="${PIIUser.customerID}" ></input>
                <td><button type="submit" class="btn btn-success">Approve</button></td>
                </form:form>
             

@@ -42,12 +42,12 @@
 
           <ul class="nav nav-sidebar">
             <li><a href="${pageContext.servletContext.contextPath}/manager-home">Home</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/">Pending Transactions</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/">Critical Transactions</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/internalemployee-pendingtransaction">Pending Transactions</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/internalemployee-pending-critical-transaction">Critical Transactions</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/manage-customer">Add Users</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/manager-customer-search">View-Edit-Delete Users</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/manager-customer-search">View-Delete Users</a></li>
 			<li><a href="${pageContext.servletContext.contextPath}/requests-pending-ext">Pending Requests</a></li>
-			<li><a href="${pageContext.servletContext.contextPath}/">Settings</a></li>
+			<li><a href="${pageContext.servletContext.contextPath}/manager-setting">Settings</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
           </ul>
           
@@ -83,7 +83,7 @@
 				<td>${modification.updatedAt}</td>
 				<td>Personal Details Change</td>
 				<form:form method="POST"  action="requests-view-ext">
-				<input type="hidden" name="modificationuserID" value="${modification.customerID}"></input>
+				<input type="hidden" name="modificationrequestid" value="${modification.requestid}"></input>
                 <td><button type="submit" class="btn btn-success">View Details</button></td>
 				</form:form>
               </tr>

@@ -33,8 +33,8 @@ public class ModifiedServiceImpl implements ModifiedService {
 	}
 
 	
-	public ModifiedUser findModifiedUserByID(String ID) {
-		return dao.findModifiedUserByID(ID);
+	public ModifiedUser findModifiedUserByRequestID(String ID) {
+		return dao.findModifiedUserByRequestID(ID);
 	}
 
 	
