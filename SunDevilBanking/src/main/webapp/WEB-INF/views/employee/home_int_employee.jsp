@@ -14,7 +14,7 @@
     <meta name="author" content="">
     <link rel="icon" href="${pageContext.servletContext.contextPath}/static/favicon.ico">
 
-    <title>SBS Internal Employee Home - Group 11</title>
+    <title>SBS Regular Employee Home - Group 11</title>
 
     <!-- Bootstrap core CSS -->
     <link href="${pageContext.servletContext.contextPath}/static/css/bootstrap.min.css" rel="stylesheet">
@@ -43,7 +43,7 @@
              <li><a href="${pageContext.servletContext.contextPath}/int-employee-home">Home</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/addTransaction">Add Transaction</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/internalemployee-pendingtransaction">Pending Transactions</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/int-employee-customer-search">View-Edit-Delete Users</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/int-employee-customer-search">View-Edit Users</a></li>
 			<li><a href="${pageContext.servletContext.contextPath}/int-employee-setting">Settings</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
           </ul>
@@ -72,7 +72,7 @@
             </div>
             </form:form>
             <p>
-            <form:form method="GET" action="get-transaction-for-transactionID">
+            <form:form method="POST" action="get-transaction-for-transactionID">
               <label>Transaction ID:</label>
               <input type="text" name="transactionID" class="form-control" placeholder="ex: 123456789">
              </p>
@@ -93,7 +93,7 @@
         	 <p>
         	 <tr>
         	   
-        	    <form:form method="GET" action= "getTransactionforAccount">
+        	    <form:form method="POST" action= "getTransactionforAccount">
                 <td><b>Account Number. :</b> ${account.number}</td>
                 <input type="hidden" name="accNumber" value="${account.number}"></input>
                 <td><button type="submit" class="btn btn-success" >View Transactions</button></td>

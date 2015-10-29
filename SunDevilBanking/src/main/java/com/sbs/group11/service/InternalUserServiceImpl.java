@@ -59,7 +59,7 @@ public class InternalUserServiceImpl implements InternalUserService {
 		Set<SecurityQuestion> secquestions = user.getSecurityQuestions();
 		for(SecurityQuestion question:secquestions)
 		{
-			question.setCustomerID(customerID);			
+			question.setUser(user);			
 		}
 		user.setCustomerID(customerID);
 		user.setCreatedAt(LocalDateTime.now());
@@ -149,11 +149,6 @@ public class InternalUserServiceImpl implements InternalUserService {
 	
 	public void updateInternalUser(User user) {
 		// Logic here to add a user
-		User current_user = findUserByID(user.getCustomerID());
-		if(!current_user.getPassword().equals(user.getPassword()))
-		{	
-			user.setPassword(hashService.getBCryptHash((user.getPassword())));
-		}
 		
 		dao.updateInternalUser(user);
 	}
@@ -174,7 +169,6 @@ public class InternalUserServiceImpl implements InternalUserService {
 		
 	
 	public  void deleteInternalUserById(String id){
-		// TODO Auto-generated method stub
 		dao.deleteInternalUserById(id);
 	}
 	

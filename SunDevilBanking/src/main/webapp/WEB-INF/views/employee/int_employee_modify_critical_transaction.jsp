@@ -12,7 +12,7 @@
     <meta name="author" content="">
     <link rel="icon" href="${pageContext.servletContext.contextPath}/static/favicon.ico">
 
-    <title>SBS Internal Employee Add Transactions - Group 11</title>
+    <title>SBS Group 11 Manager - Modify Critical Transactions</title>
 
     <!-- Bootstrap core CSS -->
     <link href="${pageContext.servletContext.contextPath}/static/css/bootstrap.min.css" rel="stylesheet">
@@ -38,25 +38,16 @@
         <div class="col-sm-3 col-md-2 sidebar">
 
           <ul class="nav nav-sidebar">
-          <li><a href="${pageContext.servletContext.contextPath}/manager-home">Home</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/internalemployee-pendingtransaction">Pending Transactions</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/internalemployee-pending-critical-transaction">Critical Transactions</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/manage-customer">Add Users</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/manager-customer-search">View-Delete Users</a></li>
-			<li><a href="${pageContext.servletContext.contextPath}/requests-pending-ext">Pending Requests</a></li>
-			<li><a href="${pageContext.servletContext.contextPath}/manager-setting">Settings</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
-          </ul>
           
         </div> <!-- sidebar -->
 
         <div class="col-sm-9 col-md-10 main">
 
           <div class="page-header">
-            <h1>SBS - Welcome Jack Doe </h1>
+            <h1>SBS - Welcome Manager </h1>
           </div>
 
-          <h2>Add Transactions:</h2>
+          <h2>Modify Critical Transactions:</h2>
 		  <br>
         <form:form method="POST"  modelAttribute="modificationTransaction" action="modificiation-critical-transction-approve">
           <div id="fund-transfer">

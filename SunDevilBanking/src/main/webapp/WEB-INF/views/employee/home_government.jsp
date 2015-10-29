@@ -15,7 +15,7 @@
     <meta name="author" content="">
     <link rel="icon" href="${pageContext.servletContext.contextPath}/static/favicon.ico">
 
-    <title>SBS Group 11 System Admin Home</title>
+    <title>SBS Group 11 Government Home</title>
 
     <!-- Bootstrap core CSS -->
     <link href="${pageContext.servletContext.contextPath}/static/css/bootstrap.min.css" rel="stylesheet">
@@ -51,7 +51,7 @@
         <div class="col-sm-9 col-md-10 main">
 
           <div class="page-header">
-            <h1>SBS - Welcome System Admin</h1>
+            <h1>SBS Group 11 - Welcome Government</h1>
           </div>
 
           <h2>Search By:</h2>

@@ -75,15 +75,11 @@
 					<form:input path="addressLine1" id="addressLine1" type="text" 
 						Class="form-control" placeholder="ex: 1009 E University Dr" />
 			  </p>
-			   <p>
-					<label>Password:</label>
-					<form:input path="Password" id="Password" type="password"
-						class="form-control" placeholder="ex: user123" />
-			  </p>
+			
 			   <p>
 					<label>Email:</label>
-					<form:input path="email" id="email" type="text"
-						class="form-control" placeholder="ex:john@example.com" />
+					<label> ${email} </label>
+					
 			  </p>
 				
 			   <p>

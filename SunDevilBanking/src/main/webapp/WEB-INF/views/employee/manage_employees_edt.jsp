@@ -13,7 +13,7 @@
     <meta name="author" content="">
     <link rel="icon" href="${pageContext.servletContext.contextPath}/static/favicon.ico">
 
-    <title>SBS System Admin Home - Group 11</title>
+    <title>SBS Group 11 System Admin Home</title>
 
     <!-- Bootstrap core CSS -->
     <link href="${pageContext.servletContext.contextPath}/static/css/bootstrap.min.css" rel="stylesheet">
@@ -64,7 +64,7 @@
 
 	<div id="Manage_Employees">
 		<form:form method="POST"   modelAttribute="user" action = "${pageContext.servletContext.contextPath}/employee_success">
-
+			
 <div class="modal-body">
 				<form:input type="hidden" path="customerID" id="customerID"/>
 				<p>
@@ -80,15 +80,10 @@
 					<form:input path="addressLine1" id="addressLine1" type="text" 
 						Class="form-control" placeholder="ex: 1009 E University Dr" minlength='5' maxlength='50' required='required' />
 				</p>
-				<p>
-					<label>Password:</label>
-					<form:input path="Password" id="Password" type="password"
-						class="form-control" placeholder="ex: user123" minlength='6' maxlength='60' required='required'/>
-				</p>
+				
 				<p>
 					<label>Email:</label>
-					<form:input path="email" id="email" type="email" required='required'
-						class="form-control" placeholder="ex:john@example.com" disabled='true' />
+					<label> ${email} </label>
 				</p>
 				
 				<p>

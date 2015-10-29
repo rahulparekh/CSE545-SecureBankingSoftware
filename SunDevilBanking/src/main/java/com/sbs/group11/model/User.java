@@ -33,8 +33,7 @@ import org.joda.time.LocalDateTime;
 public class User {
 
 	/** The security questions. For the One-to-Many relationship */
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "CustomerID")
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
 	private Set<SecurityQuestion> securityQuestions = new HashSet<SecurityQuestion>(
 			0);
 

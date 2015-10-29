@@ -16,7 +16,7 @@
     <meta name="author" content="">
     <link rel="icon" href="${pageContext.servletContext.contextPath}/static/favicon.ico">
 
-    <title>SBS Internal Employee Pending Transactions- Group 11</title>
+    <title>SBS Group 11 Regular Employee - Pending Transactions</title>
 
     <!-- Bootstrap core CSS -->
     <link href="${pageContext.servletContext.contextPath}/static/css/bootstrap.min.css" rel="stylesheet">
@@ -45,7 +45,7 @@
              <li><a href="${pageContext.servletContext.contextPath}/int-employee-home">Home</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/addTransaction">Add Transaction</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/internalemployee-pendingtransaction">Pending Transactions</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/int-employee-customer-search">View-Edit-Delete Users</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/int-employee-customer-search">View-Edit Users</a></li>
 			<li><a href="${pageContext.servletContext.contextPath}/int-employee-setting">Settings</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
           </ul>
@@ -55,7 +55,7 @@
         <div class="col-sm-9 col-md-10 main">
 
           <div class="page-header">
-            <h1>SBS - Welcome Andrew </h1>
+            <h1>SBS - Welcome Regular Employee </h1>
           </div>
 
           <h2>Pending Transactions:</h2>

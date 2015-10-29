@@ -26,6 +26,8 @@ public interface TransactionService {
 	 *            the transaction
 	 */
 	void addTransaction(Transaction transaction);
+	
+	void updateTransaction(Transaction transaction);
 
 	/**
 	 * Gets the unique transaction id.
@@ -94,7 +96,7 @@ public interface TransactionService {
 	
 	boolean approveTransactionafterModification(Transaction transaction);
 
-	boolean approveTransaction(String transactionID);
+	boolean approveTransaction(Transaction transaction);
 
 	/**
 	 * Decline transaction.
@@ -178,5 +180,7 @@ public interface TransactionService {
 	 * @return the transaction by pair id
 	 */
 	Transaction getTransactionByPairId(String pairId, String transactionID);
+
+	boolean updateTransactionPair(Transaction transaction, String string, BigDecimal balance);
 
 }

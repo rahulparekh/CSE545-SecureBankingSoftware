@@ -15,7 +15,7 @@
     <meta name="author" content="">
     <link rel="icon" href="${pageContext.servletContext.contextPath}/static/favicon.ico">
 
-    <title>SBS Group 11 Regular Employee - Transactions</title>
+    <title>SBS Internal Employee Pending Transactions- Group 11</title>
 
     <!-- Bootstrap core CSS -->
     <link href="${pageContext.servletContext.contextPath}/static/css/bootstrap.min.css" rel="stylesheet">
@@ -40,16 +40,17 @@
         
         <div class="col-sm-3 col-md-2 sidebar">
 
+         
           
         </div> <!-- sidebar -->
 
         <div class="col-sm-9 col-md-10 main">
 
           <div class="page-header">
-            <h1>SBS - Welcome Regular Employee </h1>
+            <h1>SBS - Welcome Manager </h1>
           </div>
 
-          <h2>Transactions:</h2>
+          <h2>Pending Transactions:</h2>
 		  <br>
 
           <table class="table">
@@ -78,7 +79,7 @@
               
              </c:forEach>
              
-                <form:form method="GET" action="int-employee-home" >
+                <form:form method="GET" action="manager-home" >
 				<td><button type="submit" class="btn btn-primary">Back</button></td>
 				</form:form>
              

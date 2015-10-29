@@ -1,5 +1,6 @@
 package com.sbs.group11.controller;
 
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.sbs.group11.helpers.FileUploadHelper;
 import com.sbs.group11.model.Account;
 import com.sbs.group11.model.ModifiedUser;
 import com.sbs.group11.model.OTP;
@@ -156,31 +158,8 @@ public class ExternalUserController {
 			// if fund transfer
 			// get the reverse transaction too and set it to pending
 			if (type.equals("fundtransfer")) {
-
-				String pairId = transaction.getPairId();
-
-				if (pairId != null) {
-
-					Transaction transactionPair = transactionService
-							.getTransactionByPairId(pairId,
-									transaction.getTransactionID());
-
-					if (transactionPair == null) {
-						attr.addFlashAttribute("failureMsg",
-								"Bad request. Please cancel the transaction and create a new transaction.");
-						return redirectUrl;
-					}
-
-					logger.debug("Found the pair: " + transactionPair);
-
-					transactionPair.setStatus("pending");
-					transactionPair.setUpdatedAt(new DateTime()
-							.toLocalDateTime());
-					transactionService.addTransaction(transactionPair);
-
-					logger.debug("Updated the pair to pending");
-
-				} else {
+				
+				if(!transactionService.updateTransactionPair(transaction, "pairtxn", BigDecimal.ZERO)) {
 					attr.addFlashAttribute("failureMsg",
 							"Bad request. Please cancel the transaction and create a new transaction.");
 					return redirectUrl;
@@ -632,9 +611,11 @@ public class ExternalUserController {
 			String isCritical = transactionService.isCritical(amount,
 					CRITICAL_VALUE);
 
-			String status = "completed";
+			String statusSender = "completed";
+			String statusReceiver = "completed";
 			if (isCritical.equalsIgnoreCase("yes")) {
-				status = "pending";
+				statusSender = "pending";
+				statusReceiver = "pairtxn";
 			}
 
 			String pairId = UUID.randomUUID().toString();
@@ -645,7 +626,7 @@ public class ExternalUserController {
 					"Fund Transfer From: "
 							+ request.getParameter("senderAccNumber") + " To: "
 							+ receiverAccNumber, receiverAccNumber,
-					request.getParameter("senderAccNumber"), status, "Debit",
+					request.getParameter("senderAccNumber"), statusSender, "Debit",
 					amount, isCritical,
 					request.getParameter("senderAccNumber"), pairId);
 
@@ -685,11 +666,10 @@ public class ExternalUserController {
 					"Fund Transfer From: "
 							+ request.getParameter("senderAccNumber") + " To: "
 							+ receiverAccNumber, receiverAccNumber,
-					request.getParameter("senderAccNumber"), status, "Credit",
+					request.getParameter("senderAccNumber"), statusReceiver, "Credit",
 					amount, isCritical, receiverAccNumber, pairId);
 
 			logger.debug("Receiver Transaction created: " + receiverTransaction);
-
 			logger.debug("isCritical? " + isCritical);
 
 			// Don't transfer if the transaction is critical
@@ -709,7 +689,7 @@ public class ExternalUserController {
 
 					return "redirect:/home/fund-transfer";
 				} catch (Exception e) {
-					logger.warn(e);
+					logger.error(e);
 					attr.addFlashAttribute("failureMsg",
 							"Transfer unsucessful. Please try again or contact the bank.");
 					return "redirect:/home/fund-transfer";
@@ -735,7 +715,7 @@ public class ExternalUserController {
 						"Could not process your transaction. Please try again or contact the bank.");
 				return "redirect:/home/fund-transfer";
 			} catch (NoSuchAlgorithmException e) {
-				logger.warn(e);
+				logger.error(e);
 				attr.addFlashAttribute("failureMsg",
 						"Could not process your transaction. Please try again or contact the bank.");
 				return "redirect:/home/fund-transfer";
@@ -788,7 +768,7 @@ public class ExternalUserController {
 		model.addAttribute("title", "Payments");
 
 		List<User> merchants = userService.getUsersOfType("Merchant");
-		//logger.info(merchants.get(0).toString());
+
 		model.put("merchants", merchants);
 
 		List<Account> userAccounts = accountService
@@ -826,8 +806,8 @@ public class ExternalUserController {
 		
 		model.put("user", user);
 		model.addAttribute("title", "Payments");
-
-		List<Account> customerAccounts = accountService
+		
+				List<Account> customerAccounts = accountService
 				.getAccountsByCustomerID(user.getCustomerID());
 
 		BigDecimal amount = transactionService.getBigDecimal(request

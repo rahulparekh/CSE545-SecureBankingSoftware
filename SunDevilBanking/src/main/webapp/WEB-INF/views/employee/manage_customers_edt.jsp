@@ -40,20 +40,19 @@
 
 <ul class="nav nav-sidebar">
             <li><a href="${pageContext.servletContext.contextPath}/manager-home">Home</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/internalemployee-pending-critical-transaction">Critical and Pending Transactions</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/internalemployee-pending-critical-transaction">Pending and Critical Transactions</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/manage-customer">Add Users</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/manager-customer-search">View-Delete Users</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/manager-customer-search">View-Edit-Delete Users</a></li>
 			<li><a href="${pageContext.servletContext.contextPath}/requests-pending-ext">Pending Requests</a></li>
 			<li><a href="${pageContext.servletContext.contextPath}/manager-setting">Settings</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
-          </ul>
-          
+          </ul>          
         </div> <!-- sidebar -->
 
         <div class="col-sm-9 col-md-10 main">
 
           <div class="page-header">
-            <h1>SBS - Welcome System Admin</h1>
+            <h1>SBS - Welcome Manager</h1>
           </div>
 
           <h2>Search By:</h2>
@@ -81,14 +80,8 @@
 						Class="form-control" placeholder="ex: 1009 E University Dr" minlength='5' maxlength='50' required='required' />
 				</p>
 				<p>
-					<label>Password:</label>
-					<form:input path="Password" id="Password" type="password"
-						class="form-control" placeholder="ex: user123" minlength='6' maxlength='60' required='required'/>
-				</p>
-				<p>
 					<label>Email:</label>
-					<form:input path="email" id="email" type="email" required='required'
-						class="form-control" placeholder="ex:john@example.com" disabled='true' />
+					<label> ${email} </label>
 				</p>
 				
 				<p>
@@ -112,6 +105,9 @@
 				<label>UserType:</label>
 				<form:select path="userType" items="${userTypes}" class="form-control" />
 				</p>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-success" name = "update" value = "update">Update</button>
+				</div>
 				<div class="modal-footer">
 					<button type="submit" class="btn btn-success" name= "delete" value="delete">Delete</button>
 				</div>
