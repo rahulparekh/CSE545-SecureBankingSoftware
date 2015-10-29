@@ -31,34 +31,30 @@ import com.sbs.group11.service.InternalUserService;
 public class AuthController {
 	
 	final static Logger logger = Logger.getLogger(AuthController.class);
-	//@Autowired
-	//SecurityQuesService securityQuesService;
+	
 	@Autowired
-	InternalUserService internalUserService;
-	
-	
+	InternalUserService internalUserService;	
 
 	@ModelAttribute("user")
 	public User getUserObject() {
 		return new User();
 	}
+	
 	@ModelAttribute("securityques")
 	public SecurityQues getsecurityQuesObject() {
-		return new SecurityQues();
-		
+		return new SecurityQues();		
 	}
 	
 	@ModelAttribute("changepassword")
 	public ChangePassword getChangePasswordObject() {
-		return new ChangePassword();
-		
+		return new ChangePassword();		
 	}
 	
 	@ModelAttribute("emailSearch")
 	public EmailSearch getEmailSearchObject() {
-		return new EmailSearch();
-		
+		return new EmailSearch();		
 	}
+	
 	@RequestMapping(value="/", method = RequestMethod.GET)
     public String getLogin(ModelMap model) {
 		model.addAttribute("title", "Welcome! Please Login");
@@ -84,20 +80,16 @@ public class AuthController {
     			return "redirect:/forgotpass";
     		
     	}
+    	
     	Set <SecurityQuestion> secques = user.getSecurityQuestions();
+    	
     	int i = 1;
+    	
     	for (SecurityQuestion ques: secques ){
     		model.addAttribute("question"+Integer.toString(i),ques.getQuestion());		
     		i++;
     	}
-    	/*SecurityQues securityques = securityQuesService.findSecurityquesByEmail(emailSearch.getEmail());
-    	if(securityques == null)
-    	{
-    			attr.addFlashAttribute("failureMsg",
-    					"Not a Valid User");
-    			return "redirect:/forgotpass";
-    		
-    	}*/
+    	
 		
         return "auth/securityquestions";
          
@@ -155,14 +147,8 @@ public class AuthController {
     		}
     		
     	}
-    	
-    	
-    	
-    	
 		
 		return "auth/confirmpassword";
-		
-		
        
     }
     
