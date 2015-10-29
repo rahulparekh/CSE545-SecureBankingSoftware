@@ -95,9 +95,9 @@ public class User {
 	@Column(name = "AddressLine2", nullable = true, length = 50)
 	private String addressLine2;
 	
-	/** Public Key */
-	@Size(min = 5, max = 50)
-	@Column(name = "publicKey", nullable = true, length = 50)
+	@Column(name = "publicKey")
+	@Type(type="text")
+	//@Column(name = "publicKey", nullable = true, length = 5000 )
 	private String publicKey;
 
 	/** The state. */
@@ -311,6 +311,17 @@ public class User {
 	public void setAddressLine2(String addressLine2) {
 		this.addressLine2 = addressLine2;
 	}
+	
+	/**
+	 * Sets the public key
+	 *
+	 * @param public key
+	 *            the new public key
+	 */
+	public void setPublicKey(String publicKey) {
+		this.publicKey = publicKey;
+	}
+	
 
 	/**
 	 * Gets the state.

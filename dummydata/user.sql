@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS `user` (
 --
 
 INSERT INTO `user` (`CustomerID`, `AddressLine1`, `AddressLine2`, `CreatedAt`, `Email`, `EmployeeOverride`, `Enabled`, `FirstName`, `LastLoginAt`, `LastName`, `MiddleName`, `Password`, `Phone`, `State`, `UpdatedAt`, `UserType`, `ZipCode`) VALUES
-('55465467897', '940 S Terrace RD', NULL, '2015-10-19 00:00:00', 'contact@rahulparekh.in', 0, 1, 'Rahul', '2015-10-19 00:00:00', 'Parekh', 'B', '$2a$10$N7n5j8ctR3mlEfYsuXINRORFwsBR12xRNQRMQTz9B35IuHbNIyBca', '4807581112', 'AZ', '2015-10-19 00:00:00', 'Customer', '85281');
+('55465467898', '940 S Terrace RD', NULL, '2015-10-19 00:00:00', 'contact2@rahulparekh.in', 0, 1, 'Rahul', '2015-10-19 00:00:00', 'Parekh', 'B', '$2a$10$N7n5j8ctR3mlEfYsuXINRORFwsBR12xRNQRMQTz9B35IuHbNIyBca', '4807581112', 'AZ', '2015-10-19 00:00:00', 'merchant', '85281');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

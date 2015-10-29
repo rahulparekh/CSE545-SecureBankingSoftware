@@ -40,6 +40,10 @@ public class InternalUserServiceImpl implements InternalUserService {
 	@Autowired
 	private AccountService accountService;
 	
+	
+	@Autowired
+	private PkiService pkiService;
+	
 
 	public void addInternalUser(User user) {
 		String customerID;
@@ -128,7 +132,16 @@ public class InternalUserServiceImpl implements InternalUserService {
 		accounts.add(account2);
 		
 		user.setAccounts(accounts);
+		
+		String publickey = pkiService.generatekeypair(user.getEmail());
+	//	System.out.println("Public key is : "+publickey);
+		user.setPublicKey(publickey);
+	
+		
+		
 		}
+		
+		
 		
 		
 		dao.saveInternalUser(user);
