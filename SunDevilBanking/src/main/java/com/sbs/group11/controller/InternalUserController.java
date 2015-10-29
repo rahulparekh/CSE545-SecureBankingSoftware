@@ -543,26 +543,36 @@ public class InternalUserController {
 				"successMsg",
 				"Added the User Successfully");
 		return "redirect:/manager-customer-search";
-	}
-	
+	}	
 	
 
 	@RequestMapping(value = "/critical-approve", method = RequestMethod.POST)
 	public String CriticalTransactionApprove( ModelMap model,
 			  HttpServletRequest request, RedirectAttributes attr) {
-	    
-		boolean result = transactionService.approveTransaction(request.getParameter("transactionID"));
 		
+
+		if (request.getParameter("transactionID") == null) {
+			attr.addFlashAttribute(
+					"failureMsg",
+					"Could not process your transaction. Debit amount cannot be higher than account balance. Please decline this transaction");
+			return "redirect:/internalemployee-pending-critical-transaction";
+		}
+		
+		Transaction transaction = transactionService.getTransaction(request.getParameter("transactionID"));
+		boolean result = transactionService.approveTransaction(transaction);
+		
+		
+		logger.info(result);
+
 		
 		if(!result){
-		attr.addFlashAttribute(
+			attr.addFlashAttribute(
 				"failureMsg",
 				"Could not process your transaction. Debit amount cannot be higher than account balance. Please decline this transaction");
 		}
 		
 		return "redirect:/internalemployee-pending-critical-transaction";
-		
-			
+
 	}
 	
 	@RequestMapping(value = "/critical-decline", method = RequestMethod.POST)
@@ -1124,9 +1134,17 @@ public class InternalUserController {
 	public String TransactionApprove( ModelMap model,
 			  HttpServletRequest request, RedirectAttributes attr) {
 	    
-		boolean result = transactionService.approveTransaction(request.getParameter("transactionID"));
+		if (request.getParameter("transactionID") == null) {
+			attr.addFlashAttribute(
+					"failureMsg",
+					"Could not process your transaction. Debit amount cannot be higher than account balance. Please decline this transaction");
+			return "redirect:/internalemployee-pending-critical-transaction";
+		}
 		
-		System.out.print(result);
+		Transaction transaction = transactionService.getTransaction(request.getParameter("transactionID"));
+		boolean result = transactionService.approveTransaction(transaction);
+		
+		logger.debug(result);
 		if(!result){
 		attr.addFlashAttribute(
 				"failureMsg",
@@ -1360,11 +1378,10 @@ public class InternalUserController {
 	public String getPendingCriticalTransactions(ModelMap model){
 		
 		List<Transaction> pendingTransaction = transactionService.getPendingCriticalTransaction();
-		logger.debug("Pending transactions here:" + pendingTransaction);
 		model.addAttribute("pendingCriticalTransaction", pendingTransaction);
 		return "employee/int_employee_pending_critical_transaction";
-	
 	}
+	
 /////**************INTERNAL REQUESTS
 	
 	@RequestMapping(value = "/requests-pending", method = RequestMethod.GET)

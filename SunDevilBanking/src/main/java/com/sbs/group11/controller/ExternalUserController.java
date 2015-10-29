@@ -1,5 +1,6 @@
 package com.sbs.group11.controller;
 
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -22,10 +23,13 @@ import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.sbs.group11.helpers.FileUploadHelper;
 import com.sbs.group11.model.Account;
 import com.sbs.group11.model.ModifiedUser;
 import com.sbs.group11.model.OTP;
@@ -146,31 +150,8 @@ public class ExternalUserController {
 			// if fund transfer
 			// get the reverse transaction too and set it to pending
 			if (type.equals("fundtransfer")) {
-
-				String pairId = transaction.getPairId();
-
-				if (pairId != null) {
-
-					Transaction transactionPair = transactionService
-							.getTransactionByPairId(pairId,
-									transaction.getTransactionID());
-
-					if (transactionPair == null) {
-						attr.addFlashAttribute("failureMsg",
-								"Bad request. Please cancel the transaction and create a new transaction.");
-						return redirectUrl;
-					}
-
-					logger.debug("Found the pair: " + transactionPair);
-
-					transactionPair.setStatus("pending");
-					transactionPair.setUpdatedAt(new DateTime()
-							.toLocalDateTime());
-					transactionService.addTransaction(transactionPair);
-
-					logger.debug("Updated the pair to pending");
-
-				} else {
+				
+				if(!transactionService.updateTransactionPair(transaction, "pairtxn", BigDecimal.ZERO)) {
 					attr.addFlashAttribute("failureMsg",
 							"Bad request. Please cancel the transaction and create a new transaction.");
 					return redirectUrl;
@@ -779,7 +760,6 @@ public class ExternalUserController {
 		model.addAttribute("title", "Payments");
 
 		List<User> merchants = userService.getUsersOfType("Merchant");
-		logger.info(merchants.get(0).toString());
 		model.put("merchants", merchants);
 
 		List<Account> userAccounts = accountService
@@ -794,10 +774,32 @@ public class ExternalUserController {
 	public String postPaymentsForCustomer(ModelMap model,
 			HttpServletRequest request,
 			@ModelAttribute("paymentrequest") PaymentRequest paymentRequest,
-			BindingResult result, RedirectAttributes attr) {
+			BindingResult result, RedirectAttributes attr, @RequestParam("file") MultipartFile file) {
 		User user = userService.getUserDetails();
 		model.put("user", user);
 		model.addAttribute("title", "Payments");
+		
+		// check if PKI key is uploaded
+		if (!file.isEmpty()) {
+            try {
+                InputStream is = file.getInputStream();
+                String keyText = FileUploadHelper.convertStreamToString(is);
+                // Post your key matching code here
+                
+                is.close();
+                logger.debug("The key is: " + keyText);
+            } catch (Exception e) {
+                logger.error(e);
+            	attr.addFlashAttribute("failureMsg",
+    					"Could not process your transaction. Key file is missing.");
+    			return "redirect:/home/payments";
+            }
+        } else {
+        	logger.error("Empty input file");
+        	attr.addFlashAttribute("failureMsg",
+					"Could not process your request. Key file is missing");
+			return "redirect:/home/payments";
+        }
 
 		List<Account> customerAccounts = accountService
 				.getAccountsByCustomerID(user.getCustomerID());
