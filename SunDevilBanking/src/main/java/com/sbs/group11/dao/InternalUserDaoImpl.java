@@ -127,7 +127,6 @@ public class InternalUserDaoImpl extends AbstractDao<Integer, User> implements I
 	@SuppressWarnings("unchecked")
 	
 	public User findExternalUserByID(String ID) {
-		// TODO Auto-generated method stub
 		List<User> users = new ArrayList<User>();
 		
 		
