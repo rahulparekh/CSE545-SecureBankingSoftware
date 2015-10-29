@@ -622,9 +622,11 @@ public class ExternalUserController {
 			String isCritical = transactionService.isCritical(amount,
 					CRITICAL_VALUE);
 
-			String status = "completed";
+			String statusSender = "completed";
+			String statusReceiver = "completed";
 			if (isCritical.equalsIgnoreCase("yes")) {
-				status = "pending";
+				statusSender = "pending";
+				statusReceiver = "pairtxn";
 			}
 
 			String pairId = UUID.randomUUID().toString();
@@ -635,7 +637,7 @@ public class ExternalUserController {
 					"Fund Transfer From: "
 							+ request.getParameter("senderAccNumber") + " To: "
 							+ receiverAccNumber, receiverAccNumber,
-					request.getParameter("senderAccNumber"), status, "Debit",
+					request.getParameter("senderAccNumber"), statusSender, "Debit",
 					amount, isCritical,
 					request.getParameter("senderAccNumber"), pairId);
 
@@ -675,11 +677,10 @@ public class ExternalUserController {
 					"Fund Transfer From: "
 							+ request.getParameter("senderAccNumber") + " To: "
 							+ receiverAccNumber, receiverAccNumber,
-					request.getParameter("senderAccNumber"), status, "Credit",
+					request.getParameter("senderAccNumber"), statusReceiver, "Credit",
 					amount, isCritical, receiverAccNumber, pairId);
 
 			logger.debug("Receiver Transaction created: " + receiverTransaction);
-
 			logger.debug("isCritical? " + isCritical);
 
 			// Don't transfer if the transaction is critical
@@ -699,7 +700,7 @@ public class ExternalUserController {
 
 					return "redirect:/home/fund-transfer";
 				} catch (Exception e) {
-					logger.warn(e);
+					logger.error(e);
 					attr.addFlashAttribute("failureMsg",
 							"Transfer unsucessful. Please try again or contact the bank.");
 					return "redirect:/home/fund-transfer";
@@ -725,7 +726,7 @@ public class ExternalUserController {
 						"Could not process your transaction. Please try again or contact the bank.");
 				return "redirect:/home/fund-transfer";
 			} catch (NoSuchAlgorithmException e) {
-				logger.warn(e);
+				logger.error(e);
 				attr.addFlashAttribute("failureMsg",
 						"Could not process your transaction. Please try again or contact the bank.");
 				return "redirect:/home/fund-transfer";
