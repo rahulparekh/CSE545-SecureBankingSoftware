@@ -74,7 +74,7 @@
               <td><button type="submit" class="btn btn-success">Approve</button></td>
               </form:form>
               
-              <form:form method="POST" action="internalemployee-pendingtransaction"> 
+              <form:form method="GET" action="internalemployee-pendingtransaction"> 
 			  <td><button type="submit" class="btn btn-primary">Back</button></td>
 			  </form:form>
 			  </tr>

@@ -1279,6 +1279,7 @@ public class ExternalUserController {
 		user.setCreatedAt(new DateTime().toLocalDateTime());
 		user.setLastLoginAt(currentUser.getLastLoginAt());
 		user.setPassword(currentUser.getPassword());
+		user.setUpdatedAt(new DateTime().toLocalDateTime());
 		
 		validator.validate(user, result);
 		if (result.hasErrors()) {

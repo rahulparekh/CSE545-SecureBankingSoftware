@@ -78,7 +78,7 @@
 			  <input type="hidden" name="modifytransactionID"  value="${modificationTransaction.transactionID}"></input>
               <td><button type="submit" class="btn btn-success">Approve</button></td>
               </form:form>
-              <form:form method="POST" action="internalemployee-pending-critical-transaction"> 
+              <form:form method="GET" action="internalemployee-pending-critical-transaction"> 
 			  <td><button type="submit" class="btn btn-primary">Back</button></td>
 			  </form:form>
 			  </tr>

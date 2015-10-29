@@ -59,7 +59,9 @@ public class InternalUserServiceImpl implements InternalUserService {
 		Set<SecurityQuestion> secquestions = user.getSecurityQuestions();
 		for(SecurityQuestion question:secquestions)
 		{
+
 			question.setUser(user);			
+
 		}
 		user.setCustomerID(customerID);
 		user.setCreatedAt(LocalDateTime.now());
