@@ -12,8 +12,10 @@ public interface AccountService {
 	Account getAccountByNumber(String accNumber);
 
 	Account getValidAccountByNumber(String accNumber, List<Account> accounts);
+	
+	public void updateAccount(Account account);
 
-	public boolean creditorDebit(Transaction transaction);  
+	// public boolean creditorDebit(Transaction transaction);  
 	
 	public BigDecimal getBalance(String accNumber);
 	

@@ -146,31 +146,8 @@ public class ExternalUserController {
 			// if fund transfer
 			// get the reverse transaction too and set it to pending
 			if (type.equals("fundtransfer")) {
-
-				String pairId = transaction.getPairId();
-
-				if (pairId != null) {
-
-					Transaction transactionPair = transactionService
-							.getTransactionByPairId(pairId,
-									transaction.getTransactionID());
-
-					if (transactionPair == null) {
-						attr.addFlashAttribute("failureMsg",
-								"Bad request. Please cancel the transaction and create a new transaction.");
-						return redirectUrl;
-					}
-
-					logger.debug("Found the pair: " + transactionPair);
-
-					transactionPair.setStatus("pending");
-					transactionPair.setUpdatedAt(new DateTime()
-							.toLocalDateTime());
-					transactionService.addTransaction(transactionPair);
-
-					logger.debug("Updated the pair to pending");
-
-				} else {
+				
+				if(!transactionService.updateTransactionPair(transaction, "pairtxn", BigDecimal.ZERO)) {
 					attr.addFlashAttribute("failureMsg",
 							"Bad request. Please cancel the transaction and create a new transaction.");
 					return redirectUrl;
@@ -779,7 +756,6 @@ public class ExternalUserController {
 		model.addAttribute("title", "Payments");
 
 		List<User> merchants = userService.getUsersOfType("Merchant");
-		logger.info(merchants.get(0).toString());
 		model.put("merchants", merchants);
 
 		List<Account> userAccounts = accountService
