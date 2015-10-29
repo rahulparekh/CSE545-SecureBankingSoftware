@@ -1,17 +1,9 @@
 package com.sbs.group11.model;
 	
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.Type;
 import org.joda.time.LocalDateTime;
 	
-	@Entity
-	@Table(name = "SecurityQues")
+	
 	public class SecurityQues {
 		
 		public SecurityQues()
@@ -35,49 +27,27 @@ import org.joda.time.LocalDateTime;
 	
 	
 	
-		@Id
-		@NotNull
-		@Size(max = 255)
-		@Column(name = "Email", nullable = false, length = 255, unique = true)
+		
 	private String email;
 	
-	/** The question. */
-	@NotNull
-	@Size(min = 10, max = 255)
-	@Column(name = "Question1", nullable = false, length = 255)
+	
 	private String question1;
-	@NotNull
-	@Size(min = 60, max = 60)
-	@Column(name = "Answer1", nullable = false, length = 60)
+	
 	private String answer1;
 	
-	@NotNull
-	@Size(min = 10, max = 255)
-	@Column(name = "Question2", nullable = false, length = 255)
+	
 	private String question2;
 	
-	@NotNull
-	@Size(min = 60, max = 60)
-	@Column(name = "Answer2", nullable = false, length = 60)
+	
 	private String answer2;
 	
-	@NotNull
-	@Size(min = 10, max = 255)
-	@Column(name = "Question3", nullable = false, length = 255)
 	private String question3;
 	
-	/** The answer. */	
 	
-	@NotNull
-	@Size(min = 60, max = 60)
-	@Column(name = "Answer3", nullable = false, length = 60)
 	private String answer3;
 	
 	
-	/** The updated at. */
-	@NotNull
-	@Column(name = "UpdatedAt", nullable = false)
-	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
+	
 	private LocalDateTime updatedAt;
 	
 	
