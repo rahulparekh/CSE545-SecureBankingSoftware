@@ -7,6 +7,16 @@ public class ModificationTransaction {
 	private String recieverAccNumber;
 	
 	private String amount;
+	
+	private String transactionID;
+
+	public String getTransactionID() {
+		return transactionID;
+	}
+
+	public void setTransactionID(String transactionID) {
+		this.transactionID = transactionID;
+	}
 
 	public String getSenderAccNumber() {
 		return senderAccNumber;

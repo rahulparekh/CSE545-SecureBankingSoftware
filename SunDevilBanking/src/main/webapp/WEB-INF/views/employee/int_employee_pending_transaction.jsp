@@ -3,6 +3,7 @@
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html lang="en">
@@ -70,7 +71,18 @@
               	<th>Date</th>				
               </tr>
             </thead>
-            <tbody>
+            <tbody>  
+               <c:if test="${!empty failureMsg}">
+					<div class="alert alert-danger">						
+						${fn:escapeXml(failureMsg)}
+					</div>
+				</c:if>
+				<c:if test="${!empty sucessMsg}">
+					<div class="alert alert-success">						
+						${fn:escapeXml(sucessMsg)}
+					</div>
+				</c:if>
+				
         	  <c:forEach var="transaction" items="${pendingTransaction}" varStatus="loopCounter">
         	   
               <tr>

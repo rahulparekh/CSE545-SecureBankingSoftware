@@ -91,13 +91,9 @@ public interface TransactionService {
 	 */
 	public List<Transaction> getPendingCriticalTransaction();
 
-	/**
-	 * Approve transaction.
-	 *
-	 * @param transactionID
-	 *            the transaction id
-	 * @return true, if successful
-	 */
+	
+	boolean approveTransactionafterModification(Transaction transaction);
+
 	boolean approveTransaction(String transactionID);
 
 	/**
@@ -137,6 +133,8 @@ public interface TransactionService {
 	 */
 	boolean isTransferAccountValid(List<Account> senderAccounts, HttpServletRequest request,
 			ModelMap model, User user, RedirectAttributes attr);
+	
+	List<Transaction> getTransactionsForAccountNumber(String accNumber);
 
 	/**
 	 * Initiate payment. Creates the payment request and notifies other users about it.
@@ -170,5 +168,15 @@ public interface TransactionService {
 	 * @return the payment request
 	 */
 	PaymentRequest getPaymentRequest(int id);
+	
+	
+	/**
+	 * Gets the transaction by pair id and excludes provided transactionID
+	 *
+	 * @param pairId the pair id
+	 * @param transactionID the transaction id
+	 * @return the transaction by pair id
+	 */
+	Transaction getTransactionByPairId(String pairId, String transactionID);
 
 }

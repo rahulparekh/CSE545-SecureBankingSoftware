@@ -35,4 +35,13 @@ public class UserServiceImpl implements UserService {
 		return dao.getUsersOfType(type);
 	}
 
+	
+	public User getUserbyCustomerID(String customerID){
+		
+		return dao.findByCustomerID(customerID);
+	}
+
+
+
 }
+

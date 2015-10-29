@@ -26,6 +26,7 @@ import org.joda.time.LocalDateTime;
 @Table(name = "Account")
 public class Account {
 	
+
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "CustomerID", nullable = false)
 	private User user;
@@ -33,7 +34,7 @@ public class Account {
 	/** The Account Number. */
 	@Id
 	@NotNull
-	@Size(min = 17, max = 17)
+	@Size(min = 1, max = 17)
 	@Column(name = "Number", nullable = false, length = 17, unique = true)
 	private String number;
 	

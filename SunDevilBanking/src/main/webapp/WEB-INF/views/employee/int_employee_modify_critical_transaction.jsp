@@ -40,7 +40,7 @@
           <ul class="nav nav-sidebar">
             <li><a href="#">Home</a></li>
             <li><a href="#">Pending Transactions</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/addTransaction">Add Transactions</a></li>
+            <li><a href="#">Add Transactions</a></li>
             <li><a href="#">Request Manager</a></li>
             <li><a href="#">Request Admin</a></li>
             <li><a href="#">Settings</a></li>
@@ -57,7 +57,7 @@
 
           <h2>Add Transactions:</h2>
 		  <br>
-        <form:form method="POST"  modelAttribute="modificationTransaction" action="modificiation-transction-approve">
+        <form:form method="POST"  modelAttribute="modificationTransaction" action="modificiation-critical-transction-approve">
           <div id="fund-transfer">
             <div class="modal-body">
               <p>
@@ -86,7 +86,7 @@
 			  <input type="hidden" name="modifytransactionID"  value="${modificationTransaction.transactionID}"></input>
               <td><button type="submit" class="btn btn-success">Approve</button></td>
               </form:form>
-              <form:form method="POST" action="internalemployee-pendingtransaction"> 
+              <form:form method="POST" action="internalemployee-pending-critical-transaction"> 
 			  <td><button type="submit" class="btn btn-primary">Back</button></td>
 			  </form:form>f
 			  </tr>

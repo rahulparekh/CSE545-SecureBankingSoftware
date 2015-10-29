@@ -36,9 +36,10 @@ public class Transaction {
 
 	}
 
-	public Transaction(String transactionID, String name, String receiverAccNumber,
-			String senderAccNumber, String status, String type,
-			BigDecimal amount, String isCritical, String  transactionOwner) {
+	public Transaction(String transactionID, String name,
+			String receiverAccNumber, String senderAccNumber, String status,
+			String type, BigDecimal amount, String isCritical,
+			String transactionOwner, String pairId) {
 		super();
 		this.transactionID = transactionID;
 		this.name = name;
@@ -52,11 +53,13 @@ public class Transaction {
 
 		this.isCritical = isCritical;
 		this.transactionOwner = transactionOwner;
+		this.pairId = pairId;
 	}
-	
-	public Transaction(String transactionID, String name, String receiverAccNumber,
-			String senderAccNumber, String status, String type,
-			BigDecimal amount, BigDecimal balance, String isCritical, String  transactionOwner) {
+
+	public Transaction(String transactionID, String name,
+			String receiverAccNumber, String senderAccNumber, String status,
+			String type, BigDecimal amount, BigDecimal balance,
+			String isCritical, String transactionOwner, String pairId) {
 		super();
 		this.transactionID = transactionID;
 		this.name = name;
@@ -70,11 +73,12 @@ public class Transaction {
 		this.balance = balance;
 		this.isCritical = isCritical;
 		this.transactionOwner = transactionOwner;
+		this.pairId = pairId;
 	}
-	
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy="transaction")
+
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "transaction")
 	private Set<OTP> otp = new HashSet<OTP>(0);
-	
+
 	public Set<OTP> getOtp() {
 		return otp;
 	}
@@ -84,10 +88,9 @@ public class Transaction {
 	}
 
 	/** Payment Requests. For the One-to-Many relationship */
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "TransactionID")
-	private Set<PaymentRequest> paymentRequests = new HashSet<PaymentRequest>(
-			0);
+	private Set<PaymentRequest> paymentRequests = new HashSet<PaymentRequest>(0);
 
 	/** The transaction id. */
 	@Id
@@ -95,7 +98,7 @@ public class Transaction {
 	@Size(min = 1, max = 17)
 	@Column(name = "TransactionID", nullable = false, length = 17, unique = true)
 	private String transactionID;
-	
+
 	/** The transaction name (description). */
 	@NotEmpty
 	@Size(min = 3, max = 255)
@@ -132,18 +135,18 @@ public class Transaction {
 	@DecimalMin("0.01")
 	@Column(name = "Amount", nullable = false)
 	private BigDecimal amount;
-	
+
 	/** The amount. */
 	@Digits(integer = 11, fraction = 2)
 	@Column(name = "Balance", nullable = true)
 	private BigDecimal balance;
-	
+
 	/** The transaction owner */
-	
+
 	@Size(min = 0, max = 17)
 	@Column(name = "TransactionOwner", nullable = false, length = 17)
 	private String transactionOwner;
-	
+
 	@NotEmpty
 	@Size(min = 0, max = 6)
 	@Column(name = "isCritical", nullable = false, length = 6)
@@ -168,6 +171,13 @@ public class Transaction {
 	@Column(name = "UpdatedAt", nullable = false)
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
 	private LocalDateTime updatedAt;
+
+	/**
+	 * The pair id. To maintain a single action which leads to two transctions.
+	 * i.e. payments and fund transfer
+	 */
+	@Column(name = "PairId", nullable=true, length=36)
+	private String pairId;
 
 	/**
 	 * The month. This is not to be part of the database table as we can easily
@@ -319,7 +329,8 @@ public class Transaction {
 	/**
 	 * Sets the balance.
 	 *
-	 * @param balance the new balance
+	 * @param balance
+	 *            the new balance
 	 */
 	public void setBalance(BigDecimal balance) {
 		this.balance = balance;
@@ -337,7 +348,8 @@ public class Transaction {
 	/**
 	 * Sets the transaction owner.
 	 *
-	 * @param transactionOwner the new transaction owner
+	 * @param transactionOwner
+	 *            the new transaction owner
 	 */
 	public void setTransactionOwner(String transactionOwner) {
 		this.transactionOwner = transactionOwner;
@@ -389,18 +401,25 @@ public class Transaction {
 		this.month = month;
 	}
 
+	public String getPairId() {
+		return pairId;
+	}
+
+	public void setPairId(String pairId) {
+		this.pairId = pairId;
+	}
+
 	@Override
 	public String toString() {
-		return "Transaction [Otp=" + otp + ", paymentRequests="
-				+ paymentRequests + ", transactionID=" + transactionID
-				+ ", name=" + name + ", receiverAccNumber=" + receiverAccNumber
+		return "Transaction [paymentRequests=" + paymentRequests
+				+ ", transactionID=" + transactionID + ", name=" + name
+				+ ", receiverAccNumber=" + receiverAccNumber
 				+ ", senderAccNumber=" + senderAccNumber + ", status=" + status
 				+ ", type=" + type + ", amount=" + amount + ", balance="
 				+ balance + ", transactionOwner=" + transactionOwner
 				+ ", isCritical=" + isCritical + ", createdAt=" + createdAt
-				+ ", updatedAt=" + updatedAt + ", month=" + month + "]";
+				+ ", updatedAt=" + updatedAt + ", pairId=" + pairId
+				+ ", month=" + month + "]";
 	}
-	
-	
 
 }

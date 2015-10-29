@@ -97,16 +97,6 @@
 				<input name="amount" type="text" class="form-control" placeholder="e.g. 10.50">
 				<form:errors path="amount" cssClass="error" element="label"/>
 			</p>
-			<hr>
-			<p>
-				<label>(Not implemented currently) Upload Security Token :</label> <input
-					type="file" class="form-control">
-			</p>
-			<p>
-				<label>(Not implemented currently) One time password: <a
-					href="" class="btn btn-xs btn-info">Generate OTP</a></label> <input
-					type="text" class="form-control">
-			</p>
 		</div>
 		<div class="modal-footer">
 			<button type="submit" class="btn btn-success">Transfer Funds</button>

@@ -42,6 +42,10 @@ public class TransactionServiceImpl implements TransactionService {
 	private PaymentRequestDao paymentRequestDao;
 
 	public void addTransaction(Transaction transaction) {
+			
+		transaction.setIsCritical(isCritical(transaction.getAmount(),
+				CRITICAL_VALUE));
+		
 		dao.addTransaction(transaction);
 	}
 
@@ -96,6 +100,10 @@ public class TransactionServiceImpl implements TransactionService {
 		
 		
 		
+	}
+	
+	public boolean approveTransactionafterModification(Transaction transaction){
+		 return dao.approveTransaction(transaction);
 	}
 	
 	public void declineTransaction(String transactionID){
@@ -178,6 +186,12 @@ public class TransactionServiceImpl implements TransactionService {
 		logger.debug("receiverAccount was not returned");
 		return false;
 	}
+	
+	public List<Transaction> getTransactionsForAccountNumber(String accNumber){
+		
+		return dao.getTransactionsForAccountNumber(accNumber);
+		
+	}
 
 	public void initiatePayment(PaymentRequest paymentRequest) {
 		
@@ -227,6 +241,8 @@ public class TransactionServiceImpl implements TransactionService {
 		String isCritical = isCritical(paymentRequest.getAmount(),
 				CRITICAL_VALUE);
 		
+		String pairId = UUID.randomUUID().toString();
+		
 		// Create two transactions
 		Transaction transaction1 = new Transaction(
 				getUniqueTransactionID(), 
@@ -237,7 +253,8 @@ public class TransactionServiceImpl implements TransactionService {
 				"Debit", 
 				paymentRequest.getAmount(), 
 				isCritical,
-				senderAccNumber);
+				senderAccNumber,
+				pairId);
 		
 		Transaction transaction2 = new Transaction(
 				getUniqueTransactionID(), 
@@ -248,7 +265,8 @@ public class TransactionServiceImpl implements TransactionService {
 				"Credit", 
 				paymentRequest.getAmount(), 
 				isCritical,
-				receiverAccountNumber);
+				receiverAccountNumber,
+				pairId);
 		
 		addTransaction(transaction1);
 		addTransaction(transaction2);
@@ -262,7 +280,7 @@ public class TransactionServiceImpl implements TransactionService {
 	public String isCritical(BigDecimal amount, BigDecimal critical_value) {
 		
 		if (amount != null && amount.compareTo(critical_value) >= 0) {
-			logger.debug("Critical transaction!");
+			logger.debug("Critical transaction with critical value " + critical_value.toString() + " and amount " + amount.toString());
 			return "Yes";
 		}
 		
@@ -271,6 +289,11 @@ public class TransactionServiceImpl implements TransactionService {
 
 	public PaymentRequest getPaymentRequest(int id) {
 		return paymentRequestDao.getPaymentRequest(id);
+	}
+
+	public Transaction getTransactionByPairId(String pairId,
+			String transactionID) {
+		return dao.getTransactionByPairId(pairId, transactionID);
 	}
 
 }

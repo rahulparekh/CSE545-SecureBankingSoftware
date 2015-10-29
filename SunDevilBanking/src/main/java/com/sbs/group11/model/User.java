@@ -95,6 +95,11 @@ public class User {
 	@Size(min = 5, max = 50)
 	@Column(name = "AddressLine2", nullable = true, length = 50)
 	private String addressLine2;
+	
+	/** Public Key */
+	@Size(min = 5, max = 50)
+	@Column(name = "publicKey", nullable = true, length = 50)
+	private String publicKey;
 
 	/** The state. */
 	@NotNull
@@ -454,6 +459,15 @@ public class User {
 	 */
 	public String getUserType() {
 		return userType;
+	}
+	
+	/**
+	 * Gets the public key
+	 *
+	 * @return the public key
+	 */
+	public String getPublicKey() {
+		return publicKey;
 	}
 
 	/**
