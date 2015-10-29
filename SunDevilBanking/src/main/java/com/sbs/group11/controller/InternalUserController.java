@@ -180,8 +180,8 @@ public class InternalUserController {
 			@ModelAttribute("user") User user) {
 		Map<String, String> userTypes = new LinkedHashMap<String, String>();
 
-		userTypes.put("regular", "Regular");
-		userTypes.put("manager", "Manager");
+		userTypes.put("Regular", "Regular");
+		userTypes.put("Manager", "Manager");
 		model.addAttribute("user", user);
 		model.addAttribute("email", user.getEmail());
 		model.addAttribute("userTypes", userTypes);
@@ -198,8 +198,8 @@ public class InternalUserController {
 	@RequestMapping(value = "/admin/manage-employee", method = RequestMethod.GET)
 	public String addUserInfo(ModelMap model, @ModelAttribute("user") User user) {
 		Map<String, String> userTypes = new LinkedHashMap<String, String>();
-		userTypes.put("regular", "Regular");
-		userTypes.put("manager", "Manager");
+		userTypes.put("Regular", "Regular");
+		userTypes.put("Manager", "Manager");
 		model.addAttribute("userTypes", userTypes);
 		return "employee/manage_employees";
 	}
@@ -423,8 +423,8 @@ public class InternalUserController {
 			@ModelAttribute("user") User user) {
 		Map<String, String> userTypes = new LinkedHashMap<String, String>();
 
-		userTypes.put("customer", "Customer");
-		userTypes.put("merchant", "Merchant");
+		userTypes.put("Customer", "Customer");
+		userTypes.put("Merchant", "Merchant");
 		model.addAttribute("user", user);
 		model.addAttribute("email", user.getEmail());
 		model.addAttribute("userTypes", userTypes);
@@ -459,8 +459,8 @@ public class InternalUserController {
 			@ModelAttribute("user") User user) {
 		Map<String, String> userTypes = new LinkedHashMap<String, String>();
 
-		userTypes.put("customer", "Customer");
-		userTypes.put("merchant", "Merchant");
+		userTypes.put("Customer", "Customer");
+		userTypes.put("Merchant", "Merchant");
 		model.addAttribute("user", user);
 		model.addAttribute("userTypes", userTypes);
 		return "employee/manage_customers";
@@ -818,8 +818,8 @@ public class InternalUserController {
 	public String getEditUserInfoIntEmployee(ModelMap model,
 			@ModelAttribute("user") User user) {
 		Map<String, String> userTypes = new LinkedHashMap<String, String>();
-		userTypes.put("customer", "Customer");
-		userTypes.put("merchant", "Merchant");
+		userTypes.put("Customer", "Customer");
+		userTypes.put("Merchant", "Merchant");
 		model.addAttribute("user", user);
 		model.addAttribute("userTypes", userTypes);
 		return "employee/int_employee_customers_edt";
