@@ -390,11 +390,16 @@ public class InternalUserController {
 
 	@RequestMapping(value = "/internalemployee-pendingtransaction", method = RequestMethod.GET)
 	public String getPendingTransactions(ModelMap model){
-		
+		User user = userService.getUserDetails();
 		List<Transaction> pendingTransaction = transactionService.getPendingTransactions();
 		//System.out.println("Pending Transaction" + pendingTransaction.get(0).getTransactionID());
 		model.addAttribute("pendingTransaction", pendingTransaction);
-		return "employee/int_employee_pending_transaction";
+		if(user.getUserType()=="regular")
+			
+			return "employee/int_employee_pending_transaction";
+		else
+			
+			return "employee/manage_pending_transaction";
 
 	}
 	
