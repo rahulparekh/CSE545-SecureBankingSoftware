@@ -166,6 +166,19 @@ public class User {
 	@Column(name = "UpdatedAt", nullable = false)
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
 	private LocalDateTime updatedAt;
+	
+	
+	@Digits(integer = 1, fraction = 0)
+	@Column(name = "PII", nullable = true, columnDefinition = "int(1) DEFAULT '0'")
+	private int PII;
+
+	public int getPII() {
+		return PII;
+	}
+
+	public void setPII(int pII) {
+		PII = pII;
+	}
 
 	/**
 	 * Gets the security questions. Defines a 1 to Many relationship

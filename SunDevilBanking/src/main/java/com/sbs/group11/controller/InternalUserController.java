@@ -86,6 +86,78 @@ public class InternalUserController {
 		return new ModificationTransaction();
 	}
 
+	//**************************PII starts************************************
+	@RequestMapping(value = "/government-home", method = RequestMethod.GET)
+	public String getGovernemntHomePage(ModelMap model) {
+		
+		
+		model.addAttribute("title" , "Welcome Government authority");		
+		return "employee/home_government";
+	}
+	
+	@RequestMapping(value = "/government-home", method = RequestMethod.POST)
+	public String SearchInternalUserbyGovAuthority(ModelMap model,
+			@ModelAttribute("empSearch") EmployeeSearch empSearch, BindingResult result,RedirectAttributes redirectAttrs) {
+		User user = internalUserService.searchExternalUser(empSearch.getEmployeeID());
+		if (user == null){
+			redirectAttrs.addFlashAttribute(
+					"failureMsg",
+					"Not a valid User");
+			return "redirect:/government-home";
+		}
+		
+		
+		redirectAttrs.addFlashAttribute("user", user);
+		return "redirect:/viewcustomer-government";
+	}
+	
+	@RequestMapping(value = "/viewcustomer-government", method = RequestMethod.GET)
+	public String getGovermentViewCustomerPage(ModelMap model , @ModelAttribute("user") User user) {
+		model.addAttribute("PIIUser", user);
+		model.addAttribute("title" , "Welcome Government authority");		
+		return "employee/approve_govt";
+	}
+	
+	
+	
+		@RequestMapping(value = "/approve-modification-govt", method = RequestMethod.POST)
+		public String approveModificationGOVT(ModelMap model,
+				HttpServletRequest request) {
+			System.out.println("See this " + request.getParameter("PIImodifiedUserID"));
+			User user = internalUserService.findUserByID(request.getParameter("PIImodifiedUserID"));
+			System.out.println("Customer id" + user.getCustomerID());
+			internalUserService.approvePIIUserModification(user);
+			return "redirect:/government-home";
+			
+		}
+		
+		
+		@RequestMapping(value = "/decline-govt", method = RequestMethod.POST)
+		public String DeclineModificationGOVT(ModelMap model,
+				HttpServletRequest request) {
+			
+			User user = internalUserService.findUserByID(request.getParameter("PIImodifiedUserID"));
+			
+			internalUserService.declinePIIUserModification(user);
+			return "redirect:/government-home";
+			
+		}
+		
+		
+		
+		@RequestMapping(value = "/back-modification-govt", method = RequestMethod.POST)
+		public String BackModificationGOVT(ModelMap model,
+				HttpServletRequest request) {
+			
+			
+			return "redirect:/government-home";
+			
+		}
+			
+		//**************************PII ends************************************
+	
+	
+	
 	
 	
 	@RequestMapping(value = "/sysadmin-home", method = RequestMethod.GET)

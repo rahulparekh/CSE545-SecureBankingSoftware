@@ -161,14 +161,15 @@ public class InternalUserDaoImpl extends AbstractDao<Integer, User> implements I
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
+
 	public List<User> getPIIUsers() {
 		List<User> users = new ArrayList<User>();
 			
 		users = getSession()
-				.createQuery("from User where UserType in (?,?)")
+				.createQuery("from User where UserType in (?,?) and PII = ?")
 				.setParameter(0,"customer")
 				.setParameter(1,"merchant")
+				.setParameter(2,1)
 				.list();
 
 		if (users.size() > 0) {
@@ -176,6 +177,19 @@ public class InternalUserDaoImpl extends AbstractDao<Integer, User> implements I
 		} else {
 			return null;
 		}
+	}
+
+	public void approvePIIUserModification(User user) {
+		
+		user.setPII(1);
+		getSession().update(user);
+	}
+
+	public void declinePIIUserModification(User user) {
+		
+		user.setPII(0);
+		getSession().update(user);
+		
 	}
 
 

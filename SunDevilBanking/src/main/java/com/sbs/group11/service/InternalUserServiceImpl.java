@@ -185,10 +185,21 @@ public class InternalUserServiceImpl implements InternalUserService {
 		
 	}
 
-	@Override
+	
 	public List<User> getPIIUsersService() {
 		// TODO Auto-generated method stub
 		return dao.getPIIUsers();
 	}
-
+	
+	public void approvePIIUserModification (User user){
+		
+		dao.approvePIIUserModification(user);
+		
+	}
+	
+	public void declinePIIUserModification (User user){
+		
+		dao.declinePIIUserModification(user);
+		
+	}
 }

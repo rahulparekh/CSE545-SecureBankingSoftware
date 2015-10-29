@@ -15,7 +15,8 @@ public interface InternalUserService {
 	void updatePassword(String email,String password);
 	Long generateRandomNumberOfLength(int length);
 	User searchExternalUser(String EmployeeID);
-
+	public void approvePIIUserModification (User user);
+	public void declinePIIUserModification (User user);
 
 	List <User> getPIIUsersService();
 	
