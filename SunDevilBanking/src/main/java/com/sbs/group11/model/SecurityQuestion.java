@@ -1,10 +1,13 @@
 package com.sbs.group11.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -28,18 +31,17 @@ public class SecurityQuestion {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private int QuestionID;
 	
-	/** The Customer ID. Foreign Key */
-	@NotNull
-	@Size(min = 11, max = 11)
-	@Column(name = "CustomerID", nullable = false, length = 11 )
-	private String customerID;
-
-	public String getCustomerID() {
-		return customerID;
+	/** The Customer ID. Foreign Key */	
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "CustomerID", nullable = false)
+	private User user;
+	
+	public User getUser() {
+		return user;
 	}
 
-	public void setCustomerID(String customerID) {
-		this.customerID = customerID;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	/** The question. */

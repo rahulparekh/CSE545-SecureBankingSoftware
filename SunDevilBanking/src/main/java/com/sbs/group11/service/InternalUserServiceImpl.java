@@ -156,7 +156,6 @@ public class InternalUserServiceImpl implements InternalUserService {
 		
 	
 	public  void deleteInternalUserById(String id){
-		// TODO Auto-generated method stub
 		dao.deleteInternalUserById(id);
 	}
 	
