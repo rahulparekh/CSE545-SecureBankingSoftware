@@ -7,7 +7,9 @@ import com.sbs.group11.model.Transaction;
 
 public interface TransactionDao {
 
-	void addTransaction(Transaction transaction);	
+	void addTransaction(Transaction transaction);
+	
+	void updateTransaction(Transaction transaction);
 	
 	boolean isUniqueTransactionID(String transactionID);
 	
@@ -17,7 +19,9 @@ public interface TransactionDao {
 	
 	public List<Transaction> getPendingCriticalTransactions();
 	
-	boolean approveTransaction(Transaction transaction);
+	public boolean isTransactionPending(String transactionID);
+	
+	// boolean approveTransaction(Transaction transaction);
 	
 	void modifyTransaction(Transaction transaction);
 	

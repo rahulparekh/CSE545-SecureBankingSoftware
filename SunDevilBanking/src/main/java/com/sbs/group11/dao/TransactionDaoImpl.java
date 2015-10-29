@@ -1,6 +1,5 @@
 package com.sbs.group11.dao;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -9,14 +8,12 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-
 import com.sbs.group11.model.Account;
-import com.sbs.group11.model.OTP;
-
 import com.sbs.group11.model.StatementMonthYear;
 import com.sbs.group11.model.Transaction;
 import com.sbs.group11.model.User;
 import com.sbs.group11.service.AccountService;
+import com.sbs.group11.service.TransactionService;
 import com.sbs.group11.service.UserService;
 
 @Repository("transactionDaoImpl")
@@ -28,11 +25,19 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 	@Autowired
 	public UserService userService;
 	
-	final static Logger logger = Logger.getLogger(UserDaoImpl.class);
+	@Autowired
+	public TransactionService transactionService;
+	
+	final static Logger logger = Logger.getLogger(TransactionDaoImpl.class);
 
 	public void addTransaction(Transaction transaction) {
 		
 		getSession().saveOrUpdate(transaction);
+	}
+
+
+	public void updateTransaction(Transaction transaction) {
+		getSession().merge(transaction);		
 	}
 
 	@SuppressWarnings("unchecked")
@@ -159,22 +164,12 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 				     .list();
 	   
 	   
-	   if (status.size() > 0) {
-			
-		   if(status.get(0).getStatus().equals("pending")){
-			   
-			   
-			   
+	   if (status.size() > 0 && 
+			   status.get(0).getStatus().equals("pending")){			   
 			   return true;
-			   
-		   }
-		   else{
-			   return false;
-		   }
-		   
-		} else {
-			return false;
-		}
+		} 	   
+	   
+		return false;
 		
 	}
 	
@@ -216,8 +211,7 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 	}
 	
 	
-    public boolean approveTransaction(Transaction transaction){
-    	
+    /*public boolean approveTransaction(Transaction transaction){    	
 		  
     	
     	if(!isTransactionPending(transaction.getTransactionID())) {
@@ -227,8 +221,7 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 		boolean result = accountService.creditorDebit(transaction);
 		if (result) {
 			transaction.setStatus("approved");
-			getSession().merge(transaction);
-			// getSession().evict(transaction);
+			logger.debug("transaction: " + transaction);
 
 			return result;
 
@@ -240,17 +233,11 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 			return result;
 		}
     	
-    }
+    }*/
 	
 	
-	public void modifyTransaction(Transaction transaction){
-		
-		getSession().update(transaction);
-		String senderAccNumber= transaction.getSenderAccNumber();
-		String recieverAccNumber = transaction.getReceiverAccNumber();
-		// TODO: Use accounts credit debit service to submit the transaction
-		
-		
+	public void modifyTransaction(Transaction transaction){		
+		getSession().update(transaction);				
 	}
 	
 

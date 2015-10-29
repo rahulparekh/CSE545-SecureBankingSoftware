@@ -49,18 +49,14 @@ public class AccountServiceImpl implements AccountService {
 	}
 	
 	
-	public boolean creditorDebit(Transaction transaction){
-		
-		return dao.creditorDebit(transaction);
-	}
-	
-	
 	public BigDecimal getBalance(String accNumber){
 		
 		return dao.getBalance(accNumber);
 	}
 
-	
+	public void updateAccount(Account account) {
+		dao.updateAccount(account);		
+	}
 	
 
 	public void transferFunds(TransactionService transactionService,
