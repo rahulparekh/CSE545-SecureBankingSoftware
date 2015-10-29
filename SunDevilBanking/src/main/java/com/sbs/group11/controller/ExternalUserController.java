@@ -1,6 +1,5 @@
 package com.sbs.group11.controller;
 
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.security.InvalidKeyException;
@@ -58,7 +57,7 @@ public class ExternalUserController {
 
 	final static Logger logger = Logger.getLogger(ExternalUserController.class);
 	final private BigDecimal CRITICAL_VALUE = new BigDecimal(500);
-	
+
 	@Autowired
 	private UserService userService;
 
@@ -80,13 +79,12 @@ public class ExternalUserController {
 	@Autowired
 	SmartValidator validator;
 
-	
 	@Autowired
 	ModifiedService modifiedService;
-	
+
 	@Autowired
 	PkiService pkiService;
-	
+
 	@RequestMapping(value = "/process-otp", method = RequestMethod.POST)
 	public String processOTP(ModelMap model, HttpServletRequest request,
 			RedirectAttributes attr) {
@@ -152,8 +150,9 @@ public class ExternalUserController {
 			// if fund transfer
 			// get the reverse transaction too and set it to pending
 			if (type.equals("fundtransfer")) {
-				
-				if(!transactionService.updateTransactionPair(transaction, "pairtxn", BigDecimal.ZERO)) {
+
+				if (!transactionService.updateTransactionPair(transaction,
+						"pairtxn", BigDecimal.ZERO)) {
 					attr.addFlashAttribute("failureMsg",
 							"Bad request. Please cancel the transaction and create a new transaction.");
 					return redirectUrl;
@@ -560,22 +559,22 @@ public class ExternalUserController {
 		
 		
 		String key = request.getParameter("key");
-		try{
-	    System.out.println("received key is "+key);
-		
-		
-		String cipher = pkiService.paymentinfoencryption(user.getCustomerID(), key);
-		if(!pkiService.paymentinfodecryption(user.getCustomerID(), cipher))
-		{
-			attr.addFlashAttribute("failureMsg",
-					"Could not process your transaction. Private key doesnt match.");
-			return "redirect:/home/fund-transfer";
-		}
-		}catch(Exception e){
-			attr.addFlashAttribute("failureMsg",
-					"Could not process your transaction. Private key doesnt match.");
-			return "redirect:/home/fund-transfer";
+		try {
+
+			String cipher = pkiService.paymentinfoencryption(
+					user.getCustomerID(), key);
+			if (!pkiService.paymentinfodecryption(user.getCustomerID(), cipher)) {
+				attr.addFlashAttribute("failureMsg",
+						"Could not process your transaction. Private key doesn't match.");
+				return "redirect:/home/fund-transfer";
+			}
 			
+		} catch (Exception e) {
+			logger.error(e);
+			attr.addFlashAttribute("failureMsg",
+					"Could not process your transaction. Private key doesn't match.");
+			return "redirect:/home/fund-transfer";
+
 		}
 		
 
@@ -604,24 +603,32 @@ public class ExternalUserController {
 
 		boolean isTransferAccountValid = transactionService
 				.isTransferAccountValid(accounts, request, model, user, attr);
+		
+		String receiverAccNumber = "";
+		if (request.getParameter("type").equalsIgnoreCase("internal")) {
+			receiverAccNumber = request.getParameter("receiverAccNumber");
+			logger.info("internal transfer");
+		} else {
+			receiverAccNumber = request
+					.getParameter("receiverAccNumberExternal");
+			logger.info("external transfer");
+		}
+		
+		// if sender and receiver accs are equal
+		if (receiverAccNumber.trim().equalsIgnoreCase(request.getParameter("senderAccNumber").trim())) {
+			
+			attr.addFlashAttribute("failureMsg",
+					"Could not process transaction. Transferring to the same account is not allowed.");
+			return "redirect:/home/fund-transfer";
+		}
+
+		logger.debug("receiverAccNumber: " + receiverAccNumber);
 
 		logger.debug("isTransferAccountValid: " + isTransferAccountValid);
 		if (isTransferAccountValid) {
 
 			BigDecimal amount = transactionService.getBigDecimal(request
 					.getParameter("amount"));
-
-			String receiverAccNumber = "";
-			if (request.getParameter("type").equalsIgnoreCase("internal")) {
-				receiverAccNumber = request.getParameter("receiverAccNumber");
-				logger.info("internal transfer");
-			} else {
-				receiverAccNumber = request
-						.getParameter("receiverAccNumberExternal");
-				logger.info("external transfer");
-			}
-
-			logger.debug("receiverAccNumber: " + receiverAccNumber);
 
 			String isCritical = transactionService.isCritical(amount,
 					CRITICAL_VALUE);
@@ -794,37 +801,55 @@ public class ExternalUserController {
 
 	}
 
-	@RequestMapping(value = "/payments",method = RequestMethod.POST)
+	@RequestMapping(value = "/payments", method = RequestMethod.POST)
 	public String postPaymentsForCustomer(ModelMap model,
 			HttpServletRequest request,
 			@ModelAttribute("paymentrequest") PaymentRequest paymentRequest,
 			BindingResult result, RedirectAttributes attr) throws IOException {
-		
-		//ByteArrayInputStream stream = new   ByteArrayInputStream(file.getBytes());
-		//String key = IOUtils.toString(stream, "UTF-8");
-		
-		
-		//byte[] contents = file.getBytes();
-		//String key = new String(contents);
+
+		// ByteArrayInputStream stream = new
+		// ByteArrayInputStream(file.getBytes());
+		// String key = IOUtils.toString(stream, "UTF-8");
+
+		// byte[] contents = file.getBytes();
+		// String key = new String(contents);
 		String key = request.getParameter("key");
-	    logger.info("received key is "+key);
+		logger.info("received key is " + key);
 		User user = userService.getUserDetails();
 		
-		String cipher = pkiService.paymentinfoencryption(user.getCustomerID(), key);
-		if(!pkiService.paymentinfodecryption(user.getCustomerID(), cipher)) {
-			attr.addFlashAttribute("failureMsg",
-					"Could not process your transaction. Private key doesnt match.");
-			return "redirect:/home/payments";
-		}
+		try {
+			String cipher = pkiService.paymentinfoencryption(user.getCustomerID(),
+				key);
+			if (!pkiService.paymentinfodecryption(user.getCustomerID(), cipher)) {
+				attr.addFlashAttribute("failureMsg",
+						"Could not process your transaction. Private key doesnt match.");
+				return "redirect:/home/payments";
+			}
 		
+		} catch (Exception e) {
+			logger.error(e);
+			attr.addFlashAttribute("failureMsg",
+					"Could not process your transaction. Private key doesn't match.");
+			return "redirect:/home/fund-transfer";
+
+		}
+
 		model.put("user", user);
 		model.addAttribute("title", "Payments");
-		
+
 		List<Account> customerAccounts = accountService
 				.getAccountsByCustomerID(user.getCustomerID());
 
 		BigDecimal amount = transactionService.getBigDecimal(request
 				.getParameter("amount"));
+		
+		// if sender and receiver accs are equal
+		if (request.getParameter("merchantAccNumber").trim() 
+				.equalsIgnoreCase(request.getParameter("customerAccNumber").trim())) {
+			attr.addFlashAttribute("failureMsg",
+					"Could not process transaction. Transferring to the same account is not allowed.");
+			return "home/payments";
+		}
 
 		// Generate OTP
 		String otp = null;
@@ -891,8 +916,8 @@ public class ExternalUserController {
 		// verify that the merchant account exists and is of type merchant
 		Account merchantAccount = accountService.getAccountByNumber(request
 				.getParameter("merchantAccNumber"));
-		
-		if ( amount.compareTo(customerAccount.getBalance()) >= 0 ) {
+
+		if (amount.compareTo(customerAccount.getBalance()) >= 0) {
 			attr.addFlashAttribute(
 					"failureMsg",
 					"Could not process your transaction. Debit amount cannot be higher than account balance");
@@ -1090,6 +1115,14 @@ public class ExternalUserController {
 					"Could not process your transaction. Please try again or contact the bank.");
 			return "redirect:/home/merchant-payments";
 		}
+		
+		// if sender and receiver accs are equal
+		if (request.getParameter("merchantAccNumber").trim().equalsIgnoreCase(
+				request.getParameter("customerAccNumber").trim())) {
+			attr.addFlashAttribute("failureMsg",
+					"Could not process transaction. Transferring to the same account is not allowed.");
+			return "redirect:/home/merchant-payments";
+		}
 
 		String senderAccountNumber = "";
 		String receiverAccountNumber = "";
@@ -1100,16 +1133,17 @@ public class ExternalUserController {
 			senderAccountNumber = request.getParameter("customerAccNumber");
 			receiverAccountNumber = request.getParameter("merchantAccNumber");
 		}
-		
-		Account senderAccount = accountService.getAccountByNumber(senderAccountNumber);
-		
+
+		Account senderAccount = accountService
+				.getAccountByNumber(senderAccountNumber);
+
 		if (senderAccount == null) {
 			attr.addFlashAttribute("failureMsg",
 					"Could not process your request. Please try again or contact the bank.");
 			return "redirect:/home/merchant-payments";
 		}
-		
-		if(amount.compareTo(senderAccount.getBalance()) >= 0) {
+
+		if (amount.compareTo(senderAccount.getBalance()) >= 0) {
 			attr.addFlashAttribute(
 					"failureMsg",
 					"Could not process your transaction. Debit amount cannot be higher than account balance");
@@ -1288,22 +1322,22 @@ public class ExternalUserController {
 		return "redirect:/home/merchant-payment-requests";
 
 	}
-	
-	
-	
+
 	@RequestMapping(value = "/customer-setting", method = RequestMethod.GET)
-	public String getManagerSetting(ModelMap model,@ModelAttribute("user") User user) {
+	public String getManagerSetting(ModelMap model,
+			@ModelAttribute("user") User user) {
 		User customer = userService.getUserDetails();
 		model.addAttribute("user", customer);
 		return "customer/settings";
 	}
-	
+
 	@RequestMapping(value = "/customer-setting", method = RequestMethod.POST)
 	public String changeManagerSetting(ModelMap model,
-			@ModelAttribute("user") User user,BindingResult result, RedirectAttributes attr) {
-		
-		User currentUser= userService.getUserDetails();
-		
+			@ModelAttribute("user") User user, BindingResult result,
+			RedirectAttributes attr) {
+
+		User currentUser = userService.getUserDetails();
+
 		// Validate fields
 		user.setCustomerID(currentUser.getCustomerID());
 		user.setEmail(currentUser.getEmail());
@@ -1314,15 +1348,14 @@ public class ExternalUserController {
 		user.setLastLoginAt(currentUser.getLastLoginAt());
 		user.setPassword(currentUser.getPassword());
 		user.setUpdatedAt(new DateTime().toLocalDateTime());
-		
+
 		validator.validate(user, result);
 		if (result.hasErrors()) {
 			logger.debug(result);
 
 			// attributes for validation failures
 			attr.addFlashAttribute(
-					"org.springframework.validation.BindingResult.user",
-					result);
+					"org.springframework.validation.BindingResult.user", result);
 			attr.addFlashAttribute("user", user);
 
 			attr.addFlashAttribute("failureMsg",
@@ -1331,7 +1364,7 @@ public class ExternalUserController {
 			// redirect to the credit debit view page
 			return "redirect:/home/customer-setting";
 		}
-		
+
 		ModifiedUser modifiedUser = new ModifiedUser();
 		modifiedUser.setCustomerID(currentUser.getCustomerID());
 		modifiedUser.setAddressLine1(user.getAddressLine1());
@@ -1349,23 +1382,19 @@ public class ExternalUserController {
 		modifiedUser.setPhone(user.getPhone());
 		modifiedUser.setCreatedAt(currentUser.getCreatedAt());
 		modifiedUser.setUpdatedAt(new DateTime().toLocalDateTime());
-		modifiedUser.setLastLoginAt(currentUser.getLastLoginAt());		
+		modifiedUser.setLastLoginAt(currentUser.getLastLoginAt());
 		modifiedUser.setStatus("pending");
 		modifiedUser.setEmployeeOverride(user.getEmployeeOverride());
 		long epoch = System.currentTimeMillis() / 1000;
 		modifiedUser.setRequestid(epoch);
 		modifiedService.addRequest(modifiedUser);
-		
+
 		model.addAttribute("title", "Your Settings!");
-		
+
 		attr.addFlashAttribute("successMsg",
 				"Your request was successful. Please wait for bank approval.");
-		
+
 		return "redirect:/home/customer-setting";
 	}
-	
 
-	
-	
-	
 }
