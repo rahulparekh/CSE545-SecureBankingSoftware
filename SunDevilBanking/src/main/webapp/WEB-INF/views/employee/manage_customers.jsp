@@ -113,6 +113,13 @@
 				<label>UserType:</label>
 				<form:select path="userType" items="${userTypes}" class="form-control" />
 				</p>
+				<p>
+					<label>Provide Access to view</label>
+					<form:radiobutton path="employeeOverride"  
+						 value="1"/>Yes
+					<form:radiobutton path="employeeOverride"  
+						 value = "0"/>No	
+				</p>
 				<div class="modal-footer">
 					<button type="submit" class="btn btn-success">Submit</button>
 				</div>

@@ -83,7 +83,7 @@
 				<td>${modification.updatedAt}</td>
 				<td>Personal Details Change</td>
 				<form:form method="POST"  action="requests-view-ext">
-				<input type="hidden" name="modificationuserID" value="${modification.customerID}"></input>
+				<input type="hidden" name="modificationrequestid" value="${modification.requestid}"></input>
                 <td><button type="submit" class="btn btn-success">View Details</button></td>
 				</form:form>
               </tr>
