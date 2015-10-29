@@ -40,22 +40,14 @@
         
         <div class="col-sm-3 col-md-2 sidebar">
 
-          <ul class="nav nav-sidebar">
-            <li><a href="${pageContext.servletContext.contextPath}/manager-home">Home</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/internalemployee-pending-critical-transaction">Pending and Critical Transactions</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/manage-customer">Add Users</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/manager-customer-search">View-Delete Users</a></li>
-			<li><a href="${pageContext.servletContext.contextPath}/requests-pending-ext">Pending Requests</a></li>
-			<li><a href="${pageContext.servletContext.contextPath}/manager-setting">Settings</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
-          </ul>
+         
           
         </div> <!-- sidebar -->
 
         <div class="col-sm-9 col-md-10 main">
 
           <div class="page-header">
-            <h1>SBS - Welcome Andrew </h1>
+            <h1>SBS - Welcome Manager </h1>
           </div>
 
           <h2>Pending Transactions:</h2>

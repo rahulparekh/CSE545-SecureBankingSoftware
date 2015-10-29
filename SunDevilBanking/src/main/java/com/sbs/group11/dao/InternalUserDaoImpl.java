@@ -26,8 +26,8 @@ public class InternalUserDaoImpl extends AbstractDao<Integer, User> implements I
 			current_user.setAddressLine2(user.getAddressLine2());
 			current_user.setFirstName(user.getFirstName());
 			current_user.setLastName(user.getLastName());
-			current_user.setPassword(user.getPassword());
-			current_user.setEmail(user.getEmail());
+			//current_user.setPassword(user.getPassword());
+			//current_user.setEmail(user.getEmail());
 			current_user.setPhone(user.getPhone());
 			current_user.setZipCode(user.getZipCode());
 			current_user.setState(user.getState());

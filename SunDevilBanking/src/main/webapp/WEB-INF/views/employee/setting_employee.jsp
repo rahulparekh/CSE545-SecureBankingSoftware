@@ -12,7 +12,7 @@
     <meta name="author" content="">
     <link rel="icon" href="${pageContext.servletContext.contextPath}/static/favicon.ico">
 
-    <title>SBS System Admin Settings - Group 11</title>
+    <title>SBS Regular Employee Settings - Group 11</title>
 
     <!-- Bootstrap core CSS -->
     <link href="${pageContext.servletContext.contextPath}/static/css/bootstrap.min.css" rel="stylesheet">
@@ -37,20 +37,20 @@
         
         <div class="col-sm-3 col-md-2 sidebar">
 
-          <ul class="nav nav-sidebar">
-           <li><a href="${pageContext.servletContext.contextPath}/int-employee-home">Home</a></li>
+<ul class="nav nav-sidebar">
+             <li><a href="${pageContext.servletContext.contextPath}/int-employee-home">Home</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/addTransaction">Add Transaction</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/">Pending Transactions</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/internalemployee-pendingtransaction">Pending Transactions</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/int-employee-customer-search">View-Edit Users</a></li>
 			<li><a href="${pageContext.servletContext.contextPath}/int-employee-setting">Settings</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
-          </ul>
-          
+          </ul>          
         </div> <!-- sidebar -->
 
         <div class="col-sm-9 col-md-10 main">
 
           <div class="page-header">
-            <h1>SBS - Welcome Employee </h1>
+            <h1>SBS - Welcome Regular Employee </h1>
           </div>
 
           <h2>Settings:</h2>
@@ -73,15 +73,10 @@
 					<form:input path="addressLine1" id="addressLine1" type="text" 
 						Class="form-control" placeholder="ex: 1009 E University Dr" minlength='5' maxlength='50' required='required' />
 				</p>
-				<p>
-					<label>Password:</label>
-					<form:input path="Password" id="Password" type="password"
-						class="form-control" placeholder="ex: user123" minlength='6' maxlength='60' required='required'/>
-				</p>
+				
 				<p>
 					<label>Email:</label>
-					<form:input path="email" id="email" type="email" required='required'
-						class="form-control" placeholder="ex:john@example.com" disabled='true' />
+					<label> ${email} </label>
 				</p>
 				
 				<p>

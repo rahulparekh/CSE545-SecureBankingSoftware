@@ -40,11 +40,7 @@
 					<form:input path="addressLine1" id="addressLine1" type="text" 
 						Class="form-control" placeholder="ex: 1009 E University Dr" minlength='5' maxlength='50' required='required' />
 				</p>
-				<p>
-					<label>Password:</label>
-					<input type="Password" id="Password" type="password"
-						class="form-control" minlength='6' maxlength='60' value=""/>
-				</p>
+				
 				<p>
 					<label>Email:</label>
 					<form:input path="email" id="email" type="email" required='required'

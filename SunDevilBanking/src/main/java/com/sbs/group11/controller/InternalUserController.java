@@ -126,9 +126,8 @@ public class InternalUserController {
 		@RequestMapping(value = "/approve-modification-govt", method = RequestMethod.POST)
 		public String approveModificationGOVT(ModelMap model,
 				HttpServletRequest request) {
-			System.out.println("See this " + request.getParameter("PIImodifiedUserID"));
 			User user = internalUserService.findUserByID(request.getParameter("PIImodifiedUserID"));
-			System.out.println("Customer id" + user.getCustomerID());
+			
 			internalUserService.approvePIIUserModification(user);
 			return "redirect:/government-home";
 			
@@ -178,7 +177,7 @@ public class InternalUserController {
 		if (user == null){
 			redirectAttrs.addFlashAttribute(
 					"failureMsg",
-					"Not a valid User");
+					"Not a valid Employee");
 			return "redirect:/sysadmin-home";
 		}
 		
@@ -190,10 +189,11 @@ public class InternalUserController {
 	@RequestMapping(value = "/edit-employee", method = RequestMethod.GET)
 	public String getEditUserInfo(ModelMap model,@ModelAttribute("user") User user) {
 		Map<String,String> userTypes = new LinkedHashMap<String,String>();
-		System.out.println("user name is"+user.getCustomerID());
+
 		userTypes.put("regular", "regular");
 		userTypes.put("manager", "manager");
 		model.addAttribute("user", user);
+		model.addAttribute("email", user.getEmail());
 		model.addAttribute("userTypes", userTypes);
 		return "employee/manage_employees_edt";
 	}
@@ -219,12 +219,12 @@ public class InternalUserController {
 	@RequestMapping(value = "/manage-employee_success", method = RequestMethod.POST)
 	public String AddExternalUserpost(ModelMap model,
 			@ModelAttribute("user") User user, BindingResult result,RedirectAttributes redirectAttrs, HttpServletRequest request) {
-		System.out.println("inside controller");
+		
 		model.addAttribute("user",new User());
 		if(internalUserService.findUserByEmail(user.getEmail())!= null){
 			redirectAttrs.addFlashAttribute(
 					"failureMsg",
-					"User Already Exists with the same Email Address");
+					"Employee Already Exists with the same Email Address");
 			return "redirect:/sysadmin-home"; 
 		}
 		
@@ -262,7 +262,7 @@ public class InternalUserController {
 		systemLogService.addLog(systemLog);
 		redirectAttrs.addFlashAttribute(
 				"successMsg",
-				"User Added Successfully");
+				"Employee Added Successfully");
 		return "redirect:/sysadmin-home"; 
 	}
 	
@@ -276,7 +276,7 @@ public class InternalUserController {
 		systemLogService.addLog(systemLog);
 		redirectAttrs.addFlashAttribute(
 				"successMsg",
-				"UserInformation updated Successfully");
+				"Employee Information updated Successfully");
 		return "redirect:/sysadmin-home";
 	}
 	
@@ -291,7 +291,7 @@ public class InternalUserController {
 		systemLogService.addLog(systemLog);
 		redirectAttrs.addFlashAttribute(
 				"successMsg",
-				"Deleted the user Successfully");
+				"Deleted the Employee Successfully");
 		return "redirect:/sysadmin-home";
 	}
 	
@@ -301,13 +301,14 @@ public class InternalUserController {
 		
 		User sysadmin = userService.getUserDetails();
 		model.addAttribute("user", sysadmin);
+		model.addAttribute("email", sysadmin.getEmail());
 		return "employee/setting_sys_admin";
 	}
 		@RequestMapping(value = "/sysadmin-setting_success", method = RequestMethod.POST)
 	public String changeAdminSetting(ModelMap model,
 			@ModelAttribute("user") User user,BindingResult result) {
 		
-		System.out.println("id is "+user.getCustomerID());
+		
 		user.setUserType("admin");
 		internalUserService.updateInternalUser(user);
 		return "redirect:/sysadmin-home";
@@ -330,8 +331,8 @@ public class InternalUserController {
 	public String getAccountsforaCustomerManager(ModelMap model, HttpServletRequest request,
 			RedirectAttributes attr){
 		
-		System.out.println("Hi welcome to get");
-		// Overrrrride check
+		
+		
 		User user = userService.getUserbyCustomerID(request.getParameter("customerID"));
 		
 			if(user==null){
@@ -354,7 +355,7 @@ public class InternalUserController {
 			
 		}
 		else{
-			//Flash Attribute
+			
 			attr.addFlashAttribute(
 					"failureMsg",
 					"Could not process the request. You may not have the necessary permissions !!");
@@ -379,7 +380,7 @@ public class InternalUserController {
 	public String getTransactionforTransactionIDManager(ModelMap model,HttpServletRequest request,
 			RedirectAttributes attr){
 		
-		// Overrrrrrride Check
+		
 		Transaction transaction = transactionService.getTransaction(request.getParameter("transactionID"));
 		
 		if(transaction==null){
@@ -428,9 +429,20 @@ public class InternalUserController {
 			return "redirect:/manager-customer-search";
 		}
 		
-		System.out.println(user.getFirstName());
+		if(user.getEmployeeOverride()==1){
+		
+		
 		redirectAttrs.addFlashAttribute("user", user);
 		return "redirect:/edit-customer";
+		
+		}
+		else{
+			redirectAttrs.addFlashAttribute(
+					"failureMsg",
+					"The user has not provided access to view");
+			return "redirect:/manager-customer-search";
+			
+		}
 	}
 	
 	
@@ -438,21 +450,32 @@ public class InternalUserController {
 	@RequestMapping(value = "/edit-customer", method = RequestMethod.GET)
 	public String getEditUserInfoManager(ModelMap model,@ModelAttribute("user") User user) {
 		Map<String,String> userTypes = new LinkedHashMap<String,String>();
-		System.out.println("user name is"+user.getCustomerID());
+		
 		userTypes.put("customer", "customer");
 		userTypes.put("merchant", "merchant");
 		model.addAttribute("user", user);
+		model.addAttribute("email", user.getEmail());
 		model.addAttribute("userTypes", userTypes);
 		return "employee/manage_customers_edt";
 	}
 	
-	
+
+@RequestMapping(value = "/customer_success", params="update" ,method = RequestMethod.POST)
+	public String addUserInfoPostManager(ModelMap model,
+			@ModelAttribute("user") User user, BindingResult result,RedirectAttributes redirectAttrs) {
+		model.addAttribute("user",new User());
+		internalUserService.updateInternalUser(user);
+		redirectAttrs.addFlashAttribute(
+				"successMsg",
+				"Updated the user Information Successfully");
+		return "redirect:/manager-customer-search";
+	}
 	
 
 	@RequestMapping(value = "/customer_success", params = "delete" ,method = RequestMethod.POST)
 	public String deleteUserInfoPostManager(ModelMap model,
 			@ModelAttribute("user") User user, BindingResult result,RedirectAttributes redirectAttrs) {
-		System.out.println("inside controller");
+		
 		model.addAttribute("user",new User());
 		internalUserService.deleteInternalUserById(user.getCustomerID());
 		redirectAttrs.addFlashAttribute(
@@ -466,7 +489,7 @@ public class InternalUserController {
 	@RequestMapping(value = "/manage-customer", method = RequestMethod.GET)
 	public String addUserInfoManager(ModelMap model,@ModelAttribute("user") User user) {
 		Map<String,String> userTypes = new LinkedHashMap<String,String>();
-		System.out.println("user name is"+user.getCustomerID());
+		
 		userTypes.put("customer", "customer");
 		userTypes.put("merchant", "merchant");
 		model.addAttribute("user", user);
@@ -477,13 +500,13 @@ public class InternalUserController {
 	@RequestMapping(value = "/manage-customer_success", method = RequestMethod.POST)
 	public String AddExternalUserpostManager(ModelMap model,
 			@ModelAttribute("user") User user, BindingResult result,RedirectAttributes redirectAttrs,HttpServletRequest request ) {
-		System.out.println("inside controller");
+		
 		model.addAttribute("user",new User());
 		if(internalUserService.findUserByEmail(user.getEmail())!= null){
 			redirectAttrs.addFlashAttribute(
 					"failureMsg",
 					"User Already Exists with the same Email Address");
-			return "redirect:/manager-customer-search"; 
+			return "redirect:/manager-customer"; 
 		}
 		
 		
@@ -530,7 +553,7 @@ public class InternalUserController {
 	    
 		boolean result = transactionService.approveTransaction(request.getParameter("transactionID"));
 		
-		System.out.print(result);
+		
 		if(!result){
 		attr.addFlashAttribute(
 				"failureMsg",
@@ -563,7 +586,7 @@ public class InternalUserController {
 	try{
 		
 		Transaction transaction = transactionService.getTransaction(request.getParameter("modifytransactionID"));
-		System.out.println("Amount test "+modificationTransaction.getAmount() + "SenderNumber "+ modificationTransaction.getSenderAccNumber());
+		
 		
 		if(modificationTransaction.getAmount()!=null){
 			BigDecimal amount = new BigDecimal(modificationTransaction.getAmount());
@@ -609,7 +632,7 @@ public class InternalUserController {
 		
 				boolean result = transactionService.approveTransactionafterModification(transaction);
 		
-				System.out.print(result);
+				
 				if(!result){
 					attr.addFlashAttribute(
 					"failureMsg",
@@ -664,18 +687,19 @@ public class InternalUserController {
 	@RequestMapping(value = "/manager-setting", method = RequestMethod.GET)
 	public String getManagerSetting(ModelMap model,@ModelAttribute("user") User user) {
 		
-		System.out.println("inside get");
+		
 		User manager = userService.getUserDetails();
 		model.addAttribute("user", manager);
+		model.addAttribute("email", manager.getEmail());
 		return "employee/setting_manager";
 	}
 		@RequestMapping(value = "/manager-setting_success", method = RequestMethod.POST)
 	public String changeManagerSetting(ModelMap model,
 			@ModelAttribute("user") User user,BindingResult result) {
 		
-		System.out.println("inside post");
+		
 		User current_user= userService.getUserDetails();
-		System.out.println("id is "+current_user.getCustomerID());
+		
 		ModifiedUser modifiedUser = new ModifiedUser();
 		modifiedUser.setCustomerID(current_user.getCustomerID());
 		modifiedUser.setAddressLine1(user.getAddressLine1());
@@ -726,7 +750,7 @@ public class InternalUserController {
 			public String getAccountsforaCustomer(ModelMap model, HttpServletRequest request,
 					RedirectAttributes attr){
 				
-				System.out.println("Hi welcome to get");
+				
 				// Overrrrride check
 				User user = userService.getUserbyCustomerID(request.getParameter("customerID"));
 				
@@ -803,6 +827,60 @@ public class InternalUserController {
 				}
 				
 				
+			}
+			
+			@RequestMapping(value = "/int-employee-customer-search", method = RequestMethod.GET)
+			public String getCustomerSearchIntEmployee(ModelMap model) {
+				return "employee/int_employee_customer_search";
+			}
+
+			
+			@RequestMapping(value = "/int-employee-customer-search", method = RequestMethod.POST)
+			public String SearchInternalUserIntEmployee(ModelMap model,
+					@ModelAttribute("empSearch") EmployeeSearch empSearch, BindingResult result,RedirectAttributes redirectAttrs) {
+				
+				User user = internalUserService.searchExternalUser(empSearch.getEmployeeID());
+				if (user == null){
+					redirectAttrs.addFlashAttribute(
+							"failureMsg",
+							"Not a valid User");
+					return "redirect:/int-employee-customer-search";
+				}
+				if(user.getEmployeeOverride()==1){
+				redirectAttrs.addFlashAttribute("user", user);
+				return "redirect:/edit-customer-int";
+				}
+				else{
+					redirectAttrs.addFlashAttribute(
+							"failureMsg",
+							"The user has not provided access to view");
+					return "redirect:/int-employee-customer-search";
+				}
+			}
+				
+			
+			
+			
+			@RequestMapping(value = "/edit-customer-int", method = RequestMethod.GET)
+			public String getEditUserInfoIntEmployee(ModelMap model,@ModelAttribute("user") User user) {
+				Map<String,String> userTypes = new LinkedHashMap<String,String>();
+				userTypes.put("customer", "customer");
+				userTypes.put("merchant", "merchant");
+				model.addAttribute("user", user);
+				model.addAttribute("userTypes", userTypes);
+				return "employee/int_employee_customers_edt";
+			}
+			
+			
+			@RequestMapping(value = "/customer_success-int", params="update" ,method = RequestMethod.POST)
+			public String addUserInfoPostIntEmployee(ModelMap model,
+					@ModelAttribute("user") User user, BindingResult result,RedirectAttributes redirectAttrs) {
+				model.addAttribute("user",new User());
+				internalUserService.updateInternalUser(user);
+				redirectAttrs.addFlashAttribute(
+						"successMsg",
+						"UserInformation updated Successfully");
+				return "redirect:/int-employee-customer-search";
 			}
 					
 
@@ -1035,7 +1113,7 @@ public class InternalUserController {
 	public String getPendingTransactions(ModelMap model){
 		User user = userService.getUserDetails();
 		List<Transaction> pendingTransaction = transactionService.getPendingTransactions();
-		//System.out.println("Pending Transaction" + pendingTransaction.get(0).getTransactionID());
+		
 		model.addAttribute("pendingTransaction", pendingTransaction);
 			
 			return "employee/int_employee_pending_transaction";
@@ -1081,7 +1159,7 @@ public class InternalUserController {
 	try{
 		
 		Transaction transaction = transactionService.getTransaction(request.getParameter("modifytransactionID"));
-		System.out.println("Amount test "+modificationTransaction.getAmount() + "SenderNumber "+ modificationTransaction.getSenderAccNumber());
+		
 
 		
 		if(modificationTransaction.getAmount()!=null){
@@ -1133,7 +1211,7 @@ public class InternalUserController {
 		
 				boolean result = transactionService.approveTransactionafterModification(transaction);
 		
-				System.out.print(result);
+				
 				if(!result){
 					attr.addFlashAttribute(
 					"failureMsg",
@@ -1182,15 +1260,16 @@ public class InternalUserController {
 		System.out.println("inside get");
 		User manager = userService.getUserDetails();
 		model.addAttribute("user", manager);
+		model.addAttribute("email", manager.getEmail());
 		return "employee/setting_employee";
 	}
 		@RequestMapping(value = "/int-employee-setting_success", method = RequestMethod.POST)
 	public String changeEmployeeSetting(ModelMap model,
 			@ModelAttribute("user") User user,BindingResult result) {
 		
-		System.out.println("inside post");
+		
 		User current_user= userService.getUserDetails();
-		System.out.println("id is "+current_user.getCustomerID());
+		
 		ModifiedUser modifiedUser = new ModifiedUser();
 		modifiedUser.setCustomerID(current_user.getCustomerID());
 		modifiedUser.setAddressLine1(user.getAddressLine1());
@@ -1240,10 +1319,10 @@ public class InternalUserController {
 		public String postApprovalePageManager(ModelMap model,
 				HttpServletRequest request){
 		
-			System.out.println(request.getParameter("modificationuserID"));
+			
 			ModifiedUser modifiedUser = 
 					modifiedService.findModifiedUserByRequestID(request.getParameter("modificationrequestid"));
-			System.out.println("request id "+modifiedUser.getRequestid());
+			
 			model.addAttribute("modifiedUser", modifiedUser);
 			return "employee/approve_requests_ext";
 		}
@@ -1251,9 +1330,9 @@ public class InternalUserController {
 			@RequestMapping(value = "/approve-modification-ext", method = RequestMethod.POST)
 			public String approveModificationManager(ModelMap model,
 					HttpServletRequest request) {
-				System.out.println("See this " + request.getParameter("modifiedUserId"));
+				
 				ModifiedUser modifieduser = modifiedService.findModifiedUserByRequestID(request.getParameter("modifiedrequestid")); 
-				System.out.println("Customer id" + modifieduser.getCustomerID());
+				
 				modifiedService.approveRequest(modifieduser);
 				return "redirect:/requests-pending-ext";
 				
@@ -1262,7 +1341,7 @@ public class InternalUserController {
 			@RequestMapping(value = "/decline-modification-ext", method = RequestMethod.POST)
 			public String declineModificationManager(ModelMap model,
 					 HttpServletRequest request) {
-				System.out.print("Inside decline transaction");
+				
 				ModifiedUser modifieduser = modifiedService.findModifiedUserByRequestID(request.getParameter("modifiedrequestid"));
 				modifiedService.denyRequest(modifieduser);
 				
@@ -1271,7 +1350,7 @@ public class InternalUserController {
 			
 			@RequestMapping(value = "/back-modification-ext", method = RequestMethod.POST)
 			public String backModificationManager(ModelMap model) {
-				System.out.print("HI");
+				
 				return "redirect:/requests-pending-ext";
 			}
 	
@@ -1305,7 +1384,7 @@ public class InternalUserController {
 	public String postApprovalePage(ModelMap model,
 			HttpServletRequest request){
 	
-		System.out.println(request.getParameter("modificationuserID"));
+		
 		ModifiedUser modifiedUser = 
 				modifiedService.findModifiedUserByRequestID(request.getParameter("modificationrequestid"));
 		model.addAttribute("modifiedUser", modifiedUser);
@@ -1315,9 +1394,9 @@ public class InternalUserController {
 		@RequestMapping(value = "/approve-modification", method = RequestMethod.POST)
 		public String approveModification(ModelMap model,
 				HttpServletRequest request) {
-			System.out.println("See this " + request.getParameter("modifiedUserId"));
+			
 			ModifiedUser modifieduser = modifiedService.findModifiedUserByRequestID(request.getParameter("modifiedrequestid"));
-			System.out.println("Customer id" + modifieduser.getCustomerID());
+			
 			modifiedService.approveRequest(modifieduser);
 			return "redirect:/requests-pending";
 			
@@ -1326,7 +1405,7 @@ public class InternalUserController {
 		@RequestMapping(value = "/decline-modification", method = RequestMethod.POST)
 		public String declineModification(ModelMap model,
 				 HttpServletRequest request) {
-			System.out.print("Inside decline transaction");
+			
 			ModifiedUser modifieduser = modifiedService.findModifiedUserByRequestID(request.getParameter("modifiedrequestid"));
 			modifiedService.denyRequest(modifieduser);
 			
@@ -1335,7 +1414,7 @@ public class InternalUserController {
 		
 		@RequestMapping(value = "/back-modification", method = RequestMethod.POST)
 		public String backModification(ModelMap model) {
-			System.out.print("HI");
+			
 			return "redirect:/requests-pending";
 		}
 

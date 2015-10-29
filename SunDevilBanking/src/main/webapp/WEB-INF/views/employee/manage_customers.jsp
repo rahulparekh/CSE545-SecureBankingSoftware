@@ -1,6 +1,8 @@
 <%@page language="java" contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -38,11 +40,11 @@
         
         <div class="col-sm-3 col-md-2 sidebar">
 
-          <ul class="nav nav-sidebar">
+         <ul class="nav nav-sidebar">
             <li><a href="${pageContext.servletContext.contextPath}/manager-home">Home</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/internalemployee-pending-critical-transaction">Pending and Critical Transactions</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/manage-customer">Add Users</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/manager-customer-search">View-Delete Users</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/manager-customer-search">View-Edit-Delete Users</a></li>
 			<li><a href="${pageContext.servletContext.contextPath}/requests-pending-ext">Pending Requests</a></li>
 			<li><a href="${pageContext.servletContext.contextPath}/manager-setting">Settings</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
@@ -64,7 +66,11 @@
 
 	<div id="Manage_Employees">
 		<form:form method="POST"   modelAttribute="user" action = "${pageContext.servletContext.contextPath}/manage-customer_success">
-
+			<c:if test="${!empty failureMsg}">
+					<div class="alert alert-danger">						
+						${fn:escapeXml(failureMsg)}
+					</div>
+				</c:if>
 			<div class="modal-body">
 				<form:input type="hidden" path="customerID" id="customerID"/>
 				<p>
