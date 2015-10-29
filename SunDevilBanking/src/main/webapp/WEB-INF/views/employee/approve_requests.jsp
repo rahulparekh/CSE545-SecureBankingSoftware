@@ -55,17 +55,18 @@
           <div id="fund-transfer">
           
             <div class="modal-body">
+            <p><label>Customer ID:${modifiedUser.customerID}</label></p>
               <p><label>FirstName:${modifiedUser.firstName}</label></p>
-              <p><label>MiddleName: ${modifiedUser.middleName}</label></p>
+              
               <p><label>LastName:${modifiedUser.lastName}</label></p>
               <p>
                   <label>Address1: ${modifiedUser.addressLine1}</label>
                   
 			                    <p>
-	              <label>Address2: ${modifiedUser.addressLine2}</label>
+	              
                   
 			                    
-                    <p><label>Account No.: ${modifiedUser.firstName}</label></p>
+                    
                     <p><label>State: ${modifiedUser.state}</label></p>
                     <p><label>ZipCode: ${modifiedUser.zipCode}</label></p>
                     

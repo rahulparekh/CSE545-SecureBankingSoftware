@@ -65,7 +65,7 @@
           <table class="table">
             <thead>
               <tr>
-                <th>Name as per the modification request </th>
+                <th>Name</th>
 				<th>Type of Employee</th>
                 <th>User ID</th>              
 			    <th>Date</th>	
