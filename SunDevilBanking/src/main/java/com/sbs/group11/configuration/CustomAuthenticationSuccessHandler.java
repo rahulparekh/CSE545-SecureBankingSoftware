@@ -62,7 +62,7 @@ public class CustomAuthenticationSuccessHandler implements
 			
 			// Admin
 			if (grantedAuthority.getAuthority().equals("ROLE_ADMIN")) {
-				return "/admin/sys-admin-home";
+				return "/admin/sysadmin-home";
 			}
 			
 			// Manager
