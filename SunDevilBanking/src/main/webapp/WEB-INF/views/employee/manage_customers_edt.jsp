@@ -38,15 +38,16 @@
         
         <div class="col-sm-3 col-md-2 sidebar">
 
+
 <ul class="nav nav-sidebar">
-            <li><a href="${pageContext.servletContext.contextPath}/manager-home">Home</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/internalemployee-pending-critical-transaction">Pending and Critical Transactions</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/manage-customer">Add Users</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/manager-customer-search">View-Edit-Delete Users</a></li>
-			<li><a href="${pageContext.servletContext.contextPath}/requests-pending-ext">Pending Requests</a></li>
-			<li><a href="${pageContext.servletContext.contextPath}/manager-setting">Settings</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/manager/manager-home">Home</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/manager/internalemployee-pending-critical-transaction">Pending and Critical Transactions</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/manager/manage-customer">Add Users</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/manager/manager-customer-search">View-Edit-Delete Users</a></li>
+			<li><a href="${pageContext.servletContext.contextPath}/manager/requests-pending-ext">Pending Requests</a></li>
+			<li><a href="${pageContext.servletContext.contextPath}/manager/manager-setting">Settings</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
-          </ul>          
+          </ul>         
         </div> <!-- sidebar -->
 
         <div class="col-sm-9 col-md-10 main">
@@ -62,7 +63,7 @@
 		  <br>
 
 	<div id="Manage_Employees">
-		<form:form method="POST"   modelAttribute="user" action = "${pageContext.servletContext.contextPath}/customer_success">
+		<form:form method="POST"   modelAttribute="user" action = "customer_success">
 
 			<div class="modal-body">
 				<form:input type="hidden" path="customerID" id="customerID"/>

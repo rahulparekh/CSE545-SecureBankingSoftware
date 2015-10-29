@@ -40,13 +40,14 @@
         
         <div class="col-sm-3 col-md-2 sidebar">
 
-         <ul class="nav nav-sidebar">
-            <li><a href="${pageContext.servletContext.contextPath}/manager-home">Home</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/internalemployee-pending-critical-transaction">Pending and Critical Transactions</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/manage-customer">Add Users</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/manager-customer-search">View-Edit-Delete Users</a></li>
-			<li><a href="${pageContext.servletContext.contextPath}/requests-pending-ext">Pending Requests</a></li>
-			<li><a href="${pageContext.servletContext.contextPath}/manager-setting">Settings</a></li>
+         
+<ul class="nav nav-sidebar">
+            <li><a href="${pageContext.servletContext.contextPath}/manager/manager-home">Home</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/manager/internalemployee-pending-critical-transaction">Pending and Critical Transactions</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/manager/manage-customer">Add Users</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/manager/manager-customer-search">View-Edit-Delete Users</a></li>
+			<li><a href="${pageContext.servletContext.contextPath}/manager/requests-pending-ext">Pending Requests</a></li>
+			<li><a href="${pageContext.servletContext.contextPath}/manager/manager-setting">Settings</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
           </ul>
           
@@ -65,7 +66,7 @@
 		  <br>
 
 	<div id="Manage_Employees">
-		<form:form method="POST"   modelAttribute="user" action = "${pageContext.servletContext.contextPath}/manage-customer_success">
+		<form:form method="POST"   modelAttribute="user" action = "manage-customer_success">
 			<c:if test="${!empty failureMsg}">
 					<div class="alert alert-danger">						
 						${fn:escapeXml(failureMsg)}

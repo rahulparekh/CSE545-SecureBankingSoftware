@@ -37,13 +37,14 @@
         
         <div class="col-sm-3 col-md-2 sidebar">
 
+
 <ul class="nav nav-sidebar">
-             <li><a href="${pageContext.servletContext.contextPath}/sysadmin-home">Home</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/manage-employee">Add Employees</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/systemLog-sys-admin">System Log</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/requests-pending">Pending Requests</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/sysadmin-setting">Settings</a></li>
-            <li><a href="${pageContext.servletContext.contextPath}/sys-admin-PII">Access PII</a></li>
+             <li><a href="${pageContext.servletContext.contextPath}/admin/sysadmin-home">Home</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/admin/manage-employee">Add Employees</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/admin/systemLog-sys-admin">System Log</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/admin/requests-pending">Pending Requests</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/admin/sysadmin-setting">Settings</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/admin/sys-admin-PII">Access PII</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
           </ul>
           
@@ -60,7 +61,7 @@
 
           <div id="fund-transfer">
             <div class="modal-body">
-            <form:form method="POST" modelAttribute="user" action="${pageContext.servletContext.contextPath}/sysadmin-setting_success">
+            <form:form method="POST" modelAttribute="user" action="sysadmin-setting_success">
               <form:input type="hidden" path="customerID" id="customerID"/>
               <p>
 					<label>First Name:</label>
