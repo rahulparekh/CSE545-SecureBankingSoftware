@@ -114,6 +114,7 @@ public class InternalUserDaoImpl extends AbstractDao<Integer, User> implements I
 
 	public void updatePassword(String email,String password) {
 		
+		
 		Query query = getSession().createSQLQuery(
 				"update User set Password = :pwd where Email= :mail");
 		query.setParameter("pwd", password);

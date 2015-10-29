@@ -119,6 +119,32 @@
 					<form:radiobutton path="employeeOverride"  
 						 value = "0"/>No	
 				</p>
+				
+				<label>Security Question1</label>
+				<input name="secQuestion1"  class="form-control" />
+				</p>
+				<p>
+				<label>Answer</label>
+				<input name="answer1"  class="form-control" />
+				</p>
+				<p>
+				<label>Security Question2</label>
+				<input name="secQuestion2"  class="form-control" />
+				</p>
+				<p>
+				<label>Answer</label>
+				<input name="answer2"  class="form-control" />
+				</p>
+				<p>
+				<label>Security Question3</label>
+				<input name="secQuestion3"  class="form-control" />
+				</p>
+				<p>
+				<label>Answer</label>
+				<input name="answer3"  class="form-control" />
+				</p>
+				
+				
 				<div class="modal-footer">
 					<button type="submit" class="btn btn-success">Submit</button>
 				</div>
