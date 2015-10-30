@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -31,12 +32,13 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 	final static Logger logger = Logger.getLogger(TransactionDaoImpl.class);
 
 	public void addTransaction(Transaction transaction) {
-		
+		transaction.setUpdatedAt(new DateTime().toLocalDateTime());
 		getSession().saveOrUpdate(transaction);
 	}
 
 
 	public void updateTransaction(Transaction transaction) {
+		transaction.setUpdatedAt(new DateTime().toLocalDateTime());
 		getSession().merge(transaction);		
 	}
 
@@ -91,7 +93,7 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 						+ "and status = 'approved' "
 						+ "and MONTHNAME(updatedAt) = :month "
 						+ "and YEAR(updatedAt) = :year "
-						+ "ORDER BY UpdatedAt ASC")
+						+ "ORDER BY updatedAt ASC")
 				.setParameter("accNumber", accNumber)
 				.setParameter("month", month)
 				.setParameter("year", year)
@@ -196,13 +198,14 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 	}
 	
 	
-	public void modifyTransaction(Transaction transaction){		
+	public void modifyTransaction(Transaction transaction){	
+		transaction.setUpdatedAt(new DateTime().toLocalDateTime());
 		getSession().update(transaction);				
 	}
 	
 
 	public void  declineTransaction(Transaction transaction){
-		
+		transaction.setUpdatedAt(new DateTime().toLocalDateTime());
 		transaction.setStatus("declined");
 		getSession().update(transaction);
 	}

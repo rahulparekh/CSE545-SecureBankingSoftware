@@ -101,21 +101,20 @@ public class TransactionServiceImpl implements TransactionService {
 	}
 
 	public boolean approveTransaction(Transaction transaction) {
-		
+
 		logger.debug("inside approve transaction");
-		
-		
+
 		if (!dao.isTransactionPending(transaction.getTransactionID())) {
 			return false;
 		}
-		
+
 		logger.debug("Dao pending");
 
 		Account senderAcc = accountDao.findByAccountNumber(transaction
 				.getSenderAccNumber());
 		Account recieverAcc = accountDao.findByAccountNumber(transaction
 				.getReceiverAccNumber());
-		
+
 		logger.debug("Got accounts");
 
 		BigDecimal amount = transaction.getAmount();
@@ -125,43 +124,52 @@ public class TransactionServiceImpl implements TransactionService {
 		logger.debug("amount.compare: " + amount.compareTo(zero)
 				+ " amount:balance " + amount.compareTo(senderAcc.getBalance()));
 
-		// For other transactions
-		if (amount.compareTo(zero) == 1
-				&& senderAcc.getBalance().compareTo(amount) == 1) {
-
-			// Means credit debit type of transactions
-			if (senderAcc.getNumber().equals(recieverAcc.getNumber())) {
-				if (transaction.getType().equalsIgnoreCase("credit")) {
-					senderAcc.setBalance(senderAcc.getBalance().add(amount));
-				}
-
-				// otherwise debit
+		// Means credit debit type of transactions
+		if (senderAcc.getNumber().equals(recieverAcc.getNumber())) {
+			if (transaction.getType().equalsIgnoreCase("credit")) {
+				senderAcc.setBalance(senderAcc.getBalance().add(amount));
+			} else if(amount.compareTo(zero) == 1 && senderAcc.getBalance().compareTo(
+					amount) == 1) {
 				senderAcc.setBalance(senderAcc.getBalance().subtract(amount));
-				transaction.setBalance(senderAcc.getBalance());
-				transaction.setStatus("approved");
-				updateTransaction(transaction);
-
+			
 			} else {
-
-				senderAcc.setBalance(senderAcc.getBalance().subtract(amount));
-				senderAcc.setUpdatedAt(now);
-				recieverAcc.setBalance(recieverAcc.getBalance().add(amount));
-				recieverAcc.setUpdatedAt(now);
-
-				if (transaction.getType().equalsIgnoreCase("credit")) {
-					transaction.setBalance(recieverAcc.getBalance());
-					updateTransactionPair(transaction, "approved", senderAcc.getBalance());
-				} else {
-					transaction.setBalance(senderAcc.getBalance());
-					updateTransactionPair(transaction, "approved", recieverAcc.getBalance());
-				}
-				
-				transaction.setStatus("approved");
-				updateTransaction(transaction);
-				accountService.updateAccount(senderAcc);
-				accountService.updateAccount(recieverAcc);
-
+				return false;
 			}
+			
+			transaction.setBalance(senderAcc.getBalance());
+			transaction.setStatus("approved");
+			senderAcc.setUpdatedAt(now);
+			transaction.setUpdatedAt(now);
+			updateTransaction(transaction);
+
+			return true;
+
+		}
+
+		// For other transactions
+		if ((amount.compareTo(zero) == 1 && senderAcc.getBalance().compareTo(
+				amount) == 1)) {
+
+			senderAcc.setBalance(senderAcc.getBalance().subtract(amount));
+			senderAcc.setUpdatedAt(now);
+			recieverAcc.setBalance(recieverAcc.getBalance().add(amount));
+			recieverAcc.setUpdatedAt(now);
+
+			if (transaction.getType().equalsIgnoreCase("credit")) {
+				transaction.setBalance(recieverAcc.getBalance());
+				updateTransactionPair(transaction, "approved",
+						senderAcc.getBalance());
+			} else {
+				transaction.setBalance(senderAcc.getBalance());
+				updateTransactionPair(transaction, "approved",
+						recieverAcc.getBalance());
+			}
+
+			transaction.setStatus("approved");
+			transaction.setUpdatedAt(now);
+			updateTransaction(transaction);
+			accountService.updateAccount(senderAcc);
+			accountService.updateAccount(recieverAcc);
 
 			return true;
 
@@ -169,35 +177,35 @@ public class TransactionServiceImpl implements TransactionService {
 
 		return false;
 	}
-	
-	public boolean updateTransactionPair(Transaction transaction, String status, BigDecimal balance) {
+
+	public boolean updateTransactionPair(Transaction transaction,
+			String status, BigDecimal balance) {
 
 		String pairId = transaction.getPairId();
 
 		if (pairId != null) {
 
 			Transaction transactionPair = getTransactionByPairId(pairId,
-							transaction.getTransactionID());
+					transaction.getTransactionID());
 
 			if (transactionPair == null) {
 				return false;
 			}
 
 			logger.debug("Found the pair: " + transactionPair);
-			
+
 			if (status.equalsIgnoreCase("approved") && balance != null) {
-				
+
 				if (transactionPair.getType().equalsIgnoreCase("credit")) {
 					transactionPair.setBalance(balance);
 				} else {
 					transactionPair.setBalance(balance);
 				}
-				
+
 			}
 
 			transactionPair.setStatus(status);
-			transactionPair.setUpdatedAt(new DateTime()
-					.toLocalDateTime());
+			transactionPair.setUpdatedAt(new DateTime().toLocalDateTime());
 			logger.debug(transactionPair);
 			updateTransaction(transactionPair);
 
@@ -207,7 +215,7 @@ public class TransactionServiceImpl implements TransactionService {
 		} else {
 			return false;
 		}
-		
+
 	}
 
 	public boolean approveTransactionafterModification(Transaction transaction) {
