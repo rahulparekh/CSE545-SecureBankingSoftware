@@ -35,6 +35,9 @@ public class InternalUserServiceImpl implements InternalUserService {
 	private InternalUserDaoImpl dao;
 	
 	@Autowired
+	private UserService userService;
+	
+	@Autowired
 	private BCryptHashService hashService;
 	
 	@Autowired

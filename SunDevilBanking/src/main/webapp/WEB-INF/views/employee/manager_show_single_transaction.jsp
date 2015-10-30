@@ -79,7 +79,7 @@
               
              
              
-                <form:form method="GET" action="/manager-home" >
+                <form:form method="GET" action="${pageContext.servletContext.contextPath}/manager/manager-home" >
 				<td><button type="submit" class="btn btn-primary">Back</button></td>
 				</form:form>
             </tbody>
