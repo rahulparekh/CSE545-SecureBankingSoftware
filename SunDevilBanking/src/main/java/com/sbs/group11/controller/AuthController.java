@@ -1,5 +1,6 @@
 package com.sbs.group11.controller;
 
+import java.util.Random;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +25,8 @@ import com.sbs.group11.model.SecurityQues;
 import com.sbs.group11.model.SecurityQuestion;
 import com.sbs.group11.model.User;
 import com.sbs.group11.service.InternalUserService;
+import com.sbs.group11.service.SendEmailService;
+import com.sbs.group11.service.UserService;
 //import com.sbs.group11.service.SecurityQuesService;
 
 
@@ -35,6 +38,10 @@ public class AuthController {
 	@Autowired
 	InternalUserService internalUserService;	
 
+	@Autowired
+	SendEmailService sendEmailService;	
+
+	
 	@ModelAttribute("user")
 	public User getUserObject() {
 		return new User();
@@ -95,6 +102,17 @@ public class AuthController {
          
     }
     
+    public Long generateRandomNumberOfLength(int length) {
+		// TODO Auto-generated method stub
+		Random ran = new Random();
+		char[] digits = new char[length];
+		digits[0] = (char) (ran.nextInt(9) + '1');
+		for (int i = 1; i < length; i++) {
+			digits[i] = (char) (ran.nextInt(10) + '0');
+		}
+		return Long.parseLong(new String(digits));
+	}
+    
     
             
     @RequestMapping(value="/confirmpassword", method = RequestMethod.POST)
@@ -147,47 +165,20 @@ public class AuthController {
     		}
     		
     	}
+    	
+    	String tempPassword = "" + generateRandomNumberOfLength(9);
 		
-		return "auth/confirmpassword";
+    	internalUserService.updatePassword(user.getEmail(), tempPassword);
+		sendEmailService.sendEmail(user.getEmail(), "Temporary Password Reset", "Your Temporary password is"+tempPassword);
+
+		attr.addFlashAttribute("successMsg",
+				"A temporary  password is generated and sent to you.Please use it to login");
+		return "redirect:/";
        
     }
     
-    @RequestMapping(value="/passwordSuccessful", method = RequestMethod.POST)
-    public String postChangePasswordMethod(ModelMap model,@ModelAttribute("changepassword") 
-    ChangePassword changepassword,BindingResult result,RedirectAttributes attr) {
-    	model.addAttribute("title", "Change Password");
-    	
-    	User user = internalUserService.findUserByEmail(changepassword.getEmail());
-    	if(user == null){
-    		attr.addFlashAttribute("failureMsg",
-					"Not a Valid User address");
-			return "redirect:/forgotpass";
-    	}
-    	
-    	if(user.getPassword().equals(changepassword.getNewpassword())){
-    		
-    		attr.addFlashAttribute("failureMsg",
-					"The new password is same as old one.Please enter a new thing");
-			return "redirect:/forgotpass";	
-    	}
-    	
-    	if(changepassword.getNewpassword().equals(changepassword.getConfirmpassword())){
-    		
-    		internalUserService.updatePassword(changepassword.getEmail(), changepassword.getNewpassword());
-    	
-    		attr.addFlashAttribute("successMsg",
-					"The password is changed successfully.Please login");
-			return "redirect:/";	
-        
-    	}
-        else
-        	
-        	attr.addFlashAttribute("failureMsg",
-					"The newpassword and confirm password are not same");
-			return "redirect:/forgotpass";	
-        
-    }
     
+	
     
     @RequestMapping(value="/logout", method = RequestMethod.GET)
     public String getLogout (HttpServletRequest request, HttpServletResponse response) {
@@ -197,6 +188,8 @@ public class AuthController {
         }
         return "redirect:/?logout";
     }
+
+
 
 
 }

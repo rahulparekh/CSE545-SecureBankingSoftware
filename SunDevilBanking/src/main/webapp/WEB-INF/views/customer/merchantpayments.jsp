@@ -12,7 +12,7 @@
 		<h1>Merchant Payments</h1>
 	</div>
 
-	<form:form id="payment" modelAttribute="paymentrequest" method="POST" action="merchant-payments">
+	<form:form id="payment" modelAttribute="paymentrequest" method="POST" action="merchant-payments" name="merchant-payments">
 		<c:if test="${!empty successMsg}">
 			<div class="alert alert-success">${fn:escapeXml(successMsg)}</div>
 		</c:if>
@@ -53,6 +53,12 @@
 			<span><input type="radio" name="type" value="Debit"> Debit From Customer</span>
 			<div class="type-error"><form:errors path="type" cssClass="error" element="label"/></div>
 		</div>
+		
+		<p>
+		<label>Private Key: </label>
+		<textarea resize: none rows="22" cols="77" name="key" form="merchant-payments">Enter your private key here</textarea>
+		</p>
+		
 		
 		<br>
 		
