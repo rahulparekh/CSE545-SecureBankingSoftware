@@ -27,6 +27,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.sbs.group11.model.*;
 import com.sbs.group11.service.AccountService;
+import com.sbs.group11.service.BCryptHashService;
 import com.sbs.group11.service.InternalUserService;
 import com.sbs.group11.service.SystemLogService;
 import com.sbs.group11.service.ModifiedService;
@@ -34,8 +35,10 @@ import com.sbs.group11.service.TransactionService;
 import com.sbs.group11.service.UserService;
 
 @Controller
-public class InternalUserController {
-
+public class  InternalUserController{
+	
+	@Autowired
+	private BCryptHashService hashService;
 	@Autowired
 	InternalUserService internalUserService;
 	@Autowired
@@ -83,6 +86,11 @@ public class InternalUserController {
 	@ModelAttribute("ModificationTransaction")
 	public ModificationTransaction getModificationTransaction() {
 		return new ModificationTransaction();
+	}
+
+	@ModelAttribute("changepassword")
+	public ChangePassword getChangePasswordObject() {
+		return new ChangePassword();		
 	}
 
 	// **************************PII starts************************************
@@ -1437,5 +1445,129 @@ public class InternalUserController {
 		return "employee/systemLog_sys_admin";
 
 	}
+	
+	//********************************Manager Change Password*********************************
+	
+	@RequestMapping(value = "/manager/password-manager-change", method = RequestMethod.GET)
+	public String getconfirmPassword(ModelMap model) {
+		User customer = userService.getUserDetails();
+		
+		return "employee/manager_change_password";
+	}
+	@RequestMapping(value="/manager/managerpasswordsuccess", method = RequestMethod.POST)
+    public String postChangePasswordMethod(ModelMap model,@ModelAttribute("changepassword") 
+    ChangePassword changepassword,BindingResult result,RedirectAttributes attr) {
+    	
+		
+		User customer = userService.getUserDetails();
+		
+		
+		
+		if(hashService.checkBCryptHash(changepassword.getCurrentpassword(), customer.getPassword())){
+			
+			if(changepassword.getConfirmpassword().equals(changepassword.getNewpassword())){
+				
+				internalUserService.updatePassword(customer.getEmail(), changepassword.getNewpassword());
+				
+				attr.addFlashAttribute("successMsg",
+						"The password is changed successfully.Please login");
+				return "redirect:/";
+			}
+			else{
+				attr.addFlashAttribute("failureMsg",
+						"The newpassword and confirm password are not same");
+				return "redirect:/";
+			}
+		}
+		else
+		{
+			attr.addFlashAttribute("failureMsg",
+					"The currentpassword and Emailed password are not same");
+			return "redirect:/";
+		 
+		}
+	}
+	
+	@RequestMapping(value = "/regular/password-regular-change", method = RequestMethod.GET)
+	public String getregularconfirmPassword(ModelMap model) {
+		User customer = userService.getUserDetails();
+		
+		return "employee/regular_change_password";
+	}
+	@RequestMapping(value="/regular/regularpasswordsuccess", method = RequestMethod.POST)
+    public String postregularChangePasswordMethod(ModelMap model,@ModelAttribute("changepassword") 
+    ChangePassword changepassword,BindingResult result,RedirectAttributes attr) {
+    	
+		
+		User customer = userService.getUserDetails();
+		
+		
+		
+		if(hashService.checkBCryptHash(changepassword.getCurrentpassword(), customer.getPassword())){
+			
+			if(changepassword.getConfirmpassword().equals(changepassword.getNewpassword())){
+				
+				internalUserService.updatePassword(customer.getEmail(), changepassword.getNewpassword());
+				
+				attr.addFlashAttribute("successMsg",
+						"The password is changed successfully.Please login");
+				return "redirect:/";
+			}
+			else{
+				attr.addFlashAttribute("failureMsg",
+						"The newpassword and confirm password are not same");
+				return "redirect:/";
+			}
+		}
+		else
+		{
+			attr.addFlashAttribute("failureMsg",
+					"The currentpassword and Emailed password are not same");
+			return "redirect:/";
+		 
+		}
+	}
+	
+	@RequestMapping(value = "/admin/password-admin-change", method = RequestMethod.GET)
+	public String getAdminconfirmPassword(ModelMap model) {
+		User customer = userService.getUserDetails();
+		
+		return "employee/admin_change_password";
+	}
+	@RequestMapping(value="/admin/adminpasswordsuccess", method = RequestMethod.POST)
+    public String postAdminChangePasswordMethod(ModelMap model,@ModelAttribute("changepassword") 
+    ChangePassword changepassword,BindingResult result,RedirectAttributes attr) {
+    	
+		
+		User customer = userService.getUserDetails();
+		
+		
+		
+		if(hashService.checkBCryptHash(changepassword.getCurrentpassword(), customer.getPassword())){
+			
+			if(changepassword.getConfirmpassword().equals(changepassword.getNewpassword())){
+				
+				internalUserService.updatePassword(customer.getEmail(), changepassword.getNewpassword());
+				
+				attr.addFlashAttribute("successMsg",
+						"The password is changed successfully.Please login");
+				return "redirect:/";
+			}
+			else{
+				attr.addFlashAttribute("failureMsg",
+						"The newpassword and confirm password are not same");
+				return "redirect:/";
+			}
+		}
+		else
+		{
+			attr.addFlashAttribute("failureMsg",
+					"The currentpassword and Emailed password are not same");
+			return "redirect:/";
+		 
+		}
+	}
+	
+	
 
 }
