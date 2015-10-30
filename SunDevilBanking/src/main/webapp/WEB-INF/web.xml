@@ -94,7 +94,7 @@
 		<!-- Transport guarantee is used for http/https To allow http traffic use 
 			NONE To restrict to just HTTPS use CONFIDENTIAL -->
 		<user-data-constraint>
-			<transport-guarantee>NONE</transport-guarantee>
+			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
 		</user-data-constraint>
 	</security-constraint>
 

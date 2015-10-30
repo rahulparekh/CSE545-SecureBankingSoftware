@@ -49,6 +49,8 @@
 			<li><a href="${pageContext.servletContext.contextPath}/regular/int-employee-setting">Settings</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
           </ul>
+          
+         </div>
 
         <div class="col-sm-9 col-md-10 main">
 
