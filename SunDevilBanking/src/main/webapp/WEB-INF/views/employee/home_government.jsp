@@ -70,7 +70,7 @@
 					</div>
 				</c:if>
             <p>
-              <label>Employee ID:</label>
+              <label>Customer ID:</label>
               <form:input  path = "employeeID" type="text" class="form-control" placeholder="ex: 123456789" minlength ='11' maxlength = '11'></form:input>
             </p>
 			<div class="modal-footer" >                
