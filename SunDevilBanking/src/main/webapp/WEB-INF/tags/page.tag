@@ -76,6 +76,10 @@
 						href="${pageContext.servletContext.contextPath}/home/statements">Statements</a></li>
 					<li class="${fn:endsWith(pageContext.request.requestURI, 'settings.jsp') ? 'active':''}"><a
 						href="${pageContext.servletContext.contextPath}/home/customer-setting">Settings</a></li>
+						
+					<li class="${fn:endsWith(pageContext.request.requestURI, 'customer_change_password.jsp') ? 'active':''}"><a
+						href="${pageContext.servletContext.contextPath}/home/password-change">Change Password</a></li>
+						
 					<li class="${fn:endsWith(pageContext.request.requestURI, 'logout.jsp') ? 'active':''}"><a
 						href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
 				</ul>

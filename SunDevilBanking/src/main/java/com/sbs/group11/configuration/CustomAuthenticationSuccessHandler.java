@@ -56,7 +56,7 @@ public class CustomAuthenticationSuccessHandler implements
 			} 
 			
 			// Manager
-			if (grantedAuthority.getAuthority().equals("ROLE_EMPLOYEE")) {
+			if (grantedAuthority.getAuthority().equals("ROLE_REGULAR")) {
 				return "/regular/int-employee-home";
 			}
 			

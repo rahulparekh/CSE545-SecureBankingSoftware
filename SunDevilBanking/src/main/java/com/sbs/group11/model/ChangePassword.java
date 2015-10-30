@@ -2,14 +2,34 @@ package com.sbs.group11.model;
 
 public class ChangePassword {
 	
-	private String email;
+	
 
-	private String password;
+	private String currentpassword;
 	
-	private String Confirmpassword;
-	
-	private String Newpassword;
-	
+	public String getCurrentpassword() {
+		return currentpassword;
+	}
+
+	public void setCurrentpassword(String currentpassword) {
+		this.currentpassword = currentpassword;
+	}
+
+	public String getConfirmpassword() {
+		return confirmpassword;
+	}
+
+	public void setConfirmpassword(String confirmpassword) {
+		this.confirmpassword = confirmpassword;
+	}
+
+	public String getNewpassword() {
+		return newpassword;
+	}
+
+	public void setNewpassword(String newpassword) {
+		this.newpassword = newpassword;
+	}
+
 	public String getEmail() {
 		return email;
 	}
@@ -18,29 +38,14 @@ public class ChangePassword {
 		this.email = email;
 	}
 
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getConfirmpassword() {
-		return Confirmpassword;
-	}
-
-	public void setConfirmpassword(String confirmpassword) {
-		Confirmpassword = confirmpassword;
-	}
-
-	public String getNewpassword() {
-		return Newpassword;
-	}
-
-	public void setNewpassword(String newpassword) {
-		Newpassword = newpassword;
-	}
+	private String confirmpassword;
+	
+	private String newpassword;
+	
+	private String email;
+	
+	
+	
 
 
 }

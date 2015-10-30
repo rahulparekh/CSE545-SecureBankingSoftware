@@ -12,6 +12,12 @@
 						${fn:escapeXml(successMsg)}
 					</div>
 				</c:if>
+				
+				    <c:if test="${!empty failureMsg}">
+					<div class="alert alert-danger">						
+						${fn:escapeXml(failureMsg)}
+					</div>
+		</c:if>
 		
 		<h3>Welcome to Sun Devil Banking - Group 11</h3>
 		<h2 class="form-signin-heading">Please Login</h2>

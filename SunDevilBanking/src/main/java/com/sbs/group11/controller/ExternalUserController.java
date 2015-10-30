@@ -28,6 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.sbs.group11.model.Account;
+import com.sbs.group11.model.ChangePassword;
 import com.sbs.group11.model.ModifiedUser;
 import com.sbs.group11.model.OTP;
 import com.sbs.group11.model.PaymentRequest;
@@ -36,6 +37,7 @@ import com.sbs.group11.model.Transaction;
 import com.sbs.group11.model.User;
 import com.sbs.group11.service.AccountService;
 import com.sbs.group11.service.BCryptHashService;
+import com.sbs.group11.service.InternalUserService;
 import com.sbs.group11.service.ModifiedService;
 import com.sbs.group11.service.OTPService;
 import com.sbs.group11.service.PkiService;
@@ -75,13 +77,18 @@ public class ExternalUserController {
 
 	@Autowired
 	private BCryptHashService hashService;
-
+	@Autowired
+	InternalUserService internalUserService;
 	@Autowired
 	SmartValidator validator;
 
 	@Autowired
 	ModifiedService modifiedService;
-
+	
+	@ModelAttribute("changepassword")
+	public ChangePassword getChangePasswordObject() {
+		return new ChangePassword();		
+	}
 	@Autowired
 	PkiService pkiService;
 
@@ -1396,5 +1403,49 @@ public class ExternalUserController {
 
 		return "redirect:/home/customer-setting";
 	}
+	
+	@RequestMapping(value = "/password-change", method = RequestMethod.GET)
+	public String getconfirmPassword(ModelMap model) {
+		User customer = userService.getUserDetails();
+		
+		return "customer/customer_change_password";
+	}
+	@RequestMapping(value="/passwordSuccess", method = RequestMethod.POST)
+    public String postChangePasswordMethod(ModelMap model,@ModelAttribute("changepassword") 
+    ChangePassword changepassword,BindingResult result,RedirectAttributes attr) {
+    	
+		
+		User customer = userService.getUserDetails();
+		
+		
+		
+		if(hashService.checkBCryptHash(changepassword.getCurrentpassword(), customer.getPassword())){
+			
+			if(changepassword.getConfirmpassword().equals(changepassword.getNewpassword())){
+				
+				internalUserService.updatePassword(customer.getEmail(), changepassword.getNewpassword());
+				
+				attr.addFlashAttribute("successMsg",
+						"The password is changed successfully.Please login");
+				return "redirect:/";
+			}
+			else{
+				attr.addFlashAttribute("failureMsg",
+						"The newpassword and confirm password are not same");
+				return "redirect:/";
+			}
+		}
+		else
+		{
+			attr.addFlashAttribute("failureMsg",
+					"The currentpassword and confirm password are not same");
+			return "redirect:/";
+		 
+		}
+		
+		
+	}
+	
+	
 
 }
