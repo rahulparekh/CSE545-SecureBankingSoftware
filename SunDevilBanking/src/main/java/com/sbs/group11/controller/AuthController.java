@@ -188,7 +188,13 @@ public class AuthController {
         }
         return "redirect:/?logout";
     }
-
+    
+    
+    @RequestMapping(value="/expired", method = RequestMethod.GET)
+    public String getExpired(ModelMap model) {
+    	model.addAttribute("error", "Your session has expired due to access from another device or browser.");
+    	return "auth/login";
+    }
 
 
 

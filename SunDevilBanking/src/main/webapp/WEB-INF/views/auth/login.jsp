@@ -8,10 +8,16 @@
 	<form class="form-signin" method="post" action="${pageContext.servletContext.contextPath}/login">
 		<div>
 		<c:if test="${!empty successMsg}">
-					<div class="alert alert-success">						
-						${fn:escapeXml(successMsg)}
-					</div>
-				</c:if>
+			<div class="alert alert-success">						
+				${fn:escapeXml(successMsg)}
+			</div>
+		</c:if>
+				
+		<c:if test="${!empty error}">
+			<div class="alert alert-danger">						
+				${fn:escapeXml(error)}
+			</div>
+		</c:if>
 		
 		<h3>Welcome to Sun Devil Banking - Group 11</h3>
 		<h2 class="form-signin-heading">Please Login</h2>

@@ -17,6 +17,11 @@
 
 		<!-- enable csrf protection -->
 		<csrf />
+		
+		<session-management>
+			<concurrency-control max-sessions="1" expired-url="/expired" />
+		</session-management>
+		
 
 		<!-- Interception rules as per roles -->
 		<intercept-url pattern="/home/payment-requests" access="hasRole('ROLE_CUSTOMER')" />
