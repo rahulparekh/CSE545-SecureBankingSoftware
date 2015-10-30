@@ -368,7 +368,7 @@ public class InternalUserController {
 
 			attr.addFlashAttribute("failureMsg",
 					"TransactionID Invalid or Not Found");
-			return "redirect:manager/manager-home";
+			return "redirect:/manager/manager-home";
 		}
 
 		Account account = accountService.getAccountByNumber(transaction
