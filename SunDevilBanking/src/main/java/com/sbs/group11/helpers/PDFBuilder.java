@@ -88,8 +88,8 @@ public class PDFBuilder extends AbstractITextPdfView {
 		cell.setPhrase(new Phrase("Balance", font));
 		table.addCell(cell);
 		
-		for (Transaction transaction : transactions) {
-			String balance = "";
+		String balance = "";
+		for (Transaction transaction : transactions) {			
 			if (transaction.getBalance() != null) {
 				balance = transaction.getBalance().toString();
 			}

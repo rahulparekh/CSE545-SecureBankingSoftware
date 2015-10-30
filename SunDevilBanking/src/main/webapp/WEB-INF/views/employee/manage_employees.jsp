@@ -71,11 +71,11 @@
 				<form:input type="hidden" path="customerID" id="customerID"/>
 				<p>
 					<label>First Name:</label>
-					<form:input path="firstName" id="firstName"  minlength='2' maxlength='35' required='required'/>
+					<form:input path="firstName" id="firstName"  minlength='2' maxlength='35' required='required' class="form-control"/>
 				</p>
 				<p>
 					<label>Last Name:</label>
-					<form:input path="lastName" id="lastName" minlength='3' maxlength='70' required='required'/>
+					<form:input path="lastName" id="lastName" minlength='3' maxlength='70' required='required' class="form-control"/>
 				</p>
 				<p>
 					<label>Address:</label>

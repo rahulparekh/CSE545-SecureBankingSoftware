@@ -69,6 +69,7 @@
 				<th>Receiver Account No.</th>
                 <th>Transaction ID</th>              
 			    <th>Amount</th>
+			    <th>Credit/Debit</th>
               	<th>Date</th>				
               </tr>
             </thead>
@@ -91,6 +92,7 @@
 				<td>${transaction.receiverAccNumber}</td>
 				<td>${transaction.transactionID}</td>
 				<td>${transaction.amount}</td>
+				<td>${transaction.type}</td>
 				<td>${transaction.createdAt}</td>
 				<form:form method="POST" action="critical-approve" >
 				<input type="hidden" name="transactionID" value="${transaction.transactionID}"></input>

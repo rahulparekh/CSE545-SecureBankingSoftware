@@ -37,16 +37,21 @@
 				<tr>
 					<td>
 						<joda:format var="updatedAt"
-							value="${transaction.updatedAt}" pattern="dd MMM, yyyy"
+							value="${transaction.updatedAt}" pattern="dd MMM, yyyy HH:mm"
 							style="F-" dateTimeZone="America/Phoenix" />
 						${updatedAt}
 					</td>
 					<td>${transaction.name}</td>
 					<td>${transaction.type == 'Debit' ? transaction.amount : ''}</td>
 					<td>${transaction.type == 'Credit' ? transaction.amount : ''}</td>
-					<td>${transaction.balance}</td>
+					<td>$${transaction.balance}</td>
+					<c:set var="total" scope="page" value="${transaction.balance}"/>
 				</tr>
 			</c:forEach>
+			<tr>
+				<td colspan="4">Total:</td>				
+				<td><strong>$${total}</strong></td>
+			</tr>
 		</tbody>
 	</table>
 
