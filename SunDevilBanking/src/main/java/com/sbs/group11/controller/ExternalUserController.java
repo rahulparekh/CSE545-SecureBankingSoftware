@@ -1088,19 +1088,6 @@ public class ExternalUserController {
 		User user = userService.getUserDetails();
 		model.put("user", user);
 		
-		String key = request.getParameter("key");
-	    logger.info("received key is "+key);
-		
-		
-		String cipher = pkiService.paymentinfoencryption(user.getCustomerID(), key);
-		if(!pkiService.paymentinfodecryption(user.getCustomerID(), cipher)) {
-			attr.addFlashAttribute("failureMsg",
-					"Could not process your transaction. Private key doesnt match.");
-			return "redirect:/home/merchant-payments";
-		}
-		
-
-		
 		List<Account> customerAccounts = accountService
 				.getAccountsByCustomerID(user.getCustomerID());
 
