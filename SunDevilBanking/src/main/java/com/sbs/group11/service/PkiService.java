@@ -171,7 +171,10 @@ public class PkiService {
 		
 
 			String uname = Base64.encode(usernamedecrypt);
-	
+			
+			userName = userName.replaceAll("\\s+",""); 
+			
+			uname = uname.replaceAll("\\s+",""); 
 			if (uname.equals(userName)) {
 				return true;
 			}
