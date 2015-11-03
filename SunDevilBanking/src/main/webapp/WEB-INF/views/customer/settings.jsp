@@ -59,12 +59,13 @@
 					<form:input path="state" id="state" type="text" minlength='2' maxlength='2' required='required'
 						class="form-control" placeholder="AZ"  value="${customer.state}"/>
 				</p>	
+				
 				<p>
 					<label>Provide Access to Transactions</label>
-					<form:radiobutton path="employeeOverride"  
-						 value="1"/>Yes
-					<form:radiobutton path="employeeOverride"  
-						 value = "0"/>No	
+					<input type="radio" name="employeeOverride"  
+						 value="1" ${customer.employeeOverride == 1 ? 'checked' : ''}/>Yes
+					<input type="radio" name="employeeOverride"  
+						 value = "0" ${customer.employeeOverride == 1 ? '' : 'checked'}/>No	
 				</p>
 				<div class="modal-footer">
 					<button type="submit" class="btn btn-success" >Submit</button>
