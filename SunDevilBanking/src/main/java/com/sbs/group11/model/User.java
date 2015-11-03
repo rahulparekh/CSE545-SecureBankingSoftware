@@ -74,7 +74,7 @@ public class User {
 	private String firstName;
 
 	/** The middle name. */
-	@Size(min = 3, max = 35)
+	@Size(min = 0, max = 35)
 	@Column(name = "MiddleName", nullable = true, length = 35)
 	private String middleName;
 

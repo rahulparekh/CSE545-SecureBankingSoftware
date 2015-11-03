@@ -292,22 +292,56 @@ public class  InternalUserController{
 	}
 
 	@RequestMapping(value = "/admin/sysadmin-setting", method = RequestMethod.GET)
-	public String getAdminSetting(ModelMap model,
-			@ModelAttribute("user") User user) {
-
+	public String getAdminSetting(ModelMap model) {
 		User sysadmin = userService.getUserDetails();
-		model.addAttribute("user", sysadmin);
+		model.addAttribute("sysadmin", sysadmin);
 		model.addAttribute("email", sysadmin.getEmail());
 		return "employee/setting_sys_admin";
 	}
 
 	@RequestMapping(value = "/admin/sysadmin-setting_success", method = RequestMethod.POST)
 	public String changeAdminSetting(ModelMap model,
-			@ModelAttribute("user") User user, BindingResult result) {
+			@ModelAttribute("user") User user, BindingResult result, RedirectAttributes redirectAttrs) {
 
 		user.setUserType("admin");
+		
+		User current_user = internalUserService.findUserByID(user.getCustomerID());
+		if(current_user != null)
+		{
+			user.setEmail(current_user.getEmail());
+			user.setPassword(current_user.getPassword());
+			user.setCreatedAt(current_user.getCreatedAt());
+			user.setUpdatedAt(new DateTime().toLocalDateTime());
+			user.setLastLoginAt(new DateTime().toLocalDateTime());
+		} else {
+			
+			redirectAttrs.addFlashAttribute("failureMsg",
+					"User not found.");
+
+			return "redirect:/admin/sysadmin-setting";
+			
+		}
+		
+		validator.validate(user, result);
+		logger.debug("Validated model");
+		if (result.hasErrors()) {
+			logger.debug("Validation errors: ");
+			logger.debug(result);
+
+			// attributes for validation failures
+			redirectAttrs.addFlashAttribute("failureMsg",
+					"Could not process your request. You have errors");
+			redirectAttrs.addFlashAttribute("org.springframework.validation.BindingResult.user", result);
+			redirectAttrs.addFlashAttribute("user", user);
+
+			return "redirect:/admin/sysadmin-setting";
+		}
+		
 		internalUserService.updateInternalUser(user);
-		return "redirect:/admin/sysadmin-home";
+		
+		redirectAttrs.addFlashAttribute("successMsg",
+				"Settings updated successfully.");
+		return "redirect:/admin/sysadmin-setting";
 	}
 
 	// ///***************SYS ADMIN ENDS*****************************

@@ -1,6 +1,8 @@
 <%@page language="java" contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -62,19 +64,30 @@
           <div id="fund-transfer">
             <div class="modal-body">
             <form:form method="POST" modelAttribute="user" action="sysadmin-setting_success">
-              <form:input type="hidden" path="customerID" id="customerID"/>
+            	<c:if test="${!empty successMsg}">
+					<div class="alert alert-success">						
+						${fn:escapeXml(successMsg)}
+					</div>
+				</c:if>
+				<c:if test="${!empty failureMsg}">
+					<div class="alert alert-danger">						
+						${fn:escapeXml(failureMsg)}
+						<form:errors path="*" element="div"/>
+					</div>
+				</c:if>
+              <form:input type="hidden" path="customerID" id="customerID" value="${sysadmin.customerID}"/>
               <p>
 					<label>First Name:</label>
-					<form:input path="firstName" id="firstName"  />
+					<form:input path="firstName" id="firstName" value="${sysadmin.firstName}" />
 			  </p>
 			  <p>
 					<label>Last Name:</label>
-					<form:input path="lastName" id="lastName" />
+					<form:input path="lastName" id="lastName" value="${sysadmin.lastName}" />
 			  </p>
 			   <p>
 					<label>Address:</label>
 					<form:input path="addressLine1" id="addressLine1" type="text" 
-						Class="form-control" placeholder="ex: 1009 E University Dr" />
+						Class="form-control" placeholder="ex: 1009 E University Dr" value="${sysadmin.addressLine1}" />
 			  </p>
 			
 			   <p>
@@ -86,19 +99,19 @@
 			   <p>
 					<label>Phone No:</label>
 					<form:input path="phone"  id="phone" type="text"
-						class="form-control" placeholder="ex:986-712-345" />
+						class="form-control" placeholder="ex:986-712-345" value="${sysadmin.phone}"/>
 			  </p>
 				
 			   <p>
 					<label>Zip Code:</label>
 					<form:input path="zipCode" id="zipCode" type="text"
-						class="form-control" placeholder="ex:85281" />
+						class="form-control" placeholder="ex:85281" value="${sysadmin.zipCode}"/>
 			   </p>
 			
 			   <p>
 					<label>State:</label>
 					<form:input path="state" id="state" type="text"
-						class="form-control" placeholder="AZ" />
+						class="form-control" placeholder="AZ" value="${sysadmin.state}" />
 			   </p>	
 				
 				<div class="modal-footer">
