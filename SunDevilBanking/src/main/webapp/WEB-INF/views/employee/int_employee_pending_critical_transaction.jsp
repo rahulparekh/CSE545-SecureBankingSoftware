@@ -5,6 +5,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags"%>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -93,7 +94,10 @@
 				<td>${transaction.transactionID}</td>
 				<td>${transaction.amount}</td>
 				<td>${transaction.type}</td>
-				<td>${transaction.createdAt}</td>
+				<joda:format var="createdAt"
+							value="${transaction.createdAt}" pattern="dd MMM, yyyy HH:mm:ss"
+							style="F-" dateTimeZone="America/Phoenix" />
+				<td>${createdAt}</td>
 				<form:form method="POST" action="critical-approve" >
 				<input type="hidden" name="transactionID" value="${transaction.transactionID}"></input>
 				<td><button type="submit" class="btn btn-success" name>Approve</button></td>

@@ -183,7 +183,7 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 		//System.out.print("Inside gettransaction");
 		List<Transaction> transactions = new ArrayList<Transaction>();		
 		transactions = getSession()
-				.createQuery("from Transaction where status = :pending_status Order By UpdatedAt DESC")
+				.createQuery("from Transaction where status = :pending_status Order By UpdatedAt ASC")
 				.setParameter("pending_status", pending_status)
 				.list();
 		       
