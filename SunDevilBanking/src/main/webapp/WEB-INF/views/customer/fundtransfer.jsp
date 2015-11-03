@@ -100,7 +100,7 @@
 			<hr>
 			<p>
 				<label>Your Private Key: </label>
-				<textarea resize="none" rows="22" cols="77" name="key" form="fund-transfer" class="form-control">Enter your private key here</textarea>
+				<textarea resize="none" rows="22" cols="77" name="key" form="fund-transfer" class="form-control" placeholder="Enter your private key here"></textarea>
 			</p>
 		
 		</div>
