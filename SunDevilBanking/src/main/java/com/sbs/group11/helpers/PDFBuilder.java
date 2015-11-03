@@ -45,8 +45,7 @@ public class PDFBuilder extends AbstractITextPdfView {
 
 		doc.add(new Paragraph("Account Statement: " + (String) model.get("statementName")));
 		
-		String middlename = user.getMiddleName().isEmpty() ? "" : user.getMiddleName();
-		doc.add(new Paragraph(user.getFirstName() + " " + middlename + " " + user.getLastName() ));
+		doc.add(new Paragraph(user.getFirstName() + " " + user.getLastName() ));
 		
 		String addressLine2 = "";
 		if(user.getAddressLine2() != null && !user.getAddressLine2().isEmpty()) {
@@ -58,9 +57,9 @@ public class PDFBuilder extends AbstractITextPdfView {
 		doc.add(new Paragraph("Balance: " + account.getBalance().toString() ));
 		doc.add(new Paragraph("Acc Number: " + account.getNumber()));
 
-		PdfPTable table = new PdfPTable(5);
+		PdfPTable table = new PdfPTable(6);
 		table.setWidthPercentage(100.0f);
-		table.setWidths(new float[] { 3.0f, 2.0f, 2.0f, 2.0f, 1.0f });
+		table.setWidths(new float[] { 3.0f, 2.0f, 2.0f, 2.0f, 2.0f, 2.0f });
 		table.setSpacingBefore(10);
 
 		// define font for table header row
@@ -70,9 +69,12 @@ public class PDFBuilder extends AbstractITextPdfView {
 		// define table header cell
 		PdfPCell cell = new PdfPCell();
 		cell.setBackgroundColor(BaseColor.BLACK);
-		cell.setPadding(5);
+		cell.setPadding(2);
 
 		// write table header
+		cell.setPhrase(new Phrase("Txn ID", font));
+		table.addCell(cell);
+		
 		cell.setPhrase(new Phrase("Date", font));
 		table.addCell(cell);
 
@@ -93,6 +95,7 @@ public class PDFBuilder extends AbstractITextPdfView {
 			if (transaction.getBalance() != null) {
 				balance = transaction.getBalance().toString();
 			}
+			table.addCell(transaction.getTransactionID());
 			table.addCell(DateTimeFormat.forPattern("dd MMM, yyyy").print(transaction.getCreatedAt()));
 			table.addCell(transaction.getName());
 			table.addCell(transaction.getType().equalsIgnoreCase("debit") ? transaction

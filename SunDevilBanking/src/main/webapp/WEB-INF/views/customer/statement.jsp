@@ -25,6 +25,7 @@
 	<table class="table table-bordered">
 		<thead>
 			<tr>
+				<th>Txn ID</th>
 				<th>Date</th>
 				<th>Description</th>
 				<th>Debit</th>
@@ -35,6 +36,7 @@
 		<tbody>
 			<c:forEach items="${transactions}" var="transaction">
 				<tr>
+					<td>${transaction.transactionID}</td>
 					<td>
 						<joda:format var="updatedAt"
 							value="${transaction.updatedAt}" pattern="dd MMM, yyyy HH:mm"
@@ -49,7 +51,7 @@
 				</tr>
 			</c:forEach>
 			<tr>
-				<td colspan="4">Total:</td>				
+				<td colspan="5">Total:</td>				
 				<td><strong>$${total}</strong></td>
 			</tr>
 		</tbody>
