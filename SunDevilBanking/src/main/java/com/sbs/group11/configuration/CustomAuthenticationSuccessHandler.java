@@ -50,28 +50,28 @@ public class CustomAuthenticationSuccessHandler implements
 		for (GrantedAuthority grantedAuthority : authorities) {
 			
 			// customer
-			if (grantedAuthority.getAuthority().equals("ROLE_CUSTOMER") || 
-					grantedAuthority.getAuthority().equals("ROLE_MERCHANT")) {
+			if (grantedAuthority.getAuthority().equalsIgnoreCase("ROLE_CUSTOMER") || 
+					grantedAuthority.getAuthority().equalsIgnoreCase("ROLE_MERCHANT")) {
 				return "/home/";
 			} 
 			
 			// Manager
-			if (grantedAuthority.getAuthority().equals("ROLE_REGULAR")) {
+			if (grantedAuthority.getAuthority().equalsIgnoreCase("ROLE_REGULAR")) {
 				return "/regular/int-employee-home";
 			}
 			
 			// Admin
-			if (grantedAuthority.getAuthority().equals("ROLE_ADMIN")) {
+			if (grantedAuthority.getAuthority().equalsIgnoreCase("ROLE_ADMIN")) {
 				return "/admin/sysadmin-home";
 			}
 			
 			// Manager
-			if (grantedAuthority.getAuthority().equals("ROLE_MANAGER")) {
+			if (grantedAuthority.getAuthority().equalsIgnoreCase("ROLE_MANAGER")) {
 				return "/manager/manager-home";
 			}
 			
 			// Manager
-			if (grantedAuthority.getAuthority().equals("ROLE_GOVERNMENT")) {
+			if (grantedAuthority.getAuthority().equalsIgnoreCase("ROLE_GOVERNMENT")) {
 				return "/government/government-home";
 			}
 		}

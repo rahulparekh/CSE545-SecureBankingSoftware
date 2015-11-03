@@ -109,9 +109,9 @@ public class ExternalUserController {
 			return redirectUrl;
 		}
 
-		if (type.equals("creditdebit")) {
+		if (type.equalsIgnoreCase("creditdebit")) {
 
-		} else if (type.equals("fundtransfer")) {
+		} else if (type.equalsIgnoreCase("fundtransfer")) {
 			redirectUrl = "redirect:/home/fund-transfer";
 		} else {
 			attr.addFlashAttribute("failureMsg",
@@ -156,7 +156,7 @@ public class ExternalUserController {
 
 			// if fund transfer
 			// get the reverse transaction too and set it to pending
-			if (type.equals("fundtransfer")) {
+			if (type.equalsIgnoreCase("fundtransfer")) {
 
 				if (!transactionService.updateTransactionPair(transaction,
 						"pairtxn", BigDecimal.ZERO)) {

@@ -167,7 +167,7 @@ public class TransactionDaoImpl extends AbstractDao<Integer, Transaction> implem
 	   
 	   
 	   if (status.size() > 0 && 
-			   status.get(0).getStatus().equals("pending")){			   
+			   status.get(0).getStatus().equalsIgnoreCase("pending")){			   
 			   return true;
 		} 	   
 	   
