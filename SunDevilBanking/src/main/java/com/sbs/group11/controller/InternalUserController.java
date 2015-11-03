@@ -163,6 +163,8 @@ public class  InternalUserController{
 	public String getSysAdminHome(ModelMap model) {
 
 		model.addAttribute("title", "Welcome System Admin:");
+		User user = userService.getUserDetails();
+		model.addAttribute("user", user);
 		return "employee/home_sys_admin";
 
 	}
@@ -352,6 +354,8 @@ public class  InternalUserController{
 	public String getManagerHome(ModelMap model) {
 
 		model.addAttribute("title", "Welcome Manager:");
+		User user = userService.getUserDetails();
+		model.addAttribute("user", user);
 		return "employee/home_manager";
 
 	}
@@ -834,9 +838,10 @@ public class  InternalUserController{
 	// ///********************************INTERNAL EMPLOYEE********************
 
 	@RequestMapping(value = "/regular/int-employee-home", method = RequestMethod.GET)
-	public String getInternalEmployeeHome(ModelMap model) {
-
+	public String getInternalEmployeeHome(ModelMap model) {		
 		model.addAttribute("title", "Welcome Regular Employee");
+		User user = userService.getUserDetails();
+		model.addAttribute("user", user);
 		return "employee/home_int_employee";
 
 	}

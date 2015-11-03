@@ -61,7 +61,7 @@
           <div id="fund-transfer">
             <div class="modal-body">
             <form:form method="POST" modelAttribute="user" action="int-employee-setting_success">
-				<form:input type="hidden" path="customerID" id="customerID"/>
+				<form:input type="hidden" path="customerID" id="customerID" value="${manager.customerID}"/>
 				<c:if test="${!empty successMsg}">
 					<div class="alert alert-success">						
 						${fn:escapeXml(successMsg)}

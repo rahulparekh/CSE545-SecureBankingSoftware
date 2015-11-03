@@ -55,7 +55,7 @@
         <div class="col-sm-9 col-md-10 main">
 
           <div class="page-header">
-            <h1>SBS - Welcome System Admin</h1>
+            <h1>SBS - Welcome System Admin  - EmpID: ${user.customerID}</h1>
           </div>
 
           <h2>Search By:</h2>

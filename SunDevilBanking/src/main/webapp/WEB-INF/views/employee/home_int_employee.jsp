@@ -54,11 +54,17 @@
         <div class="col-sm-9 col-md-10 main">
 
           <div class="page-header">
-            <h1>SBS - Welcome Regular Employee </h1>
+            <h1>SBS - Welcome Regular Employee - EmpID: ${user.customerID} </h1>
           </div>
 
           <h2>Search Transactions By:</h2>
 		  <br>
+		  
+		  <c:if test="${!empty successMsg}">
+					<div class="alert alert-success">						
+						${fn:escapeXml(successMsg)}
+					</div>
+				</c:if>
           
           <div id="payment">
             <p>
