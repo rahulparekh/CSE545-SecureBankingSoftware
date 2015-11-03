@@ -7,6 +7,7 @@
 
 	<div class="page-header">
 		<h1>Welcome ${fn:escapeXml(fullname)}</h1>
+		<h4>Customer Id: ${fn:escapeXml(customerId) }</h4>
 	</div>
 
 	<h2>Accounts:</h2>

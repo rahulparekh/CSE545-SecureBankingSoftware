@@ -203,6 +203,7 @@ public class ExternalUserController {
 		model.addAttribute("fullname",
 				user.getFirstName() + " " + user.getLastName());
 		model.addAttribute("accounts", accounts);
+		model.addAttribute("customerId", user.getCustomerID());
 		return "customer/home";
 	}
 
