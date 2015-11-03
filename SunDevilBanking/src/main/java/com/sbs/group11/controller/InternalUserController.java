@@ -723,11 +723,10 @@ public class  InternalUserController{
 	}
 
 	@RequestMapping(value = "/manager/manager-setting", method = RequestMethod.GET)
-	public String getManagerSetting(ModelMap model,
-			@ModelAttribute("user") User user) {
+	public String getManagerSetting(ModelMap model) {
 
 		User manager = userService.getUserDetails();
-		model.addAttribute("user", manager);
+		model.addAttribute("manager", manager);
 		model.addAttribute("email", manager.getEmail());
 		return "employee/setting_manager";
 	}
@@ -762,7 +761,7 @@ public class  InternalUserController{
 					"You have errors in your request.");
 
 			// redirect to the credit debit view page
-			return "redirect:/home/customer-setting";
+			return "redirect:/manager/manager-setting";
 		}
 
 		ModifiedUser modifiedUser = new ModifiedUser();
@@ -911,12 +910,11 @@ public class  InternalUserController{
 	}
 
 	@RequestMapping(value = "/regular/edit-customer-int", method = RequestMethod.GET)
-	public String getEditUserInfoIntEmployee(ModelMap model,
-			@ModelAttribute("user") User user) {
+	public String getEditUserInfoIntEmployee(ModelMap model) {
 		Map<String, String> userTypes = new LinkedHashMap<String, String>();
 		userTypes.put("Customer", "Customer");
 		userTypes.put("Merchant", "Merchant");
-		model.addAttribute("user", user);
+		model.addAttribute("user", (User) model.get("user"));
 		model.addAttribute("userTypes", userTypes);
 		return "employee/int_employee_customers_edt";
 	}
@@ -925,7 +923,41 @@ public class  InternalUserController{
 	public String addUserInfoPostIntEmployee(ModelMap model,
 			@ModelAttribute("user") User user, BindingResult result,
 			RedirectAttributes redirectAttrs) {
-		model.addAttribute("user", new User());
+		
+		User current_user = internalUserService.findUserByID(user.getCustomerID());
+		if(current_user != null)
+		{
+			user.setEmail(current_user.getEmail());
+			user.setPassword(current_user.getPassword());
+			user.setCreatedAt(current_user.getCreatedAt());
+			user.setUpdatedAt(new DateTime().toLocalDateTime());
+			user.setLastLoginAt(new DateTime().toLocalDateTime());
+		} else {
+			
+			redirectAttrs.addFlashAttribute("failureMsg",
+					"User not found.");
+
+			// redirect to the credit debit view page
+			return "redirect:/regular/edit-customer-int";
+			
+		}
+		
+		validator.validate(user, result);
+		logger.debug("Validated model");
+		if (result.hasErrors()) {
+			logger.debug("Validation errors: ");
+			logger.debug(result);
+
+			// attributes for validation failures
+			redirectAttrs.addFlashAttribute("failureMsg",
+					"Could not process your request. You have errors");
+			redirectAttrs.addFlashAttribute("org.springframework.validation.BindingResult.user", result);
+			redirectAttrs.addFlashAttribute("user", user);
+
+			// redirect to the credit debit view page
+			return "redirect:/regular/edit-customer-int";
+		}
+		
 		internalUserService.updateInternalUser(user);
 		redirectAttrs.addFlashAttribute("successMsg",
 				"UserInformation updated Successfully");
@@ -1277,12 +1309,11 @@ public class  InternalUserController{
 	// /////////////////INTERNAL SETTINGS
 
 	@RequestMapping(value = "/regular/int-employee-setting", method = RequestMethod.GET)
-	public String getEmployeeSetting(ModelMap model,
-			@ModelAttribute("user") User user) {
+	public String getEmployeeSetting(ModelMap model) {
 
 		System.out.println("inside get");
 		User manager = userService.getUserDetails();
-		model.addAttribute("user", manager);
+		model.addAttribute("manager", manager);
 		model.addAttribute("email", manager.getEmail());
 		return "employee/setting_employee";
 	}
@@ -1314,10 +1345,9 @@ public class  InternalUserController{
 			attr.addFlashAttribute("user", user);
 
 			attr.addFlashAttribute("failureMsg",
-					"You have errors in your request.");
+					"You have errors in your request:");
 
-			// redirect to the credit debit view page
-			return "redirect:/home/customer-setting";
+			return "redirect:/regular/int-employee-setting";
 		}
 
 		ModifiedUser modifiedUser = new ModifiedUser();
@@ -1521,20 +1551,20 @@ public class  InternalUserController{
 				internalUserService.updatePassword(customer.getEmail(), changepassword.getNewpassword());
 				
 				attr.addFlashAttribute("successMsg",
-						"The password is changed successfully.Please login");
-				return "redirect:/";
+						"The password is changed successfully.");
+				return "redirect:/manager/password-manager-change";
 			}
 			else{
 				attr.addFlashAttribute("failureMsg",
-						"The newpassword and confirm password are not same");
-				return "redirect:/";
+						"The new password and confirm password are not same");
+				return "redirect:/manager/password-manager-change";
 			}
 		}
 		else
 		{
 			attr.addFlashAttribute("failureMsg",
-					"The currentpassword and Emailed password are not same");
-			return "redirect:/";
+					"The current password does not match");
+			return "redirect:/manager/password-manager-change";
 		 
 		}
 	}
@@ -1560,19 +1590,19 @@ public class  InternalUserController{
 				
 				attr.addFlashAttribute("successMsg",
 						"The password is changed successfully.Please login");
-				return "redirect:/";
+				return "redirect:/regular/password-regular-change";
 			}
 			else{
 				attr.addFlashAttribute("failureMsg",
-						"The newpassword and confirm password are not same");
-				return "redirect:/";
+						"The new password and confirm password are not same");
+				return "redirect:/regular/password-regular-change";
 			}
 		}
 		else
 		{
 			attr.addFlashAttribute("failureMsg",
-					"The currentpassword and Emailed password are not same");
-			return "redirect:/";
+					"Current password does not match");
+			return "redirect:/regular/password-regular-change";
 		 
 		}
 	}
