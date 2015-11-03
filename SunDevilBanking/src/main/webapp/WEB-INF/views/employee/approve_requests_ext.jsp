@@ -75,6 +75,11 @@
                     <label>Email ID.: ${modifiedUser.email}</label>
                     
                   </p>
+                  
+                  <p>
+                    <label>Employee Access: ${modifiedUser.employeeOverride}</label>
+                    
+                  </p>
 			
            			     
 			   

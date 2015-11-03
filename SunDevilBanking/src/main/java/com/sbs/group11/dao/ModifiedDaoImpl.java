@@ -66,6 +66,7 @@ private BCryptHashService hashService;
 				current_user.setState(modifieduser.getState());
 				current_user.setUserType(modifieduser.getUserType());
 				current_user.setUpdatedAt(LocalDateTime.now());
+				current_user.setEmployeeOverride(modifieduser.getEmployeeOverride());
 				
 				getSession().update(modifieduser);
 				getSession().update(current_user);

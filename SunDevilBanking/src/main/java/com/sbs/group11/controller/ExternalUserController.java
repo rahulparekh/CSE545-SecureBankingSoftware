@@ -1348,7 +1348,7 @@ public class ExternalUserController {
 		// Validate fields
 		user.setCustomerID(currentUser.getCustomerID());
 		user.setEmail(currentUser.getEmail());
-		user.setEmployeeOverride(currentUser.getEmployeeOverride());
+		user.setEmployeeOverride(user.getEmployeeOverride());
 		user.setEnabled(currentUser.getEnabled());
 		user.setUserType(currentUser.getUserType());
 		user.setCreatedAt(new DateTime().toLocalDateTime());
@@ -1378,7 +1378,6 @@ public class ExternalUserController {
 		modifiedUser.setAddressLine2(user.getAddressLine2());
 		modifiedUser.setPassword(currentUser.getPassword());
 		modifiedUser.setEmail(currentUser.getEmail());
-		modifiedUser.setEmployeeOverride(currentUser.getEmployeeOverride());
 		modifiedUser.setEnabled(currentUser.getEnabled());
 		modifiedUser.setFirstName(user.getFirstName());
 		modifiedUser.setLastName(user.getLastName());
@@ -1395,6 +1394,8 @@ public class ExternalUserController {
 		long epoch = System.currentTimeMillis() / 1000;
 		modifiedUser.setRequestid(epoch);
 		modifiedService.addRequest(modifiedUser);
+		
+		logger.info(modifiedUser.getEmployeeOverride());
 
 		model.addAttribute("title", "Your Settings!");
 
