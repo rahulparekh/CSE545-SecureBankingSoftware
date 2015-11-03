@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -1332,10 +1333,13 @@ public class ExternalUserController {
 	}
 
 	@RequestMapping(value = "/customer-setting", method = RequestMethod.GET)
-	public String getManagerSetting(ModelMap model,
-			@ModelAttribute("user") User user) {
+	public String getManagerSetting(ModelMap model) {
 		User customer = userService.getUserDetails();
-		model.addAttribute("user", customer);
+		
+		if (!model.containsAttribute("user")) {
+			model.addAttribute(new User());
+		}
+		model.addAttribute("customer", customer);
 		return "customer/settings";
 	}
 
@@ -1361,13 +1365,17 @@ public class ExternalUserController {
 		if (result.hasErrors()) {
 			logger.debug(result);
 
-			// attributes for validation failures
-			attr.addFlashAttribute(
-					"org.springframework.validation.BindingResult.user", result);
-			attr.addFlashAttribute("user", user);
 
 			attr.addFlashAttribute("failureMsg",
-					"You have errors in your request.");
+					"You have errors in your request:");
+			
+			// parse errors and output
+			String fieldErrors = "";
+			for (FieldError error : result.getFieldErrors()) {
+				fieldErrors += "<div>" + error.getField() + " " + error.getDefaultMessage() + "</div>";
+			}
+			
+			attr.addFlashAttribute("fieldErrors", fieldErrors);
 
 			// redirect to the credit debit view page
 			return "redirect:/home/customer-setting";

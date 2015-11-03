@@ -19,45 +19,45 @@
 		</c:if>
 		<c:if test="${!empty failureMsg}">
 			<div class="alert alert-danger">
-				${fn:escapeXml(failureMsg)}:
-				<form:errors path="*" cssClass="error" />
+				${fn:escapeXml(failureMsg)}
+				${fieldErrors}
 			</div>
 		</c:if>
 
 		<div class="modal-body">
             <form:form method="POST" modelAttribute="user" action="customer-setting">
-              <form:input type="hidden" path="customerID" id="customerID"/>
+              	<form:input type="hidden" path="customerID" id="customerID" value="${customer.customerID}"/>
 				<p>
 					<label>First Name:</label>
-					<form:input class="form-control" path="firstName" id="firstName"  minlength='2' maxlength='35' required='required'/>
+					<form:input class="form-control" path="firstName" id="firstName"  minlength='2' maxlength='35' required='required' value="${customer.firstName}"/>
 				</p>
 				<p>
 					<label>Last Name:</label>
-					<form:input class="form-control" path="lastName" id="lastName" minlength='3' maxlength='70' required='required'/>
+					<form:input class="form-control" path="lastName" id="lastName" minlength='3' maxlength='70' required='required' value="${customer.lastName}"/>
 				</p>
 				<p>
 					<label>Address:</label>
 					<form:input path="addressLine1" id="addressLine1" type="text" 
-						Class="form-control" placeholder="ex: 1009 E University Dr" minlength='5' maxlength='50' required='required' />
+						Class="form-control" placeholder="ex: 1009 E University Dr" minlength='5' maxlength='50' required='required' value="${customer.addressLine1}" />
 				</p>
 				
 				
 				<p>
 					<label>Phone No:</label>
 					<form:input path="phone"  id="phone" type="number" required='required'
-						class="form-control" placeholder="ex:986-712-345" />
+						class="form-control" placeholder="ex:986-712-345"  value="${customer.phone}"/>
 				</p>
 				
 				<p>
 					<label>Zip Code:</label>
 					<form:input path="zipCode" id="zipCode" type="number" required='required'
-						class="form-control" placeholder="ex:85281" />
+						class="form-control" placeholder="ex:85281"  value="${customer.zipCode}" />
 				</p>
 			
 				<p>
 					<label>State:</label>
 					<form:input path="state" id="state" type="text" minlength='2' maxlength='2' required='required'
-						class="form-control" placeholder="AZ" />
+						class="form-control" placeholder="AZ"  value="${customer.state}"/>
 				</p>	
 				<p>
 					<label>Provide Access to Transactions</label>
