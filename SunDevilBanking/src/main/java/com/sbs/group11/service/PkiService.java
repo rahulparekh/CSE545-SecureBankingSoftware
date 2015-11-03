@@ -8,17 +8,17 @@ import java.security.PublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
+import javax.crypto.Cipher;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.crypto.Cipher;
-
 import sun.misc.BASE64Encoder;
 
+import com.sbs.group11.dao.UserDao;
 import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException;
 import com.sun.org.apache.xml.internal.security.utils.Base64;
-import com.sbs.group11.dao.UserDao;
 
 @SuppressWarnings("restriction")
 @Service
@@ -29,6 +29,9 @@ public class PkiService {
 
 	@Autowired
 	private UserDao userDAO;
+	
+	@Autowired
+	private SendEmailService emailService;
 
 	@Transactional
 	public String paymentinfoencryption(String userId, String oprivatekey) {
@@ -107,8 +110,7 @@ public class PkiService {
 			//
 			// mailSender.send(messageemail);
 
-			SendEmailService email = new SendEmailServiceImpl();
-			email.sendEmail(mailer, "Your private Key", "Private Key " + "\n"
+			emailService.sendEmail(mailer, "Your private Key", "Private Key " + "\n"
 					+ privatekey + "\n");
 			
 		//	System.out.println(" This is in key pair generation " + publickey);
