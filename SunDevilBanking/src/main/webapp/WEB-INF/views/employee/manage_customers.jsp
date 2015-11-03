@@ -67,10 +67,11 @@
 		  <br>
 
 	<div id="Manage_Employees">
-		<form:form method="POST"   modelAttribute="user" action = "manage-customer_success">
+		<form:form method="POST" modelAttribute="user" action = "manage-customer_success">
 			<c:if test="${!empty failureMsg}">
 					<div class="alert alert-danger">						
 						${fn:escapeXml(failureMsg)}
+						<form:errors path="*" element="div"/>
 					</div>
 				</c:if>
 			<div class="modal-body">

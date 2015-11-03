@@ -463,14 +463,14 @@ public class  InternalUserController{
 	}
 
 	@RequestMapping(value = "/manager/manage-customer", method = RequestMethod.GET)
-	public String addUserInfoManager(ModelMap model,
-			@ModelAttribute("user") User user) {
+	public String addUserInfoManager(ModelMap model) {
 		Map<String, String> userTypes = new LinkedHashMap<String, String>();
-
+		
 		userTypes.put("Customer", "Customer");
 		userTypes.put("Merchant", "Merchant");
-		model.addAttribute("user", user);
+		
 		model.addAttribute("userTypes", userTypes);
+		
 		return "employee/manage_customers";
 	}
 
@@ -483,7 +483,25 @@ public class  InternalUserController{
 		if (internalUserService.findUserByEmail(user.getEmail()) != null) {
 			redirectAttrs.addFlashAttribute("failureMsg",
 					"User Already Exists with the same Email Address");
-			return "redirect:/manager/manager-customer";
+			return "redirect:/manager/manage-customer";
+		}
+		
+		if (request.getParameter("secQuestion1") == null 
+				|| request.getParameter("secQuestion1").isEmpty()
+				|| request.getParameter("secQuestion2") == null 
+				|| request.getParameter("secQuestion2").isEmpty()
+				|| request.getParameter("secQuestion3") == null 
+				|| request.getParameter("secQuestion3").isEmpty()
+				|| request.getParameter("answer1") == null 
+				|| request.getParameter("answer1").isEmpty()
+				|| request.getParameter("answer2") == null 
+				|| request.getParameter("answer2").isEmpty()
+				|| request.getParameter("answer3") == null 
+				|| request.getParameter("answer3").isEmpty()) {
+			
+			redirectAttrs.addFlashAttribute("failureMsg",
+					"Security Questions and Answers are required");
+			return "redirect:/manager/manage-customer"; 
 		}
 
 		Set<SecurityQuestion> secQuestions = new HashSet<SecurityQuestion>();
@@ -510,6 +528,43 @@ public class  InternalUserController{
 		secQuestions.add(question2);
 		secQuestions.add(question3);
 		user.setSecurityQuestions(secQuestions);
+		
+		String customerID;
+		while (true) {
+			customerID = "" + internalUserService.generateRandomNumberOfLength(11);
+			if (internalUserService.findUserByID(customerID) == null) {
+				break;
+			}
+		}
+		Set<SecurityQuestion> secquestions = user.getSecurityQuestions();
+		for (SecurityQuestion question : secquestions) {
+
+			question.setUser(user);
+
+		}
+		user.setCustomerID(customerID);
+		user.setCreatedAt(LocalDateTime.now());
+		user.setLastLoginAt(LocalDateTime.now());
+		user.setUpdatedAt(LocalDateTime.now());
+		user.setUpdatedAt(LocalDateTime.now());
+		user.setEnabled(1);
+		
+		validator.validate(user, result);
+		if (result.hasErrors()) {
+			logger.debug(result);
+
+			// attributes for validation failures
+			redirectAttrs.addFlashAttribute(
+					"org.springframework.validation.BindingResult.user",
+					result);
+			redirectAttrs.addFlashAttribute("user", user);
+
+			redirectAttrs.addFlashAttribute("failureMsg",
+					"You have errors in your request.");
+
+			// redirect to the manager view
+			return "redirect:/manager/manage-customer";
+		}
 
 		internalUserService.addInternalUser(user);
 		redirectAttrs.addFlashAttribute("successMsg",
