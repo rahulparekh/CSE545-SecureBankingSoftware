@@ -27,10 +27,10 @@
 			</c:if>
 			<c:forEach items="${accounts}" var="account">
 				<tr>
-					<td><a title="Go to Account" href="#">${fn:escapeXml(account.name)}
-							(*${fn:escapeXml(fn:substring(account.number, fn:length(account.number) - 4, fn:length(account.number)))})</a></td>
+					<td>${fn:escapeXml(account.name)}
+							(*${fn:escapeXml(fn:substring(account.number, fn:length(account.number) - 4, fn:length(account.number)))})</td>
 					<td>$${fn:escapeXml(account.balance)}</td>
-					<td><a href="">View Statement</a></td>
+					<td><a href="statements">View Statements</a></td>
 				</tr>
 			</c:forEach>
 		</tbody>
