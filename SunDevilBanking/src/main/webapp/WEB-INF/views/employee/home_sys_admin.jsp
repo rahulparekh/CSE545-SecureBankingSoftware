@@ -46,7 +46,6 @@
             <li><a href="${pageContext.servletContext.contextPath}/admin/systemLog-sys-admin">System Log</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/admin/requests-pending">Pending Requests</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/admin/sysadmin-setting">Settings</a></li>
-             <li><a href="${pageContext.servletContext.contextPath}/admin/password-admin-change">Change Password</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/admin/sys-admin-PII">Access PII</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
           </ul>

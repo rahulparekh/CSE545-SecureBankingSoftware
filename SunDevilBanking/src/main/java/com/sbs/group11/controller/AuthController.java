@@ -177,8 +177,11 @@ public class AuthController {
        
     }
     
+    @RequestMapping(value="/login", method = RequestMethod.GET)
+    public String getLoginRedirect (HttpServletRequest request, HttpServletResponse response) {
+        return "redirect:/";
+    }
     
-	
     
     @RequestMapping(value="/logout", method = RequestMethod.GET)
     public String getLogout (HttpServletRequest request, HttpServletResponse response) {

@@ -41,13 +41,14 @@
         <div class="col-sm-3 col-md-2 sidebar">
 
          
-<ul class="nav nav-sidebar">
+        <ul class="nav nav-sidebar">
             <li><a href="${pageContext.servletContext.contextPath}/manager/manager-home">Home</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/manager/internalemployee-pending-critical-transaction">Pending and Critical Transactions</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/manager/manage-customer">Add Users</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/manager/manager-customer-search">View-Edit-Delete Users</a></li>
 			<li><a href="${pageContext.servletContext.contextPath}/manager/requests-pending-ext">Pending Requests</a></li>
 			<li><a href="${pageContext.servletContext.contextPath}/manager/manager-setting">Settings</a></li>
+            <li><a href="${pageContext.servletContext.contextPath}/manager/password-manager-change">Change Password</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
           </ul>
           

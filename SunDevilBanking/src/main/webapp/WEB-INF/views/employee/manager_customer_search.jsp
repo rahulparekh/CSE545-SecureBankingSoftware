@@ -48,6 +48,7 @@
             <li><a href="${pageContext.servletContext.contextPath}/manager/manager-customer-search">View-Edit-Delete Users</a></li>
 			<li><a href="${pageContext.servletContext.contextPath}/manager/requests-pending-ext">Pending Requests</a></li>
 			<li><a href="${pageContext.servletContext.contextPath}/manager/manager-setting">Settings</a></li>
+      <li><a href="${pageContext.servletContext.contextPath}/manager/password-manager-change">Change Password</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
           </ul>
         </div> <!-- sidebar -->

@@ -1449,9 +1449,7 @@ public class  InternalUserController{
 	//********************************Manager Change Password*********************************
 	
 	@RequestMapping(value = "/manager/password-manager-change", method = RequestMethod.GET)
-	public String getconfirmPassword(ModelMap model) {
-		User customer = userService.getUserDetails();
-		
+	public String getconfirmPassword(ModelMap model) {		
 		return "employee/manager_change_password";
 	}
 	@RequestMapping(value="/manager/managerpasswordsuccess", method = RequestMethod.POST)
@@ -1460,8 +1458,6 @@ public class  InternalUserController{
     	
 		
 		User customer = userService.getUserDetails();
-		
-		
 		
 		if(hashService.checkBCryptHash(changepassword.getCurrentpassword(), customer.getPassword())){
 			
@@ -1528,7 +1524,7 @@ public class  InternalUserController{
 		}
 	}
 	
-	@RequestMapping(value = "/admin/password-admin-change", method = RequestMethod.GET)
+	/*@RequestMapping(value = "/admin/password-admin-change", method = RequestMethod.GET)
 	public String getAdminconfirmPassword(ModelMap model) {
 		User customer = userService.getUserDetails();
 		
@@ -1567,7 +1563,7 @@ public class  InternalUserController{
 		 
 		}
 	}
-	
+	*/
 	
 
 }
