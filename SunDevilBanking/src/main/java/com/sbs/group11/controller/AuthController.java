@@ -1,5 +1,6 @@
 package com.sbs.group11.controller;
 
+import java.util.Collection;
 import java.util.Random;
 import java.util.Set;
 
@@ -8,7 +9,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
@@ -17,6 +20,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.sbs.group11.model.ChangePassword;
@@ -26,7 +30,6 @@ import com.sbs.group11.model.SecurityQuestion;
 import com.sbs.group11.model.User;
 import com.sbs.group11.service.InternalUserService;
 import com.sbs.group11.service.SendEmailService;
-import com.sbs.group11.service.UserService;
 //import com.sbs.group11.service.SecurityQuesService;
 
 
@@ -64,6 +67,45 @@ public class AuthController {
 	
 	@RequestMapping(value="/", method = RequestMethod.GET)
     public String getLogin(ModelMap model) {
+		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		
+		// if already authenticated, redirect to logged in page
+		if (!(auth instanceof AnonymousAuthenticationToken)) {
+
+			Collection<? extends GrantedAuthority> authorities = auth
+					.getAuthorities();
+			for (GrantedAuthority grantedAuthority : authorities) {
+				
+				// customer
+				if (grantedAuthority.getAuthority().equalsIgnoreCase("ROLE_CUSTOMER") || 
+						grantedAuthority.getAuthority().equalsIgnoreCase("ROLE_MERCHANT")) {
+					return "redirect:/home/";
+				} 
+				
+				// Manager
+				if (grantedAuthority.getAuthority().equalsIgnoreCase("ROLE_REGULAR")) {
+					return "redirect:/regular/int-employee-home";
+				}
+				
+				// Admin
+				if (grantedAuthority.getAuthority().equalsIgnoreCase("ROLE_ADMIN")) {
+					return "redirect:/admin/sysadmin-home";
+				}
+				
+				// Manager
+				if (grantedAuthority.getAuthority().equalsIgnoreCase("ROLE_MANAGER")) {
+					return "redirect:/manager/manager-home";
+				}
+				
+				// Manager
+				if (grantedAuthority.getAuthority().equalsIgnoreCase("ROLE_GOVERNMENT")) {
+					return "redirect:/government/government-home";
+				}
+			}
+			
+		}
+		
 		model.addAttribute("title", "Welcome! Please Login");
         return "auth/login";
     }
