@@ -90,8 +90,8 @@ private BCryptHashService hashService;
 		users = getSession()
 				.createQuery("from ModifiedUser where Status=? and UserType in (?,?)")
 				.setParameter(0, "pending")
-				.setParameter(1, "manager")
-				.setParameter(2, "regular")
+				.setParameter(1, "Manager")
+				.setParameter(2, "Regular")
 				.list();
 
 		return users;
@@ -106,8 +106,8 @@ private BCryptHashService hashService;
 		users = getSession()
 				.createQuery("from ModifiedUser where Status=? and UserType in (?,?)")
 				.setParameter(0, "pending")
-				.setParameter(1, "merchant")
-				.setParameter(2, "customer")
+				.setParameter(1, "Merchant")
+				.setParameter(2, "Customer")
 				.list();
 
 		return users;

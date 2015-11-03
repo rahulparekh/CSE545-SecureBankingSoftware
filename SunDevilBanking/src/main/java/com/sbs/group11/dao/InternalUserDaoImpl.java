@@ -3,15 +3,19 @@ package com.sbs.group11.dao;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Repository;
 
+import com.sbs.group11.controller.ExternalUserController;
 import com.sbs.group11.model.User;
 
 @Repository("internalUserDaoImpl")
 public class InternalUserDaoImpl extends AbstractDao<Integer, User> implements InternalUserDao {
+	
+	final static Logger logger = Logger.getLogger(InternalUserDaoImpl.class);
 
 	public void saveInternalUser(User user) {
 		persist(user);
@@ -57,12 +61,14 @@ public class InternalUserDaoImpl extends AbstractDao<Integer, User> implements I
 		List<User> users = new ArrayList<User>();
 		
 		
+		logger.info("findInternalUserByID called");
+		
 
 		users = getSession()
 				.createQuery("from User where CustomerID=? and UserType in (?,?)")
 				.setParameter(0, ID)
-				.setParameter(1,"regular")
-				.setParameter(2,"manager")
+				.setParameter(1,"Regular")
+				.setParameter(2,"Manager")
 				.list();
 
 		if (users.size() > 0) {
@@ -129,12 +135,14 @@ public class InternalUserDaoImpl extends AbstractDao<Integer, User> implements I
 	public User findExternalUserByID(String ID) {
 		List<User> users = new ArrayList<User>();
 		
+		logger.info("findExternalUserByID called");
+		
 		
 		users = getSession()
 				.createQuery("from User where CustomerID=? and UserType in (?,?)")
 				.setParameter(0, ID)
-				.setParameter(1,"customer")
-				.setParameter(2,"merchant")
+				.setParameter(1,"Customer")
+				.setParameter(2,"Merchant")
 				.list();
 
 		if (users.size() > 0) {
@@ -166,11 +174,13 @@ public class InternalUserDaoImpl extends AbstractDao<Integer, User> implements I
 
 	public List<User> getPIIUsers() {
 		List<User> users = new ArrayList<User>();
+		
+		logger.info("pii called");
 			
 		users = getSession()
 				.createQuery("from User where UserType in (?,?) and PII = ?")
-				.setParameter(0,"customer")
-				.setParameter(1,"merchant")
+				.setParameter(0,"Customer")
+				.setParameter(1,"Merchant")
 				.setParameter(2,1)
 				.list();
 
