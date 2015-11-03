@@ -42,6 +42,7 @@
             <li><a href="${pageContext.servletContext.contextPath}/regular/internalemployee-pendingtransaction">Pending Transactions</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/regular/int-employee-customer-search">View-Edit Users</a></li>
 			<li><a href="${pageContext.servletContext.contextPath}/regular/int-employee-setting">Settings</a></li>
+			<li><a href="${pageContext.servletContext.contextPath}/regular/password-regular-change">Change Password</a></li>
             <li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
           </ul>     
         </div> <!-- sidebar -->

@@ -1485,9 +1485,7 @@ public class  InternalUserController{
 	}
 	
 	@RequestMapping(value = "/regular/password-regular-change", method = RequestMethod.GET)
-	public String getregularconfirmPassword(ModelMap model) {
-		User customer = userService.getUserDetails();
-		
+	public String getregularconfirmPassword(ModelMap model) {		
 		return "employee/regular_change_password";
 	}
 	@RequestMapping(value="/regular/regularpasswordsuccess", method = RequestMethod.POST)

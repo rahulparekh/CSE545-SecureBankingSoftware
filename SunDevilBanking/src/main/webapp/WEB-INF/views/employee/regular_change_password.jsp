@@ -2,59 +2,144 @@
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-<%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags"%>
-<t:page>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<link rel="icon"
+		href="${pageContext.servletContext.contextPath}/static/favicon.ico">
+	
+	<title>SBS Regular Employee Change Password - Group 11</title>
+	
+	<!-- Bootstrap core CSS -->
+	<link
+		href="${pageContext.servletContext.contextPath}/static/css/bootstrap.min.css"
+		rel="stylesheet">
+	<!-- Bootstrap theme -->
+	<link
+		href="${pageContext.servletContext.contextPath}/static/css/bootstrap-theme.min.css"
+		rel="stylesheet">
+	
+	<!-- Custom styles for this template -->
+	<link
+		href="${pageContext.servletContext.contextPath}/static/css/custom.css"
+		rel="stylesheet">
+	
+	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+	<!--[if lt IE 9]>
+	      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+	      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+	    <![endif]-->
+</head>
 
+<body role="document">
 
-		<div class="page-header">
-			<h1>Change Password:</h1>
-		</div>
+	<div class="container container-main" role="main">
 
-        <div id="customer-settings">
+		<div class="row">
 
-		<c:if test="${!empty successMsg}">
-			<div class="alert alert-success">${fn:escapeXml(successMsg)}</div>
-		</c:if>
-		<c:if test="${!empty failureMsg}">
-			<div class="alert alert-danger">
-				${fn:escapeXml(failureMsg)}:
-				<form:errors path="*" cssClass="error" />
+			<div class="col-sm-3 col-md-2 sidebar">
+
+				<ul class="nav nav-sidebar">
+					<li><a
+						href="${pageContext.servletContext.contextPath}/regular/int-employee-home">Home</a></li>
+					<li><a
+						href="${pageContext.servletContext.contextPath}/regular/addTransaction">Add
+							Transaction</a></li>
+					<li><a
+						href="${pageContext.servletContext.contextPath}/regular/internalemployee-pendingtransaction">Pending
+							Transactions</a></li>
+					<li><a
+						href="${pageContext.servletContext.contextPath}/regular/int-employee-customer-search">View-Edit
+							Users</a></li>
+					<li><a
+						href="${pageContext.servletContext.contextPath}/regular/int-employee-setting">Settings</a></li>
+					<li><a
+						href="${pageContext.servletContext.contextPath}/regular/password-regular-change">Change
+							Password</a></li>
+					<li><a href="${pageContext.servletContext.contextPath}/logout">Logout</a></li>
+				</ul>
+
 			</div>
-		</c:if>
+			<!-- sidebar -->
 
-		<div class="modal-body">
-            <form:form method="POST" modelAttribute="changepassword" action="regularpasswordsuccess">
-              
-				<p>
-					<label>Current Password:</label>
-					<form:input class="form-control" path="currentpassword" id="currentpassword"  type = "password" minlength='3' maxlength='35' required='required'/>
-				</p>
-				<p>
-					<label>New Password:</label>
-					<form:input class="form-control" path="newpassword" id="newpassword" type = "password" minlength='3' maxlength='70' required='required'/>
-				</p>
-				<p>
-					<label>Confirm Password:</label>
-					<form:input class="form-control" path="confirmpassword" id="confirmpassword" type = "password" minlength='3' maxlength='70' required='required'/>
-				</p>
-				
-			
-				<div class="modal-footer">
-					<button type="submit" class="btn btn-success" >Submit</button>
+			<div class="col-sm-9 col-md-10 main">
+
+				<div class="page-header">
+					<h1>Change Password:</h1>
 				</div>
-                          
-            </form:form>
-			</div>
-			</div>
-            
-      <div id="virtualKeyboard">        
-      </div>
 
-   
+				<div id="customer-settings">
+
+					<c:if test="${!empty successMsg}">
+						<div class="alert alert-success">${fn:escapeXml(successMsg)}</div>
+					</c:if>
+					<c:if test="${!empty failureMsg}">
+						<div class="alert alert-danger">
+							${fn:escapeXml(failureMsg)}:
+							<form:errors path="*" cssClass="error" />
+						</div>
+					</c:if>
+
+					<div class="modal-body">
+						<form:form method="POST" modelAttribute="changepassword"
+							action="regularpasswordsuccess">
+
+							<p>
+								<label>Current Password:</label>
+								<form:input class="form-control" path="currentpassword"
+									id="currentpassword" type="password" minlength='3'
+									maxlength='35' required='required' />
+							</p>
+							<p>
+								<label>New Password:</label>
+								<form:input class="form-control" path="newpassword"
+									id="newpassword" type="password" minlength='3' maxlength='70'
+									required='required' />
+							</p>
+							<p>
+								<label>Confirm Password:</label>
+								<form:input class="form-control" path="confirmpassword"
+									id="confirmpassword" type="password" minlength='3'
+									maxlength='70' required='required' />
+							</p>
 
 
+							<div class="modal-footer">
+								<button type="submit" class="btn btn-success">Submit</button>
+							</div>
 
-  
-</t:page>
+						</form:form>
+					</div>
+				</div>
+
+				<div id="virtualKeyboard"></div>
+
+
+			</div> <!-- /row -->
+
+		</div><!-- /container -->
+
+	</div>
+	<!-- /container -->
+
+
+	<!-- Bootstrap core JavaScript
+    ================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script
+		src="${pageContext.servletContext.contextPath}/static/js/bootstrap.min.js"></script>
+	<script
+		src="${pageContext.servletContext.contextPath}/static/js/jsKeyboard.js"></script>
+	<script
+		src="${pageContext.servletContext.contextPath}/static/js/common.js"></script>
+</body>
+</html>
