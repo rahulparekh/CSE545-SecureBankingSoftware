@@ -206,7 +206,7 @@ public class  InternalUserController{
 	}
 
 	@RequestMapping(value = "/admin/manage-employee", method = RequestMethod.GET)
-	public String addUserInfo(ModelMap model, @ModelAttribute("user") User user) {
+	public String addUserInfo(ModelMap model) {
 		Map<String, String> userTypes = new LinkedHashMap<String, String>();
 		userTypes.put("Regular", "Regular");
 		userTypes.put("Manager", "Manager");
@@ -219,11 +219,28 @@ public class  InternalUserController{
 			@ModelAttribute("user") User user, BindingResult result,
 			RedirectAttributes redirectAttrs, HttpServletRequest request) {
 
-		model.addAttribute("user", new User());
 		if (internalUserService.findUserByEmail(user.getEmail()) != null) {
 			redirectAttrs.addFlashAttribute("failureMsg",
 					"Employee Already Exists with the same Email Address");
-			return "redirect:/admin/sysadmin-home";
+			return "redirect:/admin/manage-employee";
+		}
+		
+		if (request.getParameter("secQuestion1") == null 
+				|| request.getParameter("secQuestion1").isEmpty()
+				|| request.getParameter("secQuestion2") == null 
+				|| request.getParameter("secQuestion2").isEmpty()
+				|| request.getParameter("secQuestion3") == null 
+				|| request.getParameter("secQuestion3").isEmpty()
+				|| request.getParameter("answer1") == null 
+				|| request.getParameter("answer1").isEmpty()
+				|| request.getParameter("answer2") == null 
+				|| request.getParameter("answer2").isEmpty()
+				|| request.getParameter("answer3") == null 
+				|| request.getParameter("answer3").isEmpty()) {
+			
+			redirectAttrs.addFlashAttribute("failureMsg",
+					"Security Questions and Answers are required");
+			return "redirect:/manager/manage-customer"; 
 		}
 
 		Set<SecurityQuestion> secQuestions = new HashSet<SecurityQuestion>();
@@ -249,8 +266,45 @@ public class  InternalUserController{
 		secQuestions.add(question1);
 		secQuestions.add(question2);
 		secQuestions.add(question3);
-
 		user.setSecurityQuestions(secQuestions);
+		
+		String customerID;
+		while (true) {
+			customerID = "" + internalUserService.generateRandomNumberOfLength(11);
+			if (internalUserService.findUserByID(customerID) == null) {
+				break;
+			}
+		}
+		Set<SecurityQuestion> secquestions = user.getSecurityQuestions();
+		for (SecurityQuestion question : secquestions) {
+
+			question.setUser(user);
+
+		}
+		user.setCustomerID(customerID);
+		user.setCreatedAt(LocalDateTime.now());
+		user.setLastLoginAt(LocalDateTime.now());
+		user.setUpdatedAt(LocalDateTime.now());
+		user.setUpdatedAt(LocalDateTime.now());
+		user.setEnabled(1);
+		
+		validator.validate(user, result);
+		if (result.hasErrors()) {
+			logger.debug(result);
+
+			// attributes for validation failures
+			redirectAttrs.addFlashAttribute(
+					"org.springframework.validation.BindingResult.user",
+					result);
+			redirectAttrs.addFlashAttribute("user", user);
+
+			redirectAttrs.addFlashAttribute("failureMsg",
+					"You have errors in your request.");
+
+			// redirect to the manager view
+			return "redirect:/admin/manage-employee";
+		}
+		
 		internalUserService.addInternalUser(user);
 		SystemLog systemLog = new SystemLog(new DateTime().toLocalDateTime(),
 				user.getFirstName(), user.getUserType(), "The user "
